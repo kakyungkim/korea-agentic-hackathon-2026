@@ -953,7 +953,7 @@ def credits_html(data: dict) -> str:
 
     body = (
         '<div class="quote keep"><p>주제와 초파리 도킹 경로는 팀원 제안이고, 에이전트 하네스와 '
-        "검증 체계는 선행 프로젝트 PharmaSignal v0 에서 이어 온 자산입니다. 두 층을 하나의 "
+        "검증 체계는 선행 프로젝트 PharmaSignal v0 에서 이어 온 자산입니다. 두 갈래를 하나의 "
         "파이프라인으로 이었습니다.</p></div>"
         + "<h3>층별 기여</h3>"
         + table(c_header, c_rows, cls="small", widths=("15%", "42%", "13%", "30%"))

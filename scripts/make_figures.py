@@ -611,9 +611,9 @@ def make_pipeline_architecture(out_path: Path) -> Path:
             va="center", fontsize=5.0, color=INK_FAINT, zorder=8)
     arrow(ax, (48.6, 44.3), (50.4, 44.3))
 
-    # --- 도구 층 -------------------------------------------------------------
+    # --- 도구 묶음 -------------------------------------------------------------
     box(ax, 50.6, 30.0, 29.0, 24.2, edge=GREY, face="#F7F9FA", lw=1.0)
-    ax.text(52.0, 52.6, "도구 층", ha="left", va="center", fontsize=7.0,
+    ax.text(52.0, 52.6, "도구 묶음", ha="left", va="center", fontsize=7.0,
             fontweight="bold", color=INK, zorder=8)
     ax.text(78.2, 52.6, "NAT 함수로 등록", ha="right", va="center", fontsize=4.8,
             color=INK_FAINT, zorder=8)
@@ -1079,10 +1079,71 @@ def make_case_results(out_path: Path) -> tuple[Path, dict]:
     return out_path, case
 
 
+def make_overview(out_path: Path) -> Path:
+    """한 장 요약 그림. 상세는 architecture_pipeline.png 가 맡고 이쪽은 글자를 줄인다.
+
+    발표와 제출물 앞에 놓는다. 다섯 칸의 흐름과 크리틱이 가르는 지점만 남겼다.
+    """
+    fig = plt.figure(figsize=(8.0, 3.6))
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.set_xlim(0, 100); ax.set_ylim(0, 45); ax.axis("off")
+
+    ax.text(2.0, 41.6, "근거가 다 맞아도 추론은 틀릴 수 있다", fontsize=15,
+            fontweight="bold", color=INK)
+    ax.text(2.0, 37.8, f"{PROJECT_NAME}는 후보 하나를 구조에서 사람 근거까지 잇고, "
+            "근거를 넘어선 주장을 되돌린다.", fontsize=7.4, color=INK_SOFT)
+
+    # --- 흐름 다섯 칸 -------------------------------------------------------
+    steps = [("구조", "타깃과 후보", TEAL, TEAL_BG),
+             ("결합", "DiffDock, Vina", BLUE, BLUE_BG),
+             ("참조", "실험 친화도", TEAL, TEAL_BG),
+             ("사람 근거", "라벨, 보고, 문헌", GREEN, GREEN_BG),
+             ("주장", "근거 ID 붙임", SAND, SAND_BG)]
+    w, gap, y, h = 16.2, 3.4, 22.0, 8.6
+    for i, (name, sub, c, bg) in enumerate(steps):
+        x = 2.0 + i * (w + gap)
+        box(ax, x, y, w, h, edge=c, face=bg, lw=1.3, radius=1.2)
+        ax.text(x + w / 2, y + h - 3.1, name, fontsize=9.2, fontweight="bold",
+                color=INK, ha="center", va="center")
+        ax.text(x + w / 2, y + 2.7, sub, fontsize=6.2, color=INK_SOFT,
+                ha="center", va="center")
+        if i < len(steps) - 1:
+            arrow(ax, (x + w + 0.5, y + h / 2), (x + w + gap - 0.5, y + h / 2),
+                  color=INK_FAINT, lw=1.3)
+
+    # --- 크리틱 -------------------------------------------------------------
+    cy, ch = 6.0, 12.4
+    box(ax, 2.0, cy, 96.0, ch, edge=PLUM, face=PLUM_BG, lw=1.4, radius=1.3)
+    ax.text(5.0, cy + ch - 3.4, "크리틱", fontsize=10.0, fontweight="bold", color=INK,
+            ha="left", va="center")
+    ax.text(5.0, cy + 3.6, "근거 ID 와 숫자는 고정 규칙이 보고,\n"
+            "추론이 넘었는지는 모델이 본다.",
+            fontsize=6.6, color=INK_SOFT, ha="left", va="center", linespacing=1.6)
+
+    # 두 수치를 나란히. 이 대비가 이 프로젝트의 요지다.
+    for x0, big, lab, col in ((48.0, "1 / 16", "고정 규칙만", INK_FAINT),
+                              (73.0, "16 / 16", "의미 판단을 붙이면", PLUM)):
+        ax.text(x0 + 10.5, cy + ch - 4.6, big, fontsize=17, fontweight="bold",
+                color=col, ha="center", va="center")
+        ax.text(x0 + 10.5, cy + 2.8, lab, fontsize=6.8, color=INK_SOFT,
+                ha="center", va="center")
+    ax.text(66.0, cy + ch / 2, "vs", fontsize=8.0, color=INK_FAINT,
+            ha="center", va="center", style="italic")
+
+    ax.text(2.0, 2.2, "심어 둔 과잉해석 16건 기준. 반려해야 할 주장을 잡은 수. "
+            "출처 eval/results/critic_verdict_output_*.json",
+            fontsize=5.4, color=INK_FAINT, ha="left")
+
+    fig.savefig(out_path, dpi=300, facecolor=PAPER)
+    plt.close(fig)
+    return out_path
+
+
 def main() -> None:
     family = register_fonts()
     FIG_DIR.mkdir(parents=True, exist_ok=True)
 
+    overview = make_overview(FIG_DIR / "architecture_overview.png")
     pipeline = make_pipeline_architecture(FIG_DIR / "architecture_pipeline.png")
     case_fig, case = make_case_results(FIG_DIR / "results_case.png")
     arch = make_architecture(FIG_DIR / "architecture_pharmasignal.png")
@@ -1090,7 +1151,7 @@ def main() -> None:
 
     print(f"폰트 family: {family}")
     print(f"프로젝트 이름 자리표시자: {PROJECT_NAME}")
-    for path in (pipeline, case_fig, arch, res):
+    for path in (overview, pipeline, case_fig, arch, res):
         import subprocess
         size = subprocess.run(["sips", "-g", "pixelWidth", "-g", "pixelHeight", str(path)],
                               capture_output=True, text=True).stdout.strip().splitlines()[-2:]

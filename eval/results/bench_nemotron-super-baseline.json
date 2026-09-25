@@ -1,0 +1,467 @@
+{
+ "label": "nemotron-super-baseline",
+ "model": "nvidia/nemotron-3-super-120b-a12b",
+ "base_url": "https://integrate.api.nvidia.com/v1",
+ "cases_file": "eval/cases.jsonl",
+ "prompt_sha256": null,
+ "ran_at": "2026-09-26T00:51:05+0900",
+ "summary": {
+  "cases": 33,
+  "ok": 31,
+  "failed": 2,
+  "detection": {
+   "caught": 15,
+   "of": 16,
+   "rate": 0.9375
+  },
+  "false_positive": {
+   "count": 0,
+   "of": 17,
+   "rate": 0.0
+  },
+  "latency_ms": {
+   "mean": 4599.5,
+   "median": 2835.2,
+   "min": 1051.9,
+   "max": 31432.9
+  },
+  "tokens": {
+   "prompt": 55048,
+   "completion": 9041,
+   "total": 64089
+  },
+  "cost_usd": null,
+  "failed_ids": [
+   "rmsd_reference_pass",
+   "endpoint_merge_reject"
+  ]
+ },
+ "rows": [
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 3192.9,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1785,
+    "completion_tokens": 21,
+    "total_tokens": 1806
+   },
+   "id": "prr_signal_ok",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 2506.2,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1788,
+    "completion_tokens": 192,
+    "total_tokens": 1980
+   },
+   "id": "label_listed_ok",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 2007.3,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1708,
+    "completion_tokens": 113,
+    "total_tokens": 1821
+   },
+   "id": "planted_unsupported_claim",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 2693.7,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1866,
+    "completion_tokens": 190,
+    "total_tokens": 2056
+   },
+   "id": "cross_target_ranking_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 12627.6,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1852,
+    "completion_tokens": 814,
+    "total_tokens": 2666
+   },
+   "id": "cross_target_ranking_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 3144.0,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1697,
+    "completion_tokens": 120,
+    "total_tokens": 1817
+   },
+   "id": "affinity_conversion_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 6901.0,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1738,
+    "completion_tokens": 822,
+    "total_tokens": 2560
+   },
+   "id": "affinity_conversion_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 5363.8,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1743,
+    "completion_tokens": 431,
+    "total_tokens": 2174
+   },
+   "id": "cross_docking_binding_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 6103.8,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1756,
+    "completion_tokens": 872,
+    "total_tokens": 2628
+   },
+   "id": "cross_docking_binding_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 2851.5,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1702,
+    "completion_tokens": 106,
+    "total_tokens": 1808
+   },
+   "id": "species_mismatch_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 2392.7,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1702,
+    "completion_tokens": 73,
+    "total_tokens": 1775
+   },
+   "id": "species_mismatch_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1233.0,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1733,
+    "completion_tokens": 154,
+    "total_tokens": 1887
+   },
+   "id": "convergence_claim_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 31432.9,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1746,
+    "completion_tokens": 834,
+    "total_tokens": 2580
+   },
+   "id": "convergence_claim_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 3109.5,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1720,
+    "completion_tokens": 140,
+    "total_tokens": 1860
+   },
+   "id": "rmsd_reference_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": false,
+   "error": "응답이 CriticReport 형식이 아니다",
+   "latency_ms": 3313.4,
+   "verdict": null,
+   "usage": {
+    "prompt_tokens": 1723,
+    "completion_tokens": 90,
+    "total_tokens": 1813
+   },
+   "raw_response": "{\"verdict\": \"pass\", \"checks\": [{\"checks\": [{\"name\": \"6. RMSD 기준 명시\", \"passed\": true, \"reason\": \"이 RMSD 열은 같은 실행의 1순위 포즈를 기준으로 잰 값이고 결정 구조와의 일치를 뜻하지 않는다. 결정 구조 대비 RMSD 는 계산되지 않았다.\"}], \"required_followups\": []}",
+   "id": "rmsd_reference_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": false,
+   "error": "InternalServerError: Error code: 503 - {'error': {'message': 'Service temporarily overloaded', 'type': 'Service Unavailable', 'code': 503}}",
+   "latency_ms": 1489.5,
+   "verdict": null,
+   "usage": null,
+   "id": "endpoint_merge_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 2175.4,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1744,
+    "completion_tokens": 174,
+    "total_tokens": 1918
+   },
+   "id": "endpoint_merge_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1991.2,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1717,
+    "completion_tokens": 88,
+    "total_tokens": 1805
+   },
+   "id": "executed_input_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1621.9,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1772,
+    "completion_tokens": 102,
+    "total_tokens": 1874
+   },
+   "id": "executed_input_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 2869.4,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1700,
+    "completion_tokens": 154,
+    "total_tokens": 1854
+   },
+   "id": "fly_response_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 9995.2,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1712,
+    "completion_tokens": 823,
+    "total_tokens": 2535
+   },
+   "id": "fly_response_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 3666.1,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1751,
+    "completion_tokens": 150,
+    "total_tokens": 1901
+   },
+   "id": "diffdock_confidence_affinity_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 7516.7,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1761,
+    "completion_tokens": 420,
+    "total_tokens": 2181
+   },
+   "id": "diffdock_confidence_affinity_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1859.4,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1750,
+    "completion_tokens": 108,
+    "total_tokens": 1858
+   },
+   "id": "cross_tool_scale_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 10258.2,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1764,
+    "completion_tokens": 1084,
+    "total_tokens": 2848
+   },
+   "id": "cross_tool_scale_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 2159.9,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1807,
+    "completion_tokens": 210,
+    "total_tokens": 2017
+   },
+   "id": "diffdock_reproducibility_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1051.9,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1806,
+    "completion_tokens": 86,
+    "total_tokens": 1892
+   },
+   "id": "diffdock_reproducibility_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1803.8,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1796,
+    "completion_tokens": 122,
+    "total_tokens": 1918
+   },
+   "id": "diffdock_negative_confidence_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1472.6,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1805,
+    "completion_tokens": 82,
+    "total_tokens": 1887
+   },
+   "id": "diffdock_negative_confidence_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1558.4,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1776,
+    "completion_tokens": 124,
+    "total_tokens": 1900
+   },
+   "id": "disproportionality_causality_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1329.5,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1910,
+    "completion_tokens": 111,
+    "total_tokens": 2021
+   },
+   "id": "disproportionality_causality_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 2835.2,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1935,
+    "completion_tokens": 165,
+    "total_tokens": 2100
+   },
+   "id": "evidence_scope_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 2858.3,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 2006,
+    "completion_tokens": 156,
+    "total_tokens": 2162
+   },
+   "id": "evidence_scope_pass",
+   "expected_verdict": "pass"
+  }
+ ]
+}

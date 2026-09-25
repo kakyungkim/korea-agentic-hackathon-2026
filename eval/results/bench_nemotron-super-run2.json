@@ -1,0 +1,467 @@
+{
+ "label": "nemotron-super-run2",
+ "model": "nvidia/nemotron-3-super-120b-a12b",
+ "base_url": "https://integrate.api.nvidia.com/v1",
+ "cases_file": "eval/cases.jsonl",
+ "prompt_sha256": null,
+ "ran_at": "2026-09-26T00:55:13+0900",
+ "summary": {
+  "cases": 33,
+  "ok": 33,
+  "failed": 0,
+  "detection": {
+   "caught": 16,
+   "of": 16,
+   "rate": 1.0
+  },
+  "false_positive": {
+   "count": 0,
+   "of": 17,
+   "rate": 0.0
+  },
+  "latency_ms": {
+   "mean": 4308.8,
+   "median": 2242.7,
+   "min": 655.7,
+   "max": 26190.3
+  },
+  "tokens": {
+   "prompt": 58538,
+   "completion": 8904,
+   "total": 67442
+  },
+  "cost_usd": null,
+  "failed_ids": []
+ },
+ "rows": [
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 2739.7,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1785,
+    "completion_tokens": 77,
+    "total_tokens": 1862
+   },
+   "id": "prr_signal_ok",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 716.2,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1788,
+    "completion_tokens": 70,
+    "total_tokens": 1858
+   },
+   "id": "label_listed_ok",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1577.9,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1708,
+    "completion_tokens": 100,
+    "total_tokens": 1808
+   },
+   "id": "planted_unsupported_claim",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1887.3,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1866,
+    "completion_tokens": 180,
+    "total_tokens": 2046
+   },
+   "id": "cross_target_ranking_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 11684.4,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1852,
+    "completion_tokens": 1087,
+    "total_tokens": 2939
+   },
+   "id": "cross_target_ranking_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 2470.9,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1697,
+    "completion_tokens": 109,
+    "total_tokens": 1806
+   },
+   "id": "affinity_conversion_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 11806.7,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1738,
+    "completion_tokens": 843,
+    "total_tokens": 2581
+   },
+   "id": "affinity_conversion_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 7218.0,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1743,
+    "completion_tokens": 190,
+    "total_tokens": 1933
+   },
+   "id": "cross_docking_binding_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 5825.5,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1756,
+    "completion_tokens": 872,
+    "total_tokens": 2628
+   },
+   "id": "cross_docking_binding_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1351.6,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1702,
+    "completion_tokens": 122,
+    "total_tokens": 1824
+   },
+   "id": "species_mismatch_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 6253.5,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1702,
+    "completion_tokens": 73,
+    "total_tokens": 1775
+   },
+   "id": "species_mismatch_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 2242.7,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1733,
+    "completion_tokens": 125,
+    "total_tokens": 1858
+   },
+   "id": "convergence_claim_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 6410.3,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1746,
+    "completion_tokens": 801,
+    "total_tokens": 2547
+   },
+   "id": "convergence_claim_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1735.7,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1720,
+    "completion_tokens": 111,
+    "total_tokens": 1831
+   },
+   "id": "rmsd_reference_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1887.4,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1723,
+    "completion_tokens": 85,
+    "total_tokens": 1808
+   },
+   "id": "rmsd_reference_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1173.7,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1767,
+    "completion_tokens": 114,
+    "total_tokens": 1881
+   },
+   "id": "endpoint_merge_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 3523.6,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1744,
+    "completion_tokens": 82,
+    "total_tokens": 1826
+   },
+   "id": "endpoint_merge_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1754.1,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1717,
+    "completion_tokens": 141,
+    "total_tokens": 1858
+   },
+   "id": "executed_input_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 6417.2,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1772,
+    "completion_tokens": 508,
+    "total_tokens": 2280
+   },
+   "id": "executed_input_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1465.9,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1700,
+    "completion_tokens": 148,
+    "total_tokens": 1848
+   },
+   "id": "fly_response_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 10365.3,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1712,
+    "completion_tokens": 823,
+    "total_tokens": 2535
+   },
+   "id": "fly_response_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1194.3,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1751,
+    "completion_tokens": 167,
+    "total_tokens": 1918
+   },
+   "id": "diffdock_confidence_affinity_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 26190.3,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1761,
+    "completion_tokens": 705,
+    "total_tokens": 2466
+   },
+   "id": "diffdock_confidence_affinity_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 2294.4,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1750,
+    "completion_tokens": 108,
+    "total_tokens": 1858
+   },
+   "id": "cross_tool_scale_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1155.3,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1764,
+    "completion_tokens": 91,
+    "total_tokens": 1855
+   },
+   "id": "cross_tool_scale_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1130.2,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1807,
+    "completion_tokens": 147,
+    "total_tokens": 1954
+   },
+   "id": "diffdock_reproducibility_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 655.7,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1806,
+    "completion_tokens": 86,
+    "total_tokens": 1892
+   },
+   "id": "diffdock_reproducibility_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 976.1,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1796,
+    "completion_tokens": 107,
+    "total_tokens": 1903
+   },
+   "id": "diffdock_negative_confidence_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1683.1,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1805,
+    "completion_tokens": 82,
+    "total_tokens": 1887
+   },
+   "id": "diffdock_negative_confidence_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 2074.8,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1776,
+    "completion_tokens": 126,
+    "total_tokens": 1902
+   },
+   "id": "disproportionality_causality_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 7305.3,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 1910,
+    "completion_tokens": 111,
+    "total_tokens": 2021
+   },
+   "id": "disproportionality_causality_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 3248.9,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 1935,
+    "completion_tokens": 270,
+    "total_tokens": 2205
+   },
+   "id": "evidence_scope_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 3774.2,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 2006,
+    "completion_tokens": 243,
+    "total_tokens": 2249
+   },
+   "id": "evidence_scope_pass",
+   "expected_verdict": "pass"
+  }
+ ]
+}

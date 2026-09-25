@@ -166,3 +166,11 @@ fi
 rm -f _g.mp3 _alist.txt _silent.mp4 _voice.mp3 _bgm.mp3 _bgm_in.mp3 _bgm_out.mp3 _mix.mp3 _xfade.txt _seglen.txt _slidemap.txt \
       s_*.mp3 t_*.mp3 f_*.png cap_*.png _sents.txt _durs.txt
 printf "  final.mp4 %.1f초 · final.srt 동봉\n" "$(dur final.mp4)"
+
+# 제출용 이름으로 복사한다. final.mp4 는 빌드 기본 출력명이라 그대로 내보내지 않는다.
+DATE=$(date +%Y%m%d)
+OUTNAME="NVIDIA해커톤_FlyGate_데모영상_v${VER:-1}_${DATE}"
+cp final.mp4 "${OUTNAME}.mp4"
+cp final.srt "${OUTNAME}.srt"
+echo "  제출용 이름: ${OUTNAME}.mp4 / .srt"
+echo "  팀명이 정해지면 [NVIDIA 해커톤_<팀명>_FlyGate].mp4 로 다시 복사한다"

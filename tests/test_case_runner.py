@@ -120,6 +120,15 @@ DIFFDOCK_BODY = {
 }
 
 
+# 경로 B(응고인자 Xa) DiffDock 실측. 2026-09-25 실행한 eval/results/case_niraparib.json 의 값이다.
+DIFFDOCK_BODY_B = {
+    "status": "success", "details": "success without retry",
+    "position_confidence": [-0.17230159044265747, -0.2045024335384369, -0.6646066308021545],
+}
+DIFFDOCK_REQUEST_SHA_B = "91b182ea53cf09657b9670738d7bcfb39c17866495d7a8126f22cc630df323b3"
+DIFFDOCK_RESPONSE_SHA_B = "6b9c88eeb2a5ebf4137ce6d9050c64f4e2d1adfb0c9b5b7487b2f2121622defd"
+
+
 def _docking_fixture() -> dict:
     return {"ok": True, "errors": [], "doc": DOCKING_DOC, "url": cr.FDDD_DOCKING_URL,
             "doc_sha256": bc.sha256_text(bc.canonical_json(DOCKING_DOC)),
@@ -155,6 +164,22 @@ def _diffdock_fixture(ok: bool = True) -> dict:
             "request_sha256": request_sha, "response_sha256": "a3f5fdbd1bb3ee98edbb0ee1cb8fe27c",
             "from_cache": False, "elapsed_s": 4.02, "protein_atom_count": 2752,
             "evidence_ids": [cr.diffdock_evidence_id(request_sha, i + 1) for i in range(3)],
+            "errors": []}
+
+
+def _diffdock_fixture_b() -> dict:
+    """경로 B DiffDock 실측. 1순위 신뢰도가 음수다."""
+    confs = list(DIFFDOCK_BODY_B["position_confidence"])
+    return {"step": "diffdock", "ok": True, "skipped": False, "skip_reason": None,
+            "num_poses_returned": 3, "position_confidence": confs,
+            "poses": [{"rank": i + 1, "position_confidence": c,
+                       "evidence_id": cr.diffdock_evidence_id(DIFFDOCK_REQUEST_SHA_B, i + 1)}
+                      for i, c in enumerate(confs)],
+            "request_sha256": DIFFDOCK_REQUEST_SHA_B,
+            "response_sha256": DIFFDOCK_RESPONSE_SHA_B,
+            "from_cache": True, "elapsed_s": 0.0, "protein_atom_count": 1853,
+            "evidence_ids": [cr.diffdock_evidence_id(DIFFDOCK_REQUEST_SHA_B, i + 1)
+                             for i in range(3)],
             "errors": []}
 
 
@@ -198,15 +223,26 @@ def _pubmed_fixture() -> dict:
             "evidence_ids": [cr.pubmed_evidence_id("40687421")], "errors": []}
 
 
-def case_fixture(diffdock_ok: bool = True) -> dict:
-    """두 경로가 담긴 케이스 한 벌. 단계 계산은 실제 함수로 하고 나머지는 실측 픽스처다."""
+def case_fixture(diffdock_ok: bool = True, use_vina: bool = True) -> dict:
+    """두 경로가 담긴 케이스 한 벌. 단계 계산은 실제 함수로 하고 나머지는 실측 픽스처다.
+
+    ``use_vina=False`` 는 ``--no-vina`` 실행을 흉내 낸다. Vina 단계는 실행 코드와 같은
+    ``cr.vina_skip_step()`` 을 쓰고, 결합 근거가 DiffDock 하나로 줄므로 경로 B 에도 실측
+    DiffDock 값을 둔다.
+    """
     docking, evidence = _docking_fixture(), _evidence_fixture()
     paths = []
     for spec, atoms, digest in ((cr.PATH_A, 2752, ATOM_SHA_A), (cr.PATH_B, 1853, ATOM_SHA_B)):
+        if spec.key == "A":
+            diffdock = _diffdock_fixture(diffdock_ok)
+        elif use_vina:
+            diffdock = _diffdock_fixture(False)
+        else:
+            diffdock = _diffdock_fixture_b() if diffdock_ok else _diffdock_fixture(False)
         steps = {
             "structure": _structure_fixture(spec.pdb_id, spec.chain, atoms, digest),
-            "vina": cr.step_vina(spec, docking),
-            "diffdock": _diffdock_fixture(diffdock_ok and spec.key == "A"),
+            "vina": cr.step_vina(spec, docking) if use_vina else cr.vina_skip_step(),
+            "diffdock": diffdock,
             "bindingdb": cr.step_bindingdb(spec, evidence),
             "label": _label_fixture(),
             "faers": _faers_fixture(),
@@ -219,7 +255,7 @@ def case_fixture(diffdock_ok: bool = True) -> dict:
                     ids.append(eid)
         paths.append({**spec.as_dict(), "steps": steps, "evidence_ids": ids, "errors": {}})
     return {"case_id": "case_niraparib", "generated_at": "2026-09-25T00:00:00+00:00",
-            "offline": True,
+            "offline": True, "use_vina": use_vina,
             "compound": {"id": cr.COMPOUND_ID, "name": cr.COMPOUND_NAME,
                          "smiles": cr.COMPOUND_SMILES, "adverse_event": cr.ADVERSE_EVENT,
                          "adverse_event_ko": cr.ADVERSE_EVENT_KO},
@@ -559,7 +595,114 @@ def test_brief_table_rows_are_well_formed():
 
 
 # --------------------------------------------------------------------------------------
-# 7. 네트워크 (기본 실행에서 제외)
+# 7. --no-vina 경로. FDDD 도킹 자산을 쓸 수 없게 된 경우를 대비한 경로다.
+#    결합 근거가 DiffDock NIM 하나로 줄어도 두 경로 대조는 그대로 선다.
+# --------------------------------------------------------------------------------------
+def test_vina_skip_step_leaves_no_placeholder_score():
+    step = cr.vina_skip_step()
+    assert step["skipped"] is True and step["ok"] is False
+    assert "score_kcal_mol" not in step          # 건너뛴 값을 0 이나 빈 값으로 채우지 않는다
+    assert "--no-vina" in step["skip_reason"]
+    assert step["evidence_ids"] == []
+    assert cr.vina_skipped(step) is True
+
+
+def test_vina_skipped_tells_a_skip_from_a_failure():
+    """조회 실패는 건너뜀이 아니다. 실패한 단계에는 점수 키가 None 으로 남아 있다."""
+    failed = cr.step_vina(cr.PATH_A, {"ok": False, "errors": ["fddd_docking_fetch_failed:503"]})
+    assert failed["score_kcal_mol"] is None
+    assert cr.vina_skipped(failed) is False
+    assert cr.case_uses_vina(case_fixture()) is True
+    assert cr.case_uses_vina(case_fixture(use_vina=False)) is False
+
+
+def test_no_vina_builds_both_claim_sets_without_vina_numbers():
+    case = case_fixture(use_vina=False)
+    supported = cr.build_supported_claims(case)
+    overclaim = cr.build_overclaim_claims(case)
+    assert len(supported["claims"]) == 12        # Vina 주장 넷이 빠지고 경로 B DiffDock 셋이 온다
+    assert len(overclaim["claims"]) == 7
+    for payload in (supported, overclaim):
+        for claim in payload["claims"]:
+            assert claim["text"].strip()
+            assert claim["evidence_ids"] and all(i.strip() for i in claim["evidence_ids"])
+            assert all(not i.startswith("dock:vina") for i in claim["evidence_ids"])
+    text = " ".join(c["text"] for c in supported["claims"] + overclaim["claims"])
+    text += supported["summary"] + overclaim["summary"]
+    assert "kcal/mol" not in text
+    assert "-10.178" not in text and "-7.967" not in text
+    assert "0.761" in text and "-0.172" in text  # 실제로 받은 DiffDock 값이다
+
+
+def test_no_vina_overclaims_are_rebuilt_on_diffdock_confidence():
+    case = case_fixture(use_vina=False)
+    overclaim = cr.build_overclaim_claims(case)
+    assert len(overclaim["planted_overclaims"]) >= 3
+    text = " ".join(c["text"] for c in overclaim["claims"]) + overclaim["summary"]
+    assert "선택성" in text                      # 교차 타깃 순위
+    assert "Kd" in text                          # 친화도 환산
+    assert "항응고" in text                      # 음수 신뢰도를 비결합으로 읽기
+    ids = {i for c in overclaim["claims"] for i in c["evidence_ids"]}
+    assert "dock:diffdock:f31b513b:pose1" in ids
+    assert f"dock:diffdock:{DIFFDOCK_REQUEST_SHA_B[:8]}:pose1" in ids
+    supported_ids = {i for c in cr.build_supported_claims(case)["claims"]
+                     for i in c["evidence_ids"]}
+    assert ids <= supported_ids, "과잉해석 벌이 새 근거 ID 를 만들어 냈다"
+
+
+def test_no_vina_claim_sets_pass_stage1_and_stage2(monkeypatch):
+    """1단과 2단을 통과해야 3단 과잉해석 판정의 시연 가치가 남는다."""
+    monkeypatch.delenv("NVIDIA_API_KEY", raising=False)
+    case = case_fixture(use_vina=False)
+    counts = cr.path_by_key(case, "A")["steps"]["faers"]["counts"]
+    for payload in (cr.build_supported_claims(case), cr.build_overclaim_claims(case)):
+        stage1 = cr.critic_stage1(payload)
+        assert stage1["ran"] is True and stage1["rules_passed"] is True
+        assert stage1["verdict"] == "needs_human"
+        stage2 = cr.critic_stage2(payload, counts)
+        assert stage2["ran"] is True and stage2["ok"] is True
+        assert stage2["mismatches"] == [] and stage2["checked"] >= 4
+        verdict = cr.judge_claim_set(payload, counts, offline=True)
+        assert verdict["final_verdict"] == "needs_human"
+
+
+def test_no_vina_brief_renders_vina_row_as_skipped():
+    text = _brief(case_fixture(use_vina=False))
+    vina_row = next(l for l in text.splitlines() if l.startswith("| 결합 1 (Vina 실측) |"))
+    assert "건너뜀" in vina_row and "--no-vina" in vina_row
+    assert "Vina 건너뜀(--no-vina)" in text
+    assert "kcal/mol" not in text                # 점수 차이 문구를 쓰지 않는다
+    assert "0.761" in text and "-0.172" in text
+    assert "AutoDock Vina 결과를 이 실행의 근거로 말하는 것" in text
+    assert "—" not in text
+    for row in [l for l in text.splitlines() if l.startswith("| ")]:
+        assert row.count("|") == 4, row[:80]
+
+
+def test_no_vina_brief_keeps_the_two_path_contrast():
+    text = _brief(case_fixture(use_vina=False))
+    tail = text.split("## 그래서 무엇을 알게 됐는가", 1)[1]
+    assert "실험 근거가 있는지다" in tail
+    assert "kcal/mol" not in tail
+
+
+def test_use_vina_path_is_untouched_by_the_no_vina_branch():
+    """기존 경로의 산출물이 그대로인지 못 박는다. 이 수치가 바뀌면 회귀다."""
+    case = case_fixture()
+    supported = cr.build_supported_claims(case)
+    overclaim = cr.build_overclaim_claims(case)
+    assert len(supported["claims"]) == 14
+    assert len(overclaim["claims"]) == 7 and len(overclaim["planted_overclaims"]) == 7
+    assert "Vina 점수 하나만" in supported["summary"]
+    text = _brief(case)
+    assert "점수 차이는 2.211 kcal/mol" in text
+    assert "-10.178 kcal/mol" in text and "-7.967 kcal/mol" in text
+    assert "포즈 사이 RMSD" in text
+    assert "--no-vina" not in text and "건너뜀(--no-vina)" not in text
+
+
+# --------------------------------------------------------------------------------------
+# 8. 네트워크 (기본 실행에서 제외)
 # --------------------------------------------------------------------------------------
 @pytest.mark.network
 def test_fddd_manifest_still_reports_the_documented_scores():

@@ -671,6 +671,20 @@ def step_pubmed(*, offline: bool = False, use_cache: bool = True,
 # --------------------------------------------------------------------------------------
 # 한 경로 실행과 케이스 전체
 # --------------------------------------------------------------------------------------
+VINA_SKIP_REASON = ("--no-vina 로 FDDD Vina 실측 조회를 건너뛰었다. "
+                    "결합 근거는 DiffDock NIM 만 쓴다.")
+
+
+def vina_skip_step() -> dict[str, Any]:
+    """``--no-vina`` 로 건너뛴 Vina 단계. 점수 키를 만들지 않는다.
+
+    자리표시자를 채우지 않으려고 ``score_kcal_mol`` 키를 아예 두지 않는다. 뒤 단계는
+    ``vina_skipped`` 로 이 상태를 알아보고 DiffDock 기준으로 갈라진다.
+    """
+    return {"step": "vina", "ok": False, "skipped": True, "skip_reason": VINA_SKIP_REASON,
+            "evidence_ids": [], "errors": []}
+
+
 def run_path(spec: PathSpec, docking: dict[str, Any], evidence: dict[str, Any], *,
              offline: bool = False, use_cache: bool = True,
              num_poses: int = DIFFDOCK_NUM_POSES,
@@ -684,13 +698,7 @@ def run_path(spec: PathSpec, docking: dict[str, Any], evidence: dict[str, Any], 
     자세한 것은 ``docs/notes/contingency-roster.md``.
     """
     structure = step_structure(spec, offline=offline, use_cache=use_cache)
-    if use_vina:
-        vina = step_vina(spec, docking)
-    else:
-        vina = {"step": "vina", "ok": False, "skipped": True,
-                "skip_reason": "--no-vina 로 FDDD Vina 실측 조회를 건너뛰었다. "
-                               "결합 근거는 DiffDock NIM 만 쓴다.",
-                "evidence_ids": [], "errors": []}
+    vina = step_vina(spec, docking) if use_vina else vina_skip_step()
     diffdock = step_diffdock(spec, structure, offline=offline, use_cache=use_cache,
                              num_poses=num_poses, post=diffdock_post)
     bindingdb = step_bindingdb(spec, evidence)
@@ -742,6 +750,7 @@ def run_case(*, offline: bool = False, use_cache: bool = True,
         "case_id": "case_niraparib",
         "generated_at": now_iso(),
         "offline": offline,
+        "use_vina": use_vina,
         "compound": {"id": COMPOUND_ID, "name": COMPOUND_NAME, "smiles": COMPOUND_SMILES,
                      "smiles_note": (
                          "SMILES 는 분자 식별 정보이고 FDDD 가 실행한 입력이 아니다. "
@@ -765,6 +774,20 @@ def path_by_key(case: dict[str, Any], key: str) -> dict[str, Any]:
         if path.get("path") == key:
             return path
     raise KeyError(f"경로 {key!r} 가 케이스에 없습니다.")
+
+
+def vina_skipped(step: dict[str, Any]) -> bool:
+    """Vina 단계를 건너뛰었는지. ``--no-vina`` 로 돌린 실행에서만 True 다.
+
+    조회가 실패한 경우와 구분한다. 건너뛴 단계에는 점수 키가 아예 없고, 실패한 단계에는
+    점수 키가 None 으로 남아 있다.
+    """
+    return bool(step.get("skipped")) and "score_kcal_mol" not in step
+
+
+def case_uses_vina(case: dict[str, Any]) -> bool:
+    """이 케이스가 FDDD Vina 실측을 근거로 썼는지. 경로 A 의 Vina 단계로 판정한다."""
+    return not vina_skipped(path_by_key(case, "A")["steps"]["vina"])
 
 
 # ======================================================================================
@@ -795,6 +818,7 @@ def build_supported_claims(case: dict[str, Any]) -> dict[str, Any]:
     a = path_by_key(case, "A")
     b = path_by_key(case, "B")
     sa, sb = a["steps"], b["steps"]
+    uses_vina = not vina_skipped(sa["vina"])
     claims: list[dict[str, Any]] = []
 
     def add(text: str, ids: list[str]) -> None:
@@ -823,6 +847,14 @@ def build_supported_claims(case: dict[str, Any]) -> dict[str, Any]:
             f"{conf:.3f} 을 받았다. 이 값은 포즈가 기하학적으로 맞을 확률이고 결합 친화도가 "
             f"아니며, 호스팅 API 에 시드가 없어 같은 입력에도 호출마다 달라진다.",
             _first(sa["diffdock"]["evidence_ids"][:1]) + _first(sa["structure"]["evidence_ids"]))
+    if (not uses_vina and sa["diffdock"]["ok"]
+            and len(sa["diffdock"]["position_confidence"]) > 1):
+        # Vina 를 건너뛴 실행에서는 DiffDock 이 유일한 결합 근거다. 받은 포즈를 전부 적는다.
+        confs = ", ".join(f"{c:.3f}" for c in sa["diffdock"]["position_confidence"])
+        add(f"그 호출이 돌려준 포즈 {sa['diffdock']['num_poses_returned']}개의 "
+            f"position_confidence 는 {confs} 이다. 순위 사이의 차이는 같은 호출 안에서만 견줄 수 "
+            f"있고 친화도도 재현성도 뜻하지 않는다.",
+            _first(sa["diffdock"]["evidence_ids"]))
     # 경로 A. 참조
     if sa["bindingdb"]["reference_set_present"]:
         counts = sa["bindingdb"]["endpoint_counts"]
@@ -873,6 +905,19 @@ def build_supported_claims(case: dict[str, Any]) -> dict[str, Any]:
         add("두 점수는 서로 다른 단백질에서 나왔고 교차 타깃으로 보정되지 않았다. FDDD 가 "
             "타깃을 전역으로 순위 매기거나 선택성과 Kd, Ki, IC50, 효능을 추론하지 말라고 적었다.",
             _first(sa["vina"]["evidence_ids"]) + _first(sb["vina"]["evidence_ids"]))
+    if not uses_vina and sb["diffdock"]["ok"] and sb["diffdock"]["position_confidence"]:
+        conf_b = sb["diffdock"]["position_confidence"][0]
+        add(f"같은 리간드를 사람 응고인자 Xa(PDB 2P16 chain A) 수용체 ATOM "
+            f"{sb['diffdock']['protein_atom_count']:,}줄에 대고 DiffDock NIM 을 1회 불러 1순위 "
+            f"포즈의 position_confidence {conf_b:.3f} 을 받았다. 음수는 이 이진 분류기가 포즈를 "
+            f"낮게 봤다는 뜻이고 결합하지 않는다는 판정이 아니다.",
+            _first(sb["diffdock"]["evidence_ids"][:1]) + _first(sb["structure"]["evidence_ids"]))
+        if sa["diffdock"]["ok"] and sa["diffdock"]["position_confidence"]:
+            add("두 신뢰도는 서로 다른 단백질에 따로 부른 호출에서 나왔고 교차 타깃으로 보정되지 "
+                "않았다. 포즈 신뢰도는 친화도가 아니므로 두 값을 견주어 선택성이나 Kd, Ki, IC50 을 "
+                "말하지 않는다.",
+                _first(sa["diffdock"]["evidence_ids"][:1])
+                + _first(sb["diffdock"]["evidence_ids"][:1]))
     if sb["bindingdb"]["ok"]:
         add(f"이 실행에 붙은 참조 친화도 집합은 {sa['bindingdb']['target']} 하나뿐이고, "
             f"응고인자 Xa 에 대응하는 참조 집합은 없다.",
@@ -882,12 +927,21 @@ def build_supported_claims(case: dict[str, Any]) -> dict[str, Any]:
         _first(sa["label"]["event_evidence_ids"]) + _first(sa["faers"]["evidence_ids"])
         + _first(sa["pubmed"]["evidence_ids"]))
 
-    summary = (
-        "같은 화합물을 두 타깃에 대고 같은 도구로 같은 단계를 밟았다. PARP1 경로에서는 "
-        "co-crystal redocking 대조군으로 계산한 Vina 점수와 BindingDB 참조 친화도 집합과 사람 "
-        "라벨과 이상사례 보고가 모두 같은 대상을 가리킨다. 응고인자 Xa 경로에는 Vina 점수 하나만 "
-        "있고 참조 집합도 실험으로 확인된 결합 근거도 없다. 두 점수를 견주어 선택성을 말하지 "
-        "않고, 도킹 점수와 포즈 신뢰도를 친화도로 환산하지 않는다.")
+    if uses_vina:
+        summary = (
+            "같은 화합물을 두 타깃에 대고 같은 도구로 같은 단계를 밟았다. PARP1 경로에서는 "
+            "co-crystal redocking 대조군으로 계산한 Vina 점수와 BindingDB 참조 친화도 집합과 사람 "
+            "라벨과 이상사례 보고가 모두 같은 대상을 가리킨다. 응고인자 Xa 경로에는 Vina 점수 하나만 "
+            "있고 참조 집합도 실험으로 확인된 결합 근거도 없다. 두 점수를 견주어 선택성을 말하지 "
+            "않고, 도킹 점수와 포즈 신뢰도를 친화도로 환산하지 않는다.")
+    else:
+        summary = (
+            "같은 화합물을 두 타깃에 대고 같은 도구로 같은 단계를 밟았다. 이 실행은 AutoDock Vina "
+            "실측 조회를 건너뛰었고 결합 근거로는 DiffDock NIM 포즈 신뢰도만 썼다. PARP1 경로에서는 "
+            "그 신뢰도와 BindingDB 참조 친화도 집합과 사람 라벨과 이상사례 보고가 모두 같은 대상을 "
+            "가리킨다. 응고인자 Xa 경로에는 포즈 신뢰도 하나만 있고 참조 집합도 실험으로 확인된 "
+            "결합 근거도 없다. 두 신뢰도를 견주어 선택성을 말하지 않고, 신뢰도를 친화도로 환산하지 "
+            "않는다.")
     return {"claims": claims, "summary": summary}
 
 
@@ -896,6 +950,7 @@ def build_overclaim_claims(case: dict[str, Any]) -> dict[str, Any]:
     a = path_by_key(case, "A")
     b = path_by_key(case, "B")
     sa, sb = a["steps"], b["steps"]
+    uses_vina = not vina_skipped(sa["vina"])
     claims: list[dict[str, Any]] = []
     planted: list[str] = []
 
@@ -934,11 +989,37 @@ def build_overclaim_claims(case: dict[str, Any]) -> dict[str, Any]:
         add(f"응고인자 Xa 에서 {sb['vina']['score_kcal_mol']} kcal/mol 로 결합하므로, niraparib 을 "
             f"쓸 때 항응고 작용을 함께 고려해야 한다.",
             _first(sb["vina"]["evidence_ids"]), "교차 도킹을 확인된 결합으로 해석")
+    if not uses_vina:
+        # Vina 점수 자리를 DiffDock 신뢰도로 갈아 끼운다. 숫자와 근거 ID 는 실제 호출 값이고
+        # 추론만 어긋뜨린다. 값의 출처는 paths[i].steps.diffdock 이다.
+        conf_a = (sa["diffdock"].get("position_confidence") or [None])[0]
+        conf_b = (sb["diffdock"].get("position_confidence") or [None])[0]
+        ids_a1 = _first(sa["diffdock"]["evidence_ids"][:1])
+        ids_b1 = _first(sb["diffdock"]["evidence_ids"][:1])
+        if conf_a is not None and conf_b is not None and ids_a1 and ids_b1:
+            add(f"PARP1 경로의 DiffDock 1순위 position_confidence 는 {conf_a:.3f} 이고 응고인자 Xa "
+                f"경로는 {conf_b:.3f} 이므로, niraparib 은 응고인자 Xa 보다 PARP1 에 더 강하게 "
+                f"결합하고 PARP1 선택성을 갖는다.",
+                ids_a1 + ids_b1, "교차 타깃 순위와 선택성 추론")
+        if conf_a is not None and ids_a1:
+            add(f"DiffDock 1순위 position_confidence {conf_a:.3f} 을 환산하면 Kd 는 나노몰 수준이고 "
+                f"IC50 도 같은 자리에 온다.",
+                ids_a1, "DiffDock 신뢰도의 친화도 환산")
+            confs = ", ".join(f"{c:.3f}" for c in sa["diffdock"]["position_confidence"])
+            add(f"PARP1 경로에서 포즈 {sa['diffdock']['num_poses_returned']}개의 신뢰도가 {confs} 로 "
+                f"차례로 내려갔으므로 이 호출은 수렴했고 다시 불러도 같은 값이 나온다.",
+                _first(sa["diffdock"]["evidence_ids"]), "단일 호출 결과의 수렴과 재현성 주장")
+        if conf_b is not None and ids_b1:
+            add(f"응고인자 Xa 경로의 신뢰도 {conf_b:.3f} 는 음수이므로 niraparib 은 응고인자 Xa 에 "
+                f"결합하지 않는다. 항응고 작용은 따로 고려하지 않아도 된다.",
+                ids_b1, "음수 신뢰도를 비결합 판정으로 해석")
     if sa["bindingdb"]["reference_set_present"]:
         counts = sa["bindingdb"]["endpoint_counts"]
+        # 이 벌이 검증한다고 우기는 대상. Vina 를 건너뛴 실행에서는 DiffDock 신뢰도밖에 없다.
+        pooled_target = "위 도킹 점수" if uses_vina else "위 DiffDock 신뢰도"
         add(f"BindingDB 참조 집합의 Ki {counts.get('Ki'):,}건과 IC50 {counts.get('IC50'):,}건과 "
             f"Kd {counts.get('Kd'):,}건과 EC50 {counts.get('EC50'):,}건을 합친 "
-            f"{sa['bindingdb']['record_count']:,}건이 하나의 친화도 근거가 되어 위 도킹 점수를 "
+            f"{sa['bindingdb']['record_count']:,}건이 하나의 친화도 근거가 되어 {pooled_target}를 "
             f"실험으로 검증한다.",
             _first(sa["bindingdb"]["evidence_ids"]), "종점 4종을 보정 없이 단일 친화도로 합침")
     if sa["faers"]["ok"]:
@@ -952,10 +1033,22 @@ def build_overclaim_claims(case: dict[str, Any]) -> dict[str, Any]:
             f"사람 쪽 확증이다.",
             _first(sa["label"]["event_evidence_ids"]) + _first(sb["vina"]["evidence_ids"]),
             "화합물 단위 사람 근거를 특정 타깃 결합의 확증으로 사용")
+    if not uses_vina and sa["label"]["labeled"] and sa["diffdock"]["ok"]:
+        add(f"{ADVERSE_EVENT_KO}이 라벨 경고와 이상반응 절에 기재된 것은 위 PARP1 포즈 신뢰도가 "
+            f"가리키는 결합의 사람 쪽 확증이다.",
+            _first(sa["label"]["event_evidence_ids"])
+            + _first(sa["diffdock"]["evidence_ids"][:1]),
+            "화합물 단위 사람 근거를 특정 타깃 결합의 확증으로 사용")
 
-    summary = (
-        "niraparib 은 PARP1 선택적 억제제이고 나노몰 수준 친화도를 갖는다. 응고인자 Xa 결합도 "
-        "사람 이상사례 보고로 확증되었으므로 항응고 병용 주의 문안을 즉시 추가할 것을 권고한다.")
+    if uses_vina:
+        summary = (
+            "niraparib 은 PARP1 선택적 억제제이고 나노몰 수준 친화도를 갖는다. 응고인자 Xa 결합도 "
+            "사람 이상사례 보고로 확증되었으므로 항응고 병용 주의 문안을 즉시 추가할 것을 권고한다.")
+    else:
+        summary = (
+            "niraparib 은 PARP1 선택적 억제제이고 DiffDock 신뢰도로 보면 나노몰 수준 친화도를 갖는다. "
+            "응고인자 Xa 에는 결합하지 않으므로 항응고 병용 주의는 필요하지 않고, 혈소판감소증 보고는 "
+            "PARP1 결합이 사람에서 확인되었다는 근거다.")
     return {"claims": claims, "summary": summary, "planted_overclaims": planted}
 
 
@@ -1116,6 +1209,8 @@ def _structure_cell(step: dict[str, Any]) -> str:
 
 
 def _vina_cell(step: dict[str, Any]) -> str:
+    if vina_skipped(step):
+        return _cell(["**건너뜀**", step.get("skip_reason") or "사유 없음"])
     if not step.get("ok"):
         return _cell([f"실패: {', '.join(step.get('errors') or ['사유 없음'])}"])
     p = step["protocol"]
@@ -1267,13 +1362,16 @@ def can_say(case: dict[str, Any]) -> list[str]:
     if sb["vina"]["ok"]:
         out.append(f"경로 B 의 Vina 점수 {sb['vina']['score_kcal_mol']} kcal/mol 자체와, FDDD 가 "
                    f"그 조합에 적어 둔 역할이 \"{sb['vina']['role']}\" 이라는 사실.")
+    if (vina_skipped(sa["vina"]) and sb["diffdock"]["ok"]
+            and sb["diffdock"]["position_confidence"]):
+        out.append(f"경로 B 의 DiffDock 1순위 포즈 신뢰도 "
+                   f"{sb['diffdock']['position_confidence'][0]:.3f} 자체. 값이 음수라는 사실과, "
+                   f"그것이 포즈 신뢰도 분류기의 출력이라는 한정을 함께 붙여 쓴다.")
     return out
 
 
-def cannot_say(case: dict[str, Any]) -> list[str]:
-    """말할 수 없는 것. 이 파이프라인의 기여가 여기 있다."""
-    a, b = path_by_key(case, "A"), path_by_key(case, "B")
-    sa, sb = a["steps"], b["steps"]
+def _cannot_say_with_vina(sa: dict[str, Any], sb: dict[str, Any]) -> list[str]:
+    """Vina 실측을 쓴 실행에서 말할 수 없는 것."""
     score_a = sa["vina"].get("score_kcal_mol")
     score_b = sb["vina"].get("score_kcal_mol")
     out = [
@@ -1292,12 +1390,52 @@ def cannot_say(case: dict[str, Any]) -> list[str]:
         "SMILES 를 실행된 입력이라고 말하는 것. FDDD 의 실행 입력은 준비된 PDBQT 파일이다.",
         "포즈 사이 RMSD 를 결정 구조와의 일치로 말하는 것. FDDD 의 RMSD 열은 같은 실행 안의 포즈끼리 잰 값이다.",
     ]
+    return out
+
+
+def _cannot_say_no_vina(sa: dict[str, Any], sb: dict[str, Any]) -> list[str]:
+    """``--no-vina`` 실행에서 말할 수 없는 것.
+
+    Vina 항목을 빼고, Vina 를 쓰지 않았다는 사실 자체를 맨 앞에 넣는다. 나머지 경계는
+    DiffDock 신뢰도 기준으로 다시 적는다.
+    """
+    conf_a = (sa["diffdock"].get("position_confidence") or [None])[0]
+    conf_b = (sb["diffdock"].get("position_confidence") or [None])[0]
+    pair = (f"({conf_a:.3f} 과 {conf_b:.3f})"
+            if conf_a is not None and conf_b is not None else "")
+    return [
+        "AutoDock Vina 결과를 이 실행의 근거로 말하는 것. 이 실행은 DiffDock 만 썼고 Vina 실측 "
+        "조회를 건너뛰었다. 점수도 프로토콜도 로그 SHA256 도 이 결과에 없다.",
+        f"두 경로의 DiffDock 1순위 신뢰도{pair}를 견주어 PARP1 선택성을 말하는 것. 서로 다른 "
+        f"단백질에 따로 부른 호출이고 교차 타깃으로 보정되지 않았다.",
+        "DiffDock 신뢰도를 Kd, Ki, IC50, EC50 으로 환산하는 것. NVIDIA 문서 원문이 "
+        "\"Do not convert confidence directly into binding affinity\" 다.",
+        "경로 B 의 신뢰도가 음수인 것을 결합하지 않는다는 증거로 읽는 것. 이 값은 포즈가 "
+        "기하학적으로 맞을 확률에 대한 이진 분류기의 출력이라 낮게 나왔다는 뜻이고, 결합 여부를 "
+        "판정하지 않는다.",
+        "경로 B 를 확인된 결합으로 말하는 것. 이 경로에는 참조 친화도 집합도 실험으로 확인된 결합 "
+        "근거도 없고, 포즈 신뢰도는 친화도가 아니다.",
+        "DiffDock 결과에 수렴이나 재현성을 말하는 것. 호스팅 API 에 시드 파라미터가 아예 없어 같은 "
+        "입력에도 호출마다 값이 달라진다.",
+        "BindingDB 의 Ki, Kd, IC50, EC50 을 보정과 불확실성 표기 없이 합쳐 단일 친화도로 쓰는 것.",
+        "FAERS 불균형 지표를 인과로 말하는 것. 보고 편향과 적응증 교란과 노출 규모 차이가 남는다.",
+        "라벨과 FAERS 와 문헌을 어느 한 타깃 결합의 사람 쪽 확증으로 쓰는 것. 이 셋은 화합물 단위 "
+        "근거이고 타깃을 가리지 않는다.",
+    ]
+
+
+def cannot_say(case: dict[str, Any]) -> list[str]:
+    """말할 수 없는 것. 이 파이프라인의 기여가 여기 있다."""
+    a, b = path_by_key(case, "A"), path_by_key(case, "B")
+    sa, sb = a["steps"], b["steps"]
+    out = (_cannot_say_no_vina(sa, sb) if vina_skipped(sa["vina"])
+           else _cannot_say_with_vina(sa, sb))
     if not sb["bindingdb"].get("reference_set_present"):
         out.append("경로 B 에 참조 친화도 집합이 있다고 말하는 것. 이 실행에 붙은 참조 집합은 "
                    "사람 PARP1 하나뿐이다.")
     negative = [c for step in (sa["diffdock"], sb["diffdock"])
                 for c in (step.get("position_confidence") or []) if c < 0]
-    if negative:
+    if negative and not vina_skipped(sa["vina"]):
         out.append("DiffDock 신뢰도가 음수로 나온 것을 결합하지 않는다는 증거로 읽는 것. 이 값은 "
                    "포즈가 기하학적으로 맞을 확률에 대한 이진 분류기의 출력이라 낮게 나왔다는 "
                    "뜻이고, 결합 여부를 판정하지 않는다.")
@@ -1329,10 +1467,24 @@ def _verdict_line(name: str, verdicts: dict[str, Any]) -> list[str]:
     return lines
 
 
+def _vina_gap(a: dict[str, Any], b: dict[str, Any]) -> float:
+    """두 경로 Vina 점수의 차이. Vina 를 쓴 실행에서만 부른다."""
+    return abs(float(a["steps"]["vina"]["score_kcal_mol"])
+               - float(b["steps"]["vina"]["score_kcal_mol"]))
+
+
+def _confidence_pair(a: dict[str, Any], b: dict[str, Any]) -> tuple[float | None, float | None]:
+    """두 경로 DiffDock 1순위 신뢰도. 없으면 None."""
+    return ((a["steps"]["diffdock"].get("position_confidence") or [None])[0],
+            (b["steps"]["diffdock"].get("position_confidence") or [None])[0])
+
+
 def render_brief(case: dict[str, Any], supported: dict[str, Any], overclaim: dict[str, Any],
                  verdicts: dict[str, dict[str, Any]]) -> str:
     """한 장 브리프를 마크다운으로 만든다. em-dash 를 쓰지 않는다."""
     a, b = path_by_key(case, "A"), path_by_key(case, "B")
+    uses_vina = case_uses_vina(case)
+    conf_a, conf_b = _confidence_pair(a, b)
     mode = "오프라인(캐시 재생)" if case.get("offline") else "온라인"
     diffdock_state = a["steps"]["diffdock"]
     if diffdock_state.get("ok"):
@@ -1343,12 +1495,22 @@ def render_brief(case: dict[str, Any], supported: dict[str, Any], overclaim: dic
     lines: list[str] = []
     lines.append("# niraparib 한 후보의 두 경로 대조: 도킹에서 사람 근거까지")
     lines.append("")
-    lines.append(f"생성 {case['generated_at']}, 실행 모드 {mode}, {dd_state}, "
+    vina_state = "" if uses_vina else ", Vina 건너뜀(--no-vina)"
+    lines.append(f"생성 {case['generated_at']}, 실행 모드 {mode}, {dd_state}{vina_state}, "
                  f"화합물 {case['compound']['name']}, 이상사례 {case['compound']['adverse_event']}")
     lines.append("")
-    lines.append(f"같은 화합물, 같은 도구, 같은 단계다. 점수 차이는 "
-                 f"{abs(float(a['steps']['vina']['score_kcal_mol']) - float(b['steps']['vina']['score_kcal_mol'])):.3f} "
-                 f"kcal/mol 인데 한쪽은 말할 수 있고 한쪽은 말할 수 없다.")
+    if uses_vina:
+        lines.append(f"같은 화합물, 같은 도구, 같은 단계다. 점수 차이는 "
+                     f"{_vina_gap(a, b):.3f} "
+                     f"kcal/mol 인데 한쪽은 말할 수 있고 한쪽은 말할 수 없다.")
+    elif conf_a is not None and conf_b is not None:
+        lines.append(f"같은 화합물, 같은 도구, 같은 단계다. 이 실행은 Vina 실측을 건너뛰고 결합 "
+                     f"근거로 DiffDock 신뢰도만 썼다. 1순위 포즈 신뢰도는 경로 A {conf_a:.3f}, "
+                     f"경로 B {conf_b:.3f} 인데 한쪽은 말할 수 있고 한쪽은 말할 수 없다.")
+    else:
+        lines.append("같은 화합물, 같은 도구, 같은 단계다. 이 실행은 Vina 실측을 건너뛰었고 "
+                     "DiffDock 호출도 남지 않아 결합 근거가 비어 있다. 그래도 두 경로를 가르는 것은 "
+                     "실험 근거의 유무라는 요지는 그대로다.")
     lines.append("")
 
     lines.append("## 단계별 근거")
@@ -1391,13 +1553,24 @@ def render_brief(case: dict[str, Any], supported: dict[str, Any], overclaim: dic
 
     lines.append("## 그래서 무엇을 알게 됐는가")
     lines.append("")
-    lines.append(
-        f"같은 화합물을 같은 도구로 두 번 돌렸는데, PARP1 경로에서는 계산값과 참조 친화도 집합과 "
-        f"사람 라벨과 이상사례 보고가 같은 대상을 가리켰고 응고인자 Xa 경로에는 Vina 점수 하나만 "
-        f"남았다. 두 경로를 가르는 것은 점수 차이 "
-        f"{abs(float(a['steps']['vina']['score_kcal_mol']) - float(b['steps']['vina']['score_kcal_mol'])):.3f} "
-        f"kcal/mol 이 아니라 그 점수를 받쳐 줄 실험 근거가 있는지다. "
-        f"그 경계를 사람이 매번 기억하지 않아도 되게 근거 ID 로 붙여 두고, 경계를 넘는 주장을 "
-        f"크리틱 3단이 반려하게 만든 것이 이 파이프라인의 기여다.")
+    if uses_vina:
+        lines.append(
+            f"같은 화합물을 같은 도구로 두 번 돌렸는데, PARP1 경로에서는 계산값과 참조 친화도 집합과 "
+            f"사람 라벨과 이상사례 보고가 같은 대상을 가리켰고 응고인자 Xa 경로에는 Vina 점수 하나만 "
+            f"남았다. 두 경로를 가르는 것은 점수 차이 "
+            f"{_vina_gap(a, b):.3f} "
+            f"kcal/mol 이 아니라 그 점수를 받쳐 줄 실험 근거가 있는지다. "
+            f"그 경계를 사람이 매번 기억하지 않아도 되게 근거 ID 로 붙여 두고, 경계를 넘는 주장을 "
+            f"크리틱 3단이 반려하게 만든 것이 이 파이프라인의 기여다.")
+    else:
+        gap = (f"신뢰도 차이({conf_a:.3f} 과 {conf_b:.3f})"
+               if conf_a is not None and conf_b is not None else "신뢰도 차이")
+        lines.append(
+            f"이 실행은 FDDD Vina 실측을 쓰지 않고 DiffDock NIM 한 줄로만 결합 근거를 뒀다. 그래도 "
+            f"두 경로의 대조는 그대로 선다. PARP1 경로에서는 포즈 신뢰도와 BindingDB 참조 친화도 "
+            f"집합과 사람 라벨과 이상사례 보고가 같은 대상을 가리켰고, 응고인자 Xa 경로에는 포즈 "
+            f"신뢰도 하나만 남았다. 두 경로를 가르는 것은 {gap}가 아니라 그 값을 받쳐 줄 실험 근거가 "
+            f"있는지다. 결합 근거가 한 줄로 줄어들면 말할 수 있는 범위도 그만큼 좁아지고, 그 경계를 "
+            f"근거 ID 로 붙여 두었기에 도구 하나가 빠져도 어디까지 말할 수 있는지가 그대로 드러난다.")
     lines.append("")
     return "\n".join(lines)

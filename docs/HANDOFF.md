@@ -126,8 +126,7 @@ Applying Landlock filesystem sandbox [abi:V2 compat:BestEffort ro:12 rw:3]
   **우리가 실측으로 보인 규칙이라 발표에서 값이 크다**
 - 응답 캐시가 필수다. 캐시 적중은 0.01초이고 네트워크를 타지 않는다
 
-**작업 하네스를 만들었다.** `.claude/` 에 에이전트 5명과 스킬 4개가 있다.
-다음 세션에서 "이어서 해줘" 라고 하면 `hackathon-ship` 이 상태를 읽고 이어간다.
+**규약은 `docs/CONVENTIONS.md` 에 있다.** 담당 배분은 `docs/notes/work-assignment.md`,
 기여 표기는 `docs/notes/credits.md` 를 따른다.
 
 ## 주제 현황 (2026-09-25)

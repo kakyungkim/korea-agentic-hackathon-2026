@@ -7,7 +7,7 @@
    하나라도 실패하면 LLM 을 부르지 않고 바로 reject. "근거 없는 주장을 심은" 부정 케이스는 여기서 걸린다.
 2. 의미 판단(LLM, planner 모델): 결정 규칙을 모두 통과한 경우에만 요약이 주장 범위를 넘는지 등을 묻는다.
    `deterministic_only: true` 이거나 LLM 호출이 실패하면 verdict 를 needs_human 으로 두고 사유를 남긴다.
-   (API 키가 없어도 워크플로가 끝까지 돌아가게 하려는 규약. CLAUDE.md "키 없이도 돌아가는 모의 경로".)
+   (API 키가 없어도 워크플로가 끝까지 돌아가게 하려는 규약. docs/CONVENTIONS.md "키 없이도 돌아가는 모의 경로".)
 
 구조화 출력은 `with_structured_output` 을 쓰지 않는다. LangChain ChatNVIDIA 의 그 경로는 실패 시
 `nvext.guided_json` 으로 되돌아가는데 Nemotron 3 엔드포인트가 그 필드를 400 으로 거부한다

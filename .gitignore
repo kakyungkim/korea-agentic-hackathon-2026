@@ -25,5 +25,8 @@ docs/*.pdf
 docs/notes/dli-course/
 assets/video/slides/*.html
 
-# 작업 도구 설정. 저장소에 올리지 않는다.
+# 작업 도구 설정과 개인 메모. 저장소에 올리지 않는다.
 .claude/
+CLAUDE.md
+AGENTS.md
+.cursor/

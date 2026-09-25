@@ -194,7 +194,7 @@ celecoxib 쪽이 값어치가 크다. 생쥐 구조 결과를 사람 이야기�
   **Jev 를 뺀 ablation 에서 파이프라인이 그대로 도는지.** 숫자가 없으면 넣은 이유를 댈 수 없다
 - 못 쓰게 되면 `nemotron-3.5-lightning` 으로 같은 구조를 만든다. 계획이 무너지지 않는다
 
-등록 절차는 `.claude/skills/nat-tool-add/SKILL.md` 를 그대로 따른다.
+등록 절차는 `docs/notes/nat-harness.md:244-253` 을 그대로 따른다.
 `configs/author.yml` 과 `configs/guardrails/author_guarded.yml` 을 **둘 다** 고쳐야 한다.
 
 ### C-2. 영상의 기술 설명 구간 (선택)
@@ -220,7 +220,7 @@ CRITIC_DETERMINISTIC_ONLY=true .venv/bin/nat eval --config_file configs/eval.yml
 ```
 
 **두 수치를 함께 기록한다.** 차이가 LLM 의미 판단의 몫이다. 503 이나 429 가 섞이면 다시 돌린다.
-`max_concurrency: 1` 이 이미 설정돼 있다. 절차는 `.claude/skills/evidence-gate/SKILL.md` T5.
+`max_concurrency: 1` 이 이미 설정돼 있다. 두 수치를 함께 기록한다.
 
 ### D-2. README 갱신 (필수)
 

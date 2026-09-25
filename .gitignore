@@ -25,8 +25,11 @@ docs/*.pdf
 docs/notes/dli-course/
 assets/video/slides/*.html
 
-# 작업 도구 설정과 개인 메모. 저장소에 올리지 않는다.
-.claude/
-CLAUDE.md
-AGENTS.md
-.cursor/
+# 개인 작업 환경과 도구 설정. 저장소에 올리지 않는다.
+# 팀이 함께 지키는 규약은 docs/CONVENTIONS.md 에 있다.
+.*/
+!.github/
+!.gitignore
+[A-Z][A-Z]*.md
+!README.md
+*.local.md

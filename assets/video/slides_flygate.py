@@ -147,7 +147,7 @@ SLIDES: list[tuple[str, str]] = [
     ("06", f'''<body>
       <div class="k">결합</div>
       <h2>구조에서 포즈까지</h2>
-      {big("200", "DiffDock NIM", "HTTP 200, 4.0초, 포즈 3개. 시드가 없어 호출마다 값이 다르다", ACCENT, "#1b3631")}
+      {big("200", "DiffDock NIM", "HTTP 200, 4.1초, 포즈 3개. 시드가 없어 호출마다 값이 다르다", ACCENT, "#1b3631")}
       <div class="row">
       {card("실측 조회", "AutoDock Vina", "팀원 데모의 도킹 결과를 SHA256 으로 대조", PA, TPA)}
       {card("참조 친화도", "BindingDB", "종점 Ki, IC50, Kd, EC50 을 합치지 않는다", POL, TPOL)}

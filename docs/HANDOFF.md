@@ -33,13 +33,13 @@
 
 | 항목 | 값 | 어디서 |
 |---|---|---|
-| 오프라인 테스트 | **313개 통과** (2026-09-25 갱신, 이전 128) | `pytest -q -m "not network"` |
+| 오프라인 테스트 | **330개 통과** (2026-09-26 갱신, 이전 313) | `pytest -q -m "not network"` |
 | 도구 NAT 등록 | **8종.** openfda_faers, dailymed_label, pubmed_search, prr_calculator, diffdock_nim, vina_reference, bindingdb_ref, echo_tool | `configs/author.yml` tool_names |
 | 설정 검증 | 4종 전부 유효 | `nat validate` |
 | **에이전트 도구 호출(도킹 포함)** | **4종 연속 호출.** `vina_reference`, `openfda_faers`, `dailymed_label`, `pubmed_search`. 주장 4건 전부 근거 ID 있음, 근거 없는 주장 0건 | `eval/results/nat_run_author_flydock.json` |
 | **케이스 시연 E2E** | niraparib 두 경로, 7단계 전부 수집, 3단 크리틱 통과와 반려 | `eval/results/case_niraparib_brief.md` |
 | 크리틱 3단 분리 | 1단과 2단은 양쪽 통과, **3단만 과잉해석 7건을 전부 반려** | `eval/results/case_niraparib.json` |
-| DiffDock NIM 호출 | HTTP 200, 4.0초, 포즈 3개 | `eval/results/diffdock_smoke.txt`, `diffdock_client_run.txt` |
+| DiffDock NIM 호출 | HTTP 200, 4.1초, 포즈 3개 | `eval/results/diffdock_smoke.txt` (클라이언트 실행은 4.02초, `diffdock_client_run.txt`) |
 | **크리틱 적발률(LLM 포함)** | **16/16 = 1.0**, 평균 0.9697, 거짓 양성 0/17 | `eval/results/critic_verdict_output_llm.json` |
 | **크리틱 적발률(결정 규칙만)** | **1/16 = 0.0625**, 평균 0.0303 | `eval/results/critic_verdict_output_deterministic.json` |
 | **LLM 의미 판단의 몫** | **격차 0.9394.** 과잉해석 15건은 기계 검사로 하나도 안 걸린다 | 위 두 파일 대조 |

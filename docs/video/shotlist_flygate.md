@@ -35,7 +35,7 @@
 터미널 장면은 꾸며 내지 않고 아래 명령의 실제 출력을 쓴다. 넷 모두 이 저장소에서 돌아간 적이 있다.
 
 ```bash
-.venv/bin/python -m pytest -q -m "not network"          # 313 passed
+.venv/bin/python -m pytest -q -m "not network"          # 330 passed
 .venv/bin/nat validate --config_file configs/author.yml # 설정 검증
 .venv/bin/python scripts/run_case_demo.py --out eval/results --offline
 scripts/openshell_smoke.sh flydock                      # 허용/차단/쓰기/TLS 검증
@@ -84,7 +84,7 @@ VM 기동 절차는 `docs/notes/openshell-setup.md`에 있다.
 | 컷 | 문장 | 화면 | 만드는 법 |
 |---|---|---|---|
 | 3-1 | 9 | 슬라이드 5. 도식 왼쪽 "입력" 상자로 천천히 들어간다 | `docs/figures/architecture_pipeline.png` 원본을 쓰고 s05는 예비 |
-| 3-2 | 10 | 같은 도식의 "작성자 워크플로"와 "도구 층" | 원본 크롭 |
+| 3-2 | 10 | 같은 도식의 "작성자 워크플로"와 "도구 묶음" | 원본 크롭 |
 | 3-3 | 11 | 슬라이드 6 | s06 |
 | 3-4 | 12 | 슬라이드 6의 `200` 배지. 또는 `diffdock_smoke.txt` 원문 | s06 크롭, 로그는 선택 |
 | 3-5 | 13 | 슬라이드 6 아래 두 카드 | s06 |

@@ -1,51 +1,171 @@
-# Korea Agentic AI Hackathon 2026 (NVIDIA x 패스트캠퍼스)
+# FlyGate
 
-온라인 사전 챌린지 제출 프로젝트. 마감 2026-09-28(월) 23:59. 계획 전체는 `docs/PLAN.md`.
+**도킹 점수에서 나올 수 없는 주장을 잡는 신약 후보 검증 에이전트**
 
-후보 두 개를 공통 하네스 위에 올려 두고 팀 구성 결과에 따라 하나를 고른다.
+NVIDIA x 패스트캠퍼스 Korea Agentic AI Hackathon 2026 온라인 사전 챌린지 제출 프로젝트.
 
-| 후보 | 한 줄 | 상태 |
+후보물질 하나를 구조에서 사람까지 이어 검증한다. 타깃 단백질과 후보를 받아 결합을 보고,
+실험 친화도를 참조하고, 그 후보가 사람에게서 어땠는지를 허가 라벨과 이상사례 보고와 문헌으로
+확인한다. 모든 주장에 근거 ID가 붙고, **도구 문서가 금지한 추론을 한 주장은 크리틱이 반려한다.**
+
+![파이프라인 구조](docs/figures/architecture_pipeline.png)
+
+## 왜 만들었나
+
+도킹 점수에는 도구 문서가 직접 밝힌 해석 한계가 있다. 서로 다른 단백질에서 나온 점수는 견줄 수
+없고, 딥러닝 도킹이 내는 신뢰도 값은 결합 세기가 아니며, 교차 도킹 결과는 결합의 증거가 아니다.
+
+LLM 에이전트를 이런 도구에 붙이면 그 선을 자주 넘는다. **근거도 제대로 붙고 숫자도 로그와
+맞는데 결론만 틀린 요약이 나온다.** 형식을 보는 검사로는 걸러 낼 수 없다.
+
+## 크리틱 3단
+
+| 단 | 무엇을 보는가 | 모델을 쓰는가 |
 |---|---|---|
-| PharmaSignal | 약물 이상사례 시그널을 공개 데이터로 1차 판정하는 트리아지 에이전트 | 도구 3종 실제 동작, 케이스 3건 수치 확보 |
-| Night Shift | 밤새 저장소에서 스스로 실험하고 아침에 증거 붙인 PR 후보를 올리는 자율 에이전트. OpenShell이 울타리 | 실행기, 크리틱 규칙, 보고서 동작. 부정 패치 2건 반려 확인 |
+| 1단 결정 규칙 | 주장 존재, 근거 ID 유무, 빈 문자열 | 쓰지 않는다 |
+| 2단 숫자 오라클 | 점수가 원본 로그와 맞는지, SHA256 대조, 지표 재계산 | 쓰지 않는다 |
+| 3단 과잉해석 판정 | 근거와 숫자가 맞아도 추론이 한계를 넘었는지 | **3단만 쓴다** |
 
-## 배경과 계보
+규칙 열다섯 가지는 지어낸 것이 아니라 **도구 제공자와 데이터 제공자가 문서에 적은 경고**에서
+옮겼다. 출처는 FDDD 데모의 `notes` 배열, NVIDIA DiffDock 문서, 기존 약물감시 규율 셋이다.
+한 가지는 우리가 직접 재서 넣었다. DiffDock 호스팅 API에는 시드가 없어 같은 입력에도 신뢰도가
+0.725와 0.515로 갈린다.
 
-이 저장소는 2026-08-22 Agent Forge AI Hackathon Seoul에 낸 PharmaSignal v0의 후속이다. v0의 공개 저장소는 https://github.com/kakyungkim/pharmasignal-v0 이고 수상하지는 못했다. v0의 시그널 계산은 ClinicalTrials.gov의 이상사례만 보고 ROR을 냈다. 시판 후 자발보고 데이터베이스인 FAERS는 코드에서 한 번도 부르지 않았고, `code/src/pharmasignal/signal.py` 주석에도 "전체 시판 후 데이터베이스(FAERS 등)를 쓰는 정식 신호 탐지와는 규모가 다르다"고 한계로 적어 두었다. 허가 라벨 대조는 아예 없었고, 문헌은 검색 결과 제목만 긁는 수준이라 `research/01-novelty-assessment.md`의 4절과 5절에 미완 과제로 남겼다. 이번 PharmaSignal은 그 셋을 도구로 메운다. openFDA FAERS에서 2x2표를 만들고, DailyMed 라벨에서 기재 여부를 확인하고, PubMed에서 문헌을 모은다. 작성자와 독립 크리틱은 서로 다른 워크플로로 나누고, 실행은 OpenShell 정책 안에 둔다. v0이 쓴 Bright Data, Daytona, Nosana, Qwen은 이번에 하나도 쓰지 않아 스택이 전부 다르고, 지금 `src/harness/` 코드 중 v0에서 가져온 것도 사실상 없다. 물려받은 것은 문제 정의와 검증 설계다. v0도 생성 코드의 불일치율과 검증 커버리지를 직접 재서 `docs/11-measurement.md`에 남겼고, 그 측정 우선 원칙을 이번에도 이어 간다.
+## 검증된 수치
 
-## 공통 하네스
-- **Nemotron 3** (NIM API, `integrate.api.nvidia.com`): 계획자와 크리틱은 `nemotron-3-super-120b-a12b`, 작업자는 `nemotron-3.5-lightning-30b-a3b`
-- **NeMo Agent Toolkit 1.9.0**: `configs/author.yml`(계획과 실행), `configs/critic.yml`(검증 전용), `configs/eval.yml`(적발률 평가기)
-- **OpenShell**: `policies/`에 deny-by-default 정책 3종. 허용 도메인만 열고 차단 시도를 감사 로그로 남긴다
-- **NeMo Guardrails**: NAT Guardrails 미들웨어로 정책을 올리고 차단 주제를 정의했다.
-  판정 모델로 지정한 NemoGuard 토픽 제어는 호스팅 쪽 서버 오류로 응답하지 않아 차단 시연은 남아 있다
+모두 실행 결과에서 가져왔다. 출처 파일을 함께 적는다.
 
-## 현재 확인된 것
-- 오프라인 테스트 128개 통과 (`.venv/bin/python -m pytest -q -m "not network"`)
-- NAT 설정 4종 `nat validate` 통과
-- 크리틱 적발률 1.0 (`eval/results/critic_verdict_output.json`. 정상 2건 pass, 심어 둔 부정 1건 reject)
-- Nemotron 3 모델 ID 실측. 계획서의 `nemotron-3-nano-30b-a3b`는 2026-09-01 종료라 작업자를 lightning으로 바꿨다
-- PharmaSignal 케이스 3건: metformin과 유산산증 PRR 72.8 라벨 기재, semaglutide와 췌장염 PRR 7.2 라벨 기재, amoxicillin과 망막박리 PRR 0.87 라벨 미기재
-- Night Shift 데모: 정직한 패치 1건 통과, 테스트 삭제와 skip 마커 패치 2건 반려
+| 항목 | 값 | 어디서 |
+|---|---|---|
+| 오프라인 테스트 | 313개 통과 | `pytest -q -m "not network"` |
+| NAT 등록 도구 | 8종 | `configs/author.yml` |
+| 에이전트 도구 호출 | 4종 연속, 주장 4건 전부 근거 있음 | `eval/results/nat_run_author_flydock.json` |
+| 과잉해석 규칙 | 15종 | `src/harness/tools/overclaim_rules.py` |
+| 평가 케이스 | 33건 | `eval/cases.jsonl` |
+| **적발률 (LLM 포함)** | **16/16**, 거짓 양성 0/17 | `eval/results/critic_verdict_output_llm.json` |
+| **적발률 (결정 규칙만)** | **1/16** | `eval/results/critic_verdict_output_deterministic.json` |
+| DiffDock NIM 호출 | HTTP 200, 4.0초, 포즈 3개 | `eval/results/diffdock_smoke.txt` |
+| 샌드박스 스모크 | 18건 통과 | `eval/results/openshell_smoke_flydock.txt` |
 
-## 아직 못 한 것
-- OpenShell 실제 실행 (Multipass VM 설치 필요, Intel Mac 호스트 직접 설치는 불가)
+**두 적발률의 차이가 이 프로젝트의 요지다.** 심어 둔 과잉해석 열여섯 건을 LLM 판정은 전부
+잡고 고정 규칙만으로는 한 건만 걸린다. 나머지 열다섯 건은 근거 ID와 숫자가 전부 맞아서
+기계 검사를 통과한다.
+
+## 케이스: 같은 화합물, 두 경로
+
+![케이스 결과](docs/figures/results_case.png)
+
+니라파립을 두 타깃에 돌렸다. 점수 차이는 2.2 kcal/mol이다.
+
+| | 경로 A (PARP1 4R6E) | 경로 B (응고인자 Xa 2P16) |
+|---|---|---|
+| AutoDock Vina | -10.178 | -7.967 |
+| DiffDock 신뢰도 | 0.761, 0.693, 0.515 | -0.172, -0.205, -0.665 |
+| BindingDB 참조 | 레코드 7,311건 | **없음** |
+| 사람 근거 | 라벨 기재, PRR 9.13, 문헌 92건 | 화합물 단위라 타깃을 가리지 못함 |
+
+**두 경로를 가른 것은 점수 차이가 아니라 그 점수를 받쳐 줄 실험 근거의 유무였다.**
+전체 브리프는 `eval/results/case_niraparib_brief.md`에 있고 "말할 수 있는 것" 여덟 항목과
+"말할 수 없는 것" 열한 항목으로 끝난다.
+
+## 쓴 기술
+
+**NVIDIA**
+
+- Nemotron 3 Super 120B (계획과 크리틱 판정), Nemotron 3.5 Lightning 30B (반복 작업)
+- DiffDock NIM (`health.api.nvidia.com/v1/biology/mit/diffdock`)
+- NeMo Agent Toolkit 1.9.0 (작성자와 크리틱 워크플로 분리, `nat eval`, Guardrails 미들웨어)
+- OpenShell 0.0.116 (deny-by-default 정책, 허용 호스트 일곱 곳)
+- build.nvidia.com 스킬 카탈로그 (BioNeMo 에이전트 스킬 문서를 NIM 호출 규격 참조로 사용)
+
+**그 밖에** Python 3.12, AutoDock Vina 실측(FDDD), openFDA FAERS, DailyMed SPL,
+PubMed E-utilities, RCSB PDB, BindingDB 참조.
+
+불균형 지표(PRR, ROR, 신뢰구간, 카이제곱)는 모델이 아니라 파이썬이 계산한다.
 
 ## 시작
+
 ```bash
-cp .env.example .env            # build.nvidia.com 에서 발급한 키를 채운다
-python -m venv .venv && .venv/bin/pip install -r requirements.txt
+git clone https://github.com/kakyungkim/korea-agentic-hackathon-2026
+cd korea-agentic-hackathon-2026
+python3.12 -m venv .venv
+.venv/bin/pip install -r requirements.txt
 .venv/bin/pip install -e . --no-deps
-.venv/bin/python scripts/hello_nemotron.py
-.venv/bin/python -m pytest -q -m "not network"
+cp .env.example .env            # NVIDIA_API_KEY 를 채운다. .env 는 커밋되지 않는다
+
+.venv/bin/python -m pytest -q -m "not network"        # 오프라인 테스트
+.venv/bin/nat validate --config_file configs/author.yml
 ```
 
-키를 넣은 뒤 LLM 경로 확인:
+케이스 시연을 돌려 본다. `--offline` 을 붙이면 캐시만으로 돌아 네트워크를 타지 않는다.
+
 ```bash
 set -a; source .env; set +a
-.venv/bin/nat eval --config_file configs/eval.yml   # 적발률이 0.33 에서 1.0 이 되어야 한다
+.venv/bin/python scripts/run_case_demo.py --out eval/results
+cat eval/results/case_niraparib_brief.md
 ```
 
-OpenShell 환경 준비는 `docs/notes/openshell-setup.md`.
-설치와 실행에서 막히면 `docs/TROUBLESHOOTING.md` 에 겪은 문제와 해결책을 모아 두었다.
-새로 합류하신 분은 `docs/ONBOARDING.md` 부터 보면 된다.
+적발률을 잰다. **두 수치를 함께 봐야 의미가 있다.**
+
+```bash
+.venv/bin/nat eval --config_file configs/eval.yml
+CRITIC_DETERMINISTIC_ONLY=true .venv/bin/nat eval --config_file configs/eval.yml
+```
+
+자세한 것은 `docs/ONBOARDING.md` 하나면 된다. 막히면 `docs/TROUBLESHOOTING.md` 를 먼저 본다.
+겪고 푼 문제 열 건을 적어 두었다.
+
+## 아직 하지 않은 것
+
+되지 않는 것을 되는 것처럼 쓰지 않는다. 이 저장소의 규율이다.
+
+| 항목 | 실제 상태 |
+|---|---|
+| `flybrain_pose` | 계획. 초파리 커넥톰 포즈 탐색은 아직 도구로 등록하지 않았다 |
+| `jev_triage` | 계획. 판정 전용 모델을 앞단 분류기로 두는 구성이다 |
+| NemoGuard 판정 모델 | 배선까지 했다. 호스팅 쪽 오류로 시연하지 못했다 |
+| 샌드박스 안 DiffDock 호출 | TLS가 닿는 것까지 확인했다. POST는 부르지 않았다 |
+| NeMo Retriever 리랭커 | 이 계정 모델 목록 여든두 개에 없어 쓰지 않았다 |
+| NemoClaw | 쓰지 않았다. 참조 스택으로 검토만 했다 |
+
+평가 케이스의 정답 라벨은 저자들이 붙였고 도메인 전문가 두 명 이상의 일치도는 아직 없다.
+`build.nvidia.com` 이 간헐적으로 503을 내므로 측정을 다시 돌려야 할 때가 있다.
+
+## 계보와 기여
+
+**숨기지 않고 밝힌다.**
+
+이 저장소는 2026-08 Agent Forge AI Hackathon Seoul에 낸
+[PharmaSignal v0](https://github.com/kakyungkim/pharmasignal-v0)의 후속이고 수상하지는 못했다.
+v0에서 물려받은 것은 문제 정의와 검증 설계이며, v0이 쓴 외부 플랫폼은 이번에 하나도 쓰지 않았다.
+v0도 생성 코드의 불일치율과 검증 커버리지를 직접 재서 남겼고 그 측정 우선 원칙을 이어 간다.
+
+주제와 초파리 도킹 경로는 팀원 제안이고, 에이전트 하네스와 검증 체계는 선행 프로젝트에서
+이어 온 자산이다. 두 층을 하나의 파이프라인으로 이었다. 층별 구분은 `docs/notes/credits.md`.
+
+초파리 도킹 자산 FDDD는 팀원의 별도 저작물이다. **복제하지 않고 도구로 참조한다.**
+데이터 출처와 SHA256을 그대로 인용한다.
+
+## 외부 자산과 라이선스
+
+| 자산 | 출처 | 라이선스 |
+|---|---|---|
+| AutoDock Vina 실측과 준비된 수용체 | Durrant Lab webina, MolModa | 각 저장소 표기 |
+| 수용체 구조 4R6E, 2P16, 3LN1 | RCSB PDB | 공개 |
+| BindingDB 참조 친화도 | BindingDB REST (FDDD 캡처 경유) | 각 사이트 표기 |
+| NVIDIA BioNeMo 에이전트 스킬 문서 | NVIDIA-BioNeMo/bionemo-agent-toolkit | 문서 CC BY 4.0, 코드 Apache-2.0 |
+| 초파리 커넥톰 | MaleCNS (Janelia) | **CC BY 4.0. 출처 표기 필요** |
+| Pretendard 폰트 | orioncactus/pretendard | OFL |
+
+## 문서
+
+| 문서 | 무엇 |
+|---|---|
+| `docs/notes/topic-decision.md` | 주제 결정 근거, 과잉해석 규칙 15종, 게이트와 일정 |
+| `docs/notes/bionemo-nim.md` | NVIDIA 생물학 NIM 접근 확인과 호출 규격, 구현 함정 |
+| `docs/notes/fddd-and-jev.md` | 초파리 데모와 Jev 실측 확인 |
+| `docs/notes/fddd-teardown.md` | 초파리 데모 기술 분해 |
+| `docs/notes/paper-plan.md` | 논문 계획, 선행연구와 정직한 한계 |
+| `docs/COURSE-GUIDE.md` | NVIDIA DLI 강좌 수강 안내 |
+| `docs/TROUBLESHOOTING.md` | 겪고 푼 문제 열 건 |
+| `docs/HANDOFF.md` | 진행 상황과 검증된 수치 |

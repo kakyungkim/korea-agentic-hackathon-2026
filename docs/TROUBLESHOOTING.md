@@ -254,6 +254,31 @@ through the approved relay`), 우리 주소 형태가 그 릴레이의 허용 �
 **진도에 미치는 영향.** 이 연결이 안 되면 진도가 50% 에서 멈춘다. 모듈 3 과 4 의 체크포인트
 다섯 개가 모두 살아 있는 launchable 연결을 요구하기 때문이다.
 
+## 5-5-1. NVIDIA 에 제보한 기록
+
+2026-09-25 에 NVIDIA Enterprise Support Portal 로 케이스를 냈다. **접수 번호 01280022.**
+
+- 접수처: `https://enterprise-support.nvidia.com/s/create-case`
+  (DLI 지원 페이지가 안내하는 공식 창구다. 이름은 Enterprise 이지만 개인 학습자 문의도 여기서 받는다.)
+- 선택값: Product Type `NVIDIA Training and Certification`, Product Category `Self-paced courses`,
+  Severity `S3: Moderate`
+- 제목: `Module 3a launchable connection fails for gobrev.dev hosts (DLI S-FX-43)`
+- 본문 요지: 세 번째 호스트 형태에는 안내된 쿠키가 없고 `__Host-` 쿠키는 교차 출처로 못 보낸다,
+  공개 전환으로도 세 점검이 실패한다, 터미널에서 200 응답에 허용 헤더가 없음을 확인했다,
+  이 연결에 모듈 3a 부터 4b 가 걸려 진도가 50% 에서 멈춘다.
+
+**본문 입력 칸에 함정이 있다.** 긴 글을 붙여 넣으면 **중간 글자가 조용히 잘린다.** 두 번 겪었다.
+첫 시도에서는 여덟 군데가 잘렸고(`depend oness stops`, `Korea Agentic AIon` 처럼 단어가 붙어 버린다),
+두 번째에는 앞 문단이 통째로 사라졌다. 붙여 넣은 뒤 **칸 안을 처음부터 끝까지 훑어 확인하고**,
+잘리면 본문을 더 줄인다. 줄바꿈 없이 한 덩어리로 쓰면 덜 잘린다.
+
+대안 창구도 있다. 자율 수강 과정 지원 메일은 `NVDLI@nvidia.com` 이고, **DLI 계정에 등록된 주소에서
+보낸 문의만 처리한다.** 공개 게시판은 NVIDIA 개발자 포럼의 Learning and Certification 이다.
+
+패스트캠퍼스 쪽에는 아직 문의하지 않았다. 고객센터가 평일 10시에서 18시까지라 연휴가 끝나는
+2026-09-29 이후에 가능하다. 제출 마감이 09-28 이므로 **답을 기다리지 말고 제출은 예정대로 진행한다.**
+문의는 기록을 남기고 다른 참가자를 위해 제보하는 의미다.
+
 ## 5-6. NemoClaw 인스턴스 다루기 (요금 주의)
 
 **띄우기.** 강좌 첫 화면의 `Launch NemoClaw` 로 Brev launchable 을 배포한다. 배포가 끝나도

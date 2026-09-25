@@ -1,6 +1,6 @@
 # 선행 프로젝트(2026-08 AgentForgeAI)에서 가져온 것
 
-작성 2026-09-25. 원본은 `/Users/kkkim/projects/hackthon/AgentForgeAI/`이고 **읽기만 했다.**
+작성 2026-09-25. 원본은 선행 프로젝트 PharmaSignal v0(`github.com/kakyungkim/pharmasignal-v0`)이고 **읽기만 했다.**
 2026-08 Agent Forge AI Hackathon 제출작(미수상)으로, 같은 약물감시 도메인이라 검증된 부분을
 이번 제출(PharmaSignal)로 옮겼다.
 
@@ -308,7 +308,7 @@ Vanna와 PandasAI의 CVE(분석 에이전트의 코드 실행이 실제 공격�
 | Pretendard 폰트 4종 | `assets/video/fonts/`에 복사해 뒀다 |
 | Apple Loops(배경음악) | `/Library/Audio/Apple Loops` 있다. macOS 기본 제공이라 로열티 없음 |
 | Pillow | `.venv`에 12.3.0 |
-| edge_tts | **`.venv`에 없다.** `/opt/anaconda3/envs/rag/bin/python`에는 있다 |
+| edge_tts | **`.venv`에 없다.** 다른 파이썬 환경에 있으면 `PY` 환경변수로 실행 경로를 지정한다 |
 | Google Chrome(슬라이드 PNG 렌더) | 확인 안 함 [unverified] |
 
 `build.sh`의 `PY`를 환경변수로 덮어쓸 수 있게 고쳐 두었다. 기본값은 rag env이고, `.venv`로

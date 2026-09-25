@@ -21,7 +21,7 @@
 - 로컬은 **Intel Mac(i5, 16GB, GPU 없음)**, Docker 27, Python 3.12(openai 1.59), Node. 모델 추론은 전부 클라우드 NIM, OpenShell은 Linux VM(Multipass)이나 팀원 서버가 필요.
 - 과거 수상작: NAT를 다른 NVIDIA 기술과 결합하고 에이전틱 동작을 시연한 팀이 상위. UCSC NemoClaw 해커톤은 "NVIDIA 도구 활용", "Nemotron 활용"을 별도 항목으로 채점.
 
-기존 자산(autobiox, /Users/kkkim/projects/autobiox): LLM 호출 코드는 없다. 재활용할 것은 `BioProject02/agents/critic/scripts/verify_citations.py`(Crossref·PubMed, urllib), `check_number_drift.py`, 그리고 "작성자와 검토자 분리" 크리틱 게이트 설계 패턴. BP02 데이터(TCGA/CPTAC)는 통제 접근이라 쓰지 않는다.
+기존 자산(팀장의 연구 자동화 작업물 autobiox): LLM 호출 코드는 없다. 재활용할 것은 `BioProject02/agents/critic/scripts/verify_citations.py`(Crossref·PubMed, urllib), `check_number_drift.py`, 그리고 "작성자와 검토자 분리" 크리틱 게이트 설계 패턴. BP02 데이터(TCGA/CPTAC)는 통제 접근이라 쓰지 않는다.
 
 ## 공통 하네스 (두 후보가 공유, 9/24~9/25에 먼저 만든다)
 
@@ -89,7 +89,7 @@
 
 시간이 모자랄 때 줄이는 순서: 라벨 RAG 또는 벤치마크 재측정 → NemoGuard → UI(`nat run` CLI 출력으로 대체). **줄이지 않는 것**: Nemotron 도구 호출, 크리틱 검증, OpenShell 정책과 차단 로그, 교육 미션, 영상.
 
-## 저장소 구조(신규, /Users/kkkim/projects/hackthon/KoreaAgenticAIhackathon)
+## 저장소 구조
 
 ```
 <project>/

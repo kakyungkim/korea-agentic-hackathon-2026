@@ -30,7 +30,9 @@ assets/video/slides/*.html
 .*/
 !.github/
 !.gitignore
-[A-Z][A-Z]*.md
+# 맥은 core.ignorecase 가 true 라 대문자 패턴이 소문자 파일까지 잡는다.
+# 앵커를 붙여 저장소 루트에만 적용한다. 붙이지 않으면 docs/ 아래 새 문서가 조용히 빠진다.
+/[A-Z][A-Z]*.md
 !README.md
 *.local.md
 
@@ -44,3 +46,8 @@ assets/video/*.mp4
 assets/video/_*
 assets/video/[stf]_*.png
 assets/video/[st]_*.mp3
+
+# 저장소에 올리지 않는 로컬 작업물을 한 곳에 모은다. 폴더째 제외한다.
+# 안에 든 것: 팀 메시지(실명), 렌더 산출물, 강좌 원문 노트.
+# git clean -fdx 는 이 폴더를 지우므로 그 명령은 쓰지 않는다.
+_local/

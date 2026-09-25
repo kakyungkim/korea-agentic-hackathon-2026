@@ -101,6 +101,7 @@ Applying Landlock filesystem sandbox [abi:V2 compat:BestEffort ro:12 rw:3]
 - `docs/notes/paper-plan.md` 논문 계획과 확장 요건
 - `docs/notes/credits.md` 기여 표기. README 와 신청서가 이것을 따른다
 - `docs/notes/work-assignment.md` **팀원별 담당과 파일 충돌 방지 규칙**
+- `docs/notes/contingency-roster.md` 팀원 이탈과 초파리 자산 제거 대비
 - 새로 합류한 분에게는 `docs/ONBOARDING.md` 링크만 주면 된다
 
 ## 결정된 사항

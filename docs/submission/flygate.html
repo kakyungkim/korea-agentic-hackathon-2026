@@ -1,0 +1,149 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>FlyGate 제출 문서</title><style>
+@font-face{font-family:Pretendard;src:url('../../assets/video/fonts/Pretendard-Regular.otf') format('opentype');font-weight:400;font-style:normal;font-display:block}
+@font-face{font-family:Pretendard;src:url('../../assets/video/fonts/Pretendard-Medium.otf') format('opentype');font-weight:500;font-style:normal;font-display:block}
+@font-face{font-family:Pretendard;src:url('../../assets/video/fonts/Pretendard-SemiBold.otf') format('opentype');font-weight:600;font-style:normal;font-display:block}
+@font-face{font-family:Pretendard;src:url('../../assets/video/fonts/Pretendard-Bold.otf') format('opentype');font-weight:700;font-style:normal;font-display:block}
+@page { size: A4 portrait; margin: 15mm 14mm 15mm 14mm; }
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: Pretendard, -apple-system, sans-serif;
+  color: #2E3338;
+  background: #FFFFFF;
+  font-size: 10pt;
+  font-weight: 400;
+  line-height: 1.62;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.wrap { width: 100%; max-width: 182mm; margin: 0 auto; padding: 0 4mm; }
+@media screen { .wrap { padding: 10mm 6mm; } }
+
+p { margin: 0 0 3.2mm; }
+.lead { color: #5B646C; margin-bottom: 4mm; }
+.muted { color: #8A939B; font-size: 8.4pt; line-height: 1.55; }
+code { font-family: "SFMono-Regular", Menlo, Consolas, monospace; font-size: 0.88em;
+        background: #F2F4F6; padding: 0 0.3em; border-radius: 2px; }
+strong { font-weight: 700; }
+
+/* 표지 */
+.cover { min-height: 248mm; display: flex; flex-direction: column;
+          justify-content: center; break-after: page; page-break-after: always; }
+.cover .badge { display: inline-block; align-self: flex-start; font-size: 8.6pt;
+  font-weight: 600; letter-spacing: .06em; color: #8E82AC;
+  background: #EFEDF6; border: 1px solid #8E82AC; border-radius: 3mm;
+  padding: 1.2mm 3mm; margin-bottom: 7mm; }
+.cover h1 { font-size: 34pt; font-weight: 700; letter-spacing: -.02em;
+             line-height: 1.1; margin: 0 0 4mm; }
+.cover .tag { font-size: 13pt; font-weight: 500; color: #5B646C;
+               line-height: 1.45; margin: 0 0 10mm; max-width: 150mm; }
+.cover .bar { height: 1.2mm; width: 46mm; background: #6E8FB5; border-radius: 1mm;
+               margin-bottom: 10mm; }
+.cover dl { margin: 0; display: grid; grid-template-columns: 34mm 1fr;
+             row-gap: 2.6mm; column-gap: 4mm; font-size: 9.6pt; }
+.cover dt { color: #8A939B; font-weight: 600; }
+.cover dd { margin: 0; color: #2E3338; word-break: break-all; }
+.cover .note { margin-top: 12mm; padding-top: 5mm; border-top: 1px solid #E3E7EB;
+                color: #8A939B; font-size: 8.4pt; }
+
+/* 본문 절 */
+section { margin: 0 0 9mm; }
+h2 { font-size: 15pt; font-weight: 700; letter-spacing: -.01em; margin: 0 0 3.5mm;
+      padding-bottom: 2mm; border-bottom: 1.6px solid #2E3338;
+      break-after: avoid; page-break-after: avoid; }
+h2 .num { display: inline-block; min-width: 9mm; color: #6E8FB5; font-weight: 700; }
+h3 { font-size: 10.5pt; font-weight: 600; margin: 5mm 0 2.2mm; color: #2E3338; }
+
+.keep { break-inside: avoid; page-break-inside: avoid; }
+
+/* 표 */
+table { width: 100%; border-collapse: collapse; font-size: 8.6pt; line-height: 1.5;
+         margin: 0 0 3.5mm; }
+thead { display: table-header-group; }
+th { background: #F2F4F6; color: #2E3338; font-weight: 600; text-align: left;
+      padding: 1.8mm 2.2mm; border-bottom: 1.2px solid #8A939B; }
+td { padding: 1.8mm 2.2mm; border-bottom: 1px solid #E3E7EB; vertical-align: top; }
+tr { break-inside: avoid; page-break-inside: avoid; }
+table.small { font-size: 8.1pt; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr.group td { background: #F2F4F6; font-weight: 600; color: #5B646C;
+               font-size: 8.2pt; }
+
+/* 그림 */
+figure { margin: 0 0 3.5mm; }
+figure img { display: block; width: 100%; max-width: 100%; height: auto;
+              border: 1px solid #E3E7EB; border-radius: 1.5mm; }
+figcaption { margin-top: 2mm; color: #8A939B; font-size: 8.2pt; }
+
+/* 인용 문안 */
+.quote { background: #F2F4F6; border-left: 3px solid #6E8FB5;
+          border-radius: 0 2mm 2mm 0; padding: 4mm 5mm; margin: 0 0 3.5mm;
+          font-size: 9.4pt; line-height: 1.7; }
+.quote p:last-child { margin-bottom: 0; }
+.quote.solution { border-left-color: #6F9C96; }
+
+/* 강조 카드 */
+.cards { display: flex; gap: 3.5mm; margin: 0 0 3.5mm; }
+.card { flex: 1; border: 1px solid var(--c); background: var(--bg);
+         border-radius: 2mm; padding: 3.5mm 4mm; }
+.card .k { font-size: 8.2pt; font-weight: 600; color: var(--c); margin-bottom: 1.5mm; }
+.card .v { font-size: 19pt; font-weight: 700; letter-spacing: -.02em;
+            line-height: 1.1; color: #2E3338; font-variant-numeric: tabular-nums; }
+.card .s { font-size: 8.1pt; color: #5B646C; margin-top: 1.5mm; line-height: 1.45; }
+
+/* 로그 발췌 */
+pre { font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+       font-size: 6.6pt; line-height: 1.55; white-space: pre-wrap;
+       overflow-wrap: anywhere; background: #FAFBFC; color: #5B646C;
+       border: 1px solid #E3E7EB; border-left: 3px solid #BC7F73;
+       border-radius: 0 2mm 2mm 0; padding: 3mm 3.5mm; margin: 0 0 3mm; }
+pre b { color: #BC7F73; font-weight: 700; }
+
+/* 자리표시자 */
+.placeholder { border: 1.4px dashed #C39A68; background: #F7F1E7;
+                border-radius: 2mm; padding: 9mm 6mm; text-align: center;
+                color: #5B646C; }
+.placeholder .big { font-size: 10.5pt; font-weight: 600; color: #C39A68;
+                     margin-bottom: 2mm; }
+
+ul { margin: 0 0 3.2mm; padding-left: 5mm; }
+li { margin-bottom: 1.2mm; }
+
+@media screen and (max-width: 640px) {
+  .cards { flex-direction: column; }
+  .cover dl { grid-template-columns: 1fr; row-gap: 1mm; }
+  .cover h1 { font-size: 26pt; }
+  table { font-size: 8pt; }
+}
+</style></head><body><div class="wrap"><div class="cover">
+  <span class="badge">NVIDIA Agentic AI Hackathon 2026</span>
+  <h1>FlyGate</h1>
+  <p class="tag">도킹 점수에서 나올 수 없는 주장을 잡는 신약 후보 검증 에이전트</p>
+  <div class="bar"></div>
+  <dl><dt>대회</dt><dd>NVIDIA x 패스트캠퍼스 Korea Agentic AI Hackathon 2026 온라인 사전 챌린지</dd><dt>팀명</dt><dd>미정 (확정되면 파일명을 [NVIDIA 해커톤_팀명_FlyGate].pdf 로 바꾼다)</dd><dt>프로젝트</dt><dd>FlyGate</dd><dt>저장소</dt><dd>https://github.com/kakyungkim/korea-agentic-hackathon-2026</dd><dt>생성일</dt><dd>2026-09-25</dd></dl>
+  <p class="note">이 문서의 수치는 모두 저장소의 결과 파일에서 읽어 만들었다.
+  항목마다 출처 파일을 함께 적는다. 확인하지 못한 것은 확인하지 못했다고 적는다.</p>
+</div><section><h2><span class="num">1</span>문제와 해결</h2><h3>해결하고자 했던 문제</h3><div class="quote keep"><p>신약 후보를 계산으로 거를 때 도킹 점수를 씁니다. 그런데 이 점수에는 도구 문서가 직접 밝힌 해석 한계가 있습니다. 서로 다른 단백질에서 나온 점수는 견줄 수 없고, 딥러닝 도킹이 내는 신뢰도 값은 결합 세기가 아니며, 교차 도킹 결과는 결합의 증거가 아닙니다. LLM 에이전트를 이런 도구에 붙이면 그 선을 자주 넘습니다. 근거도 제대로 붙고 숫자도 로그와 맞는데 결론만 틀린 요약이 나옵니다. 형식을 보는 검사로는 걸러 낼 수 없어 사람이 매번 한계를 기억해야 하고, 놓치면 없는 선택성이나 없는 결합이 보고서에 남습니다.</p></div><h3>서비스 소개와 주요 기능</h3><div class="quote solution keep"><p>FlyGate는 후보물질 하나를 구조에서 사람까지 이어 검증하는 에이전트입니다. 타깃 단백질과 후보를 받아 NVIDIA DiffDock과 AutoDock Vina 실측 두 경로로 결합을 보고, 실험 친화도를 참조한 뒤, 그 후보가 사람에게서 어땠는지를 허가 라벨과 이상사례 보고와 문헌으로 확인합니다. 모든 주장에 근거 ID가 붙습니다. 크리틱이 세 단계로 검증합니다. 1단은 근거 ID 유무를 보고, 2단은 숫자를 원본 로그와 대조하며, 3단은 도구 문서가 금지한 추론을 했는지 판정합니다. 규칙 열다섯 가지는 지어낸 것이 아니라 도구 제공자와 데이터 제공자가 문서에 적은 경고에서 옮겼습니다. 평가 서른세 건에서 과잉해석 열여섯 건을 3단이 모두 반려했고, 거짓 양성은 없었습니다. 같은 케이스를 고정 규칙만으로 돌리면 한 건만 걸립니다. 그 차이가 의미 판단의 몫입니다. 모든 실행은 OpenShell 정책 안에서 허용 호스트 일곱 곳만 열고 돕니다.</p></div><p class="muted">솔루션 문안의 결합 경로를 두 곳으로 적었다. <code>configs/author.yml</code> 의 tool_names 에 <code>flybrain_pose</code> 가 없어 초파리 커넥톰 경로는 아직 도구로 등록되지 않았다. <code>docs/submission-flygate.md</code> 가 정해 둔 규칙을 그대로 따랐다.</p></section><section><h2><span class="num">2</span>파이프라인 구조</h2><figure class="keep"><img src="../figures/architecture_pipeline.png" alt="그림 1. FlyGate 파이프라인 구조와 크리틱 3단. 모든 실행은 OpenShell 정책 안에서 이루어진다."><figcaption>그림 1. FlyGate 파이프라인 구조와 크리틱 3단. 모든 실행은 OpenShell 정책 안에서 이루어진다.</figcaption></figure><h3>크리틱 3단</h3><table class="keep"><colgroup><col style="width:22%"><col style="width:56%"><col style="width:22%"></colgroup><thead><tr><th>단</th><th>무엇을 보는가</th><th>모델을 쓰는가</th></tr></thead><tbody><tr><td>1단 결정 규칙</td><td>주장 존재, 근거 ID 유무, 빈 문자열</td><td>쓰지 않는다</td></tr><tr><td>2단 숫자 오라클</td><td>점수가 원본 로그와 맞는지, SHA256 대조, 지표 재계산</td><td>쓰지 않는다</td></tr><tr><td>3단 과잉해석 판정</td><td>근거와 숫자가 맞아도 추론이 한계를 넘었는지</td><td><strong>3단만 쓴다</strong></td></tr></tbody></table><h3>같은 케이스에 3단을 돌린 결과</h3><p class="lead">같은 케이스로 근거가 받쳐 주는 요약과 과잉해석 7건을 심은 요약을 나란히 돌렸다. 1단과 2단은 양쪽을 통과시켰고 3단만 갈랐다.</p><table class="keep small"><colgroup><col style="width:22%"><col style="width:39%"><col style="width:39%"></colgroup><thead><tr><th>단</th><th>근거가 받쳐 주는 요약</th><th>과잉해석 7건을 심은 요약</th></tr></thead><tbody><tr><td>1단 결정 규칙</td><td>근거 ID 규칙 통과 = 예</td><td>근거 ID 규칙 통과 = 예</td></tr><tr><td>2단 숫자 오라클</td><td>5/5 일치, 커버리지 83%</td><td>5/5 일치, 커버리지 83%</td></tr><tr><td>3단 과잉해석 판정</td><td>pass</td><td>reject</td></tr><tr><td>최종 판정</td><td>pass</td><td>reject</td></tr></tbody></table><p class="muted">출처 <code>eval/results/case_niraparib.json</code>. 3단 판정 모델 <code>nvidia/nemotron-3-super-120b-a12b</code>. 과잉해석 규칙은 15종이고 도구 제공자와 데이터 제공자가 문서에 적은 경고에서 옮겼다.</p></section><section><h2><span class="num">3</span>검증된 수치</h2><p class="lead">모든 값을 결과 파일에서 읽었다. 출처 파일을 함께 적는다.</p><div class="cards keep">
+  <div class="card" style="--c:#6F9C96;--bg:#EAF2F0">
+    <div class="k">적발률 (LLM 판정 포함)</div>
+    <div class="v">16 / 16</div>
+    <div class="s">거짓 양성 0 / 17.
+      평균 점수 0.9697</div>
+  </div>
+  <div class="card" style="--c:#BC7F73;--bg:#F7EDEA">
+    <div class="k">적발률 (결정 규칙만)</div>
+    <div class="v">1 / 16</div>
+    <div class="s">평균 점수 0.0303. 나머지
+      15건은 근거 ID 와 숫자가 전부 맞아
+      기계 검사를 통과한다</div>
+  </div>
+  <div class="card" style="--c:#8E82AC;--bg:#EFEDF6">
+    <div class="k">3단이 메운 차이</div>
+    <div class="v">0.9375</div>
+    <div class="s">두 적발률의 차이. 같은 케이스와 같은 입력에서 3단만 끄고 켜서 쟀다</div>
+  </div>
+</div><table><colgroup><col style="width:22%"><col style="width:48%"><col style="width:30%"></colgroup><thead><tr><th>항목</th><th>값</th><th>출처 파일</th></tr></thead><tbody><tr><td>적발률 (LLM 판정 포함)</td><td><strong>16/16</strong>, 거짓 양성 0/17, 평균 0.9697</td><td><code>eval/results/critic_verdict_output_llm.json</code></td></tr><tr><td>적발률 (결정 규칙만)</td><td><strong>1/16</strong>, 평균 0.0303</td><td><code>eval/results/critic_verdict_output_deterministic.json</code></td></tr><tr><td>평가 케이스</td><td>33건</td><td><code>eval/cases.jsonl</code></td></tr><tr><td>과잉해석 규칙</td><td>15종</td><td><code>src/harness/tools/overclaim_rules.py</code></td></tr><tr><td>오프라인 테스트</td><td>313개 수집</td><td><code>pytest --collect-only -q -m "not network"</code></td></tr><tr><td>NAT 등록 도구</td><td>8종. <code>echo_tool</code>, <code>prr_calculator</code>, <code>openfda_faers</code>, <code>dailymed_label</code>, <code>pubmed_search</code>, <code>diffdock_nim</code>, <code>vina_reference</code>, <code>bindingdb_ref</code></td><td><code>configs/author.yml</code></td></tr><tr><td>에이전트 도구 호출</td><td>주장 4건 전부 근거 ID 있음. 근거 없는 주장 0건</td><td><code>eval/results/nat_run_author_flydock.json</code></td></tr><tr><td>DiffDock NIM 호출</td><td>HTTP 200, 4.1초, 응답 232,461바이트, 포즈 3개</td><td><code>eval/results/diffdock_smoke.txt</code></td></tr><tr><td>샌드박스 스모크</td><td>18건 통과, 실패 0건</td><td><code>eval/results/openshell_smoke_flydock.txt</code></td></tr><tr><td>케이스 시연 E2E</td><td>Niraparib 두 경로, 7단계 수집, 3단 크리틱 통과와 반려</td><td><code>eval/results/case_niraparib.json</code></td></tr></tbody></table><p class="muted">적발률의 분모는 반려가 정답인 케이스 수이고, 거짓 양성의 분모는 통과가 정답인 케이스 수다. 두 수치는 같은 평가 케이스를 3단만 끄고 켜서 잰 것이라 나란히 놓아야 뜻이 산다. 결정 규칙만으로 돌린 실행에서 나머지 케이스는 <code>needs_human</code> 으로 남아 사람에게 넘어간다.</p></section><section><h2><span class="num">4</span>케이스 결과</h2><figure class="keep"><img src="../figures/results_case.png" alt="그림 2. Niraparib, 같은 화합물을 두 타깃에 돌린 결과와 크리틱 판정."><figcaption>그림 2. Niraparib, 같은 화합물을 두 타깃에 돌린 결과와 크리틱 판정.</figcaption></figure><table class="small"><colgroup><col style="width:21%"><col style="width:39.5%"><col style="width:39.5%"></colgroup><thead><tr><th>항목</th><th>경로 A: PARP1 촉매도메인 (4R6E, chain A)</th><th>경로 B: 응고인자 Xa (2P16, chain A)</th></tr></thead><tbody><tr><td>AutoDock Vina 1.2.3 점수</td><td>−10.178 kcal/mol</td><td>−7.967 kcal/mol</td></tr><tr><td>Vina 실행 성격</td><td>co-crystal redocking control</td><td>Exploratory cross-docking; no claim of validated binding</td></tr><tr><td>DiffDock position_confidence</td><td>0.761, 0.693, 0.515</td><td>−0.172, −0.205, −0.665</td></tr><tr><td>BindingDB 참조 집합</td><td>있음. 레코드 7,311건, 화합물 5,769종 (UniProt P09874)</td><td>없음</td></tr></tbody></table><div class="keep"><h3>두 경로가 함께 쓰는 사람 근거</h3><p class="lead">라벨과 FAERS 와 문헌은 화합물 단위 근거라 두 경로에 같은 값이 온다. 어느 타깃에서 결합했는지를 가리지 못한다.</p><table class="small"><colgroup><col style="width:28%"><col style="width:72%"></colgroup><thead><tr><th>항목</th><th>Niraparib 대 혈소판감소증 (Thrombocytopenia)</th></tr></thead><tbody><tr><td>허가 라벨 (DailyMed SPL)</td><td>기재됨. adverse_reactions, warnings_and_precautions</td></tr><tr><td>FAERS 불균형 지표</td><td>PRR 9.13 (95% CI 8.61 ~ 9.69), 자료 기준일 2026-07-30</td></tr><tr><td>PubMed 문헌</td><td>92건</td></tr><tr><td>근거의 범위</td><td>라벨과 FAERS 와 문헌은 화합물 단위 근거다. 이 타깃에서의 결합을 뒷받침하지 않는다.</td></tr></tbody></table></div><p class="muted">두 경로를 가른 것은 점수 차이가 아니라 그 점수를 받쳐 줄 실험 근거의 유무였다. 케이스 브리프는 말할 수 있는 것 8항목과 말할 수 없는 것 11항목으로 끝난다. 출처 <code>eval/results/case_niraparib.json</code> (생성 2026-09-25T07:58:04+00:00). 도킹 원본 SHA256 <code>8d15c55c5c25ddd5…</code></p></section><section><h2><span class="num">5</span>안전과 샌드박스</h2><p>실행은 NVIDIA OpenShell 안에서만 이루어진다. 정책은 deny-by-default 이고 허용 호스트 7곳만 연다. 쓰기는 지정한 출력 폴더만 허용하며 그 밖의 접근은 차단 로그로 남는다.</p><table class="keep small"><colgroup><col style="width:24%"><col style="width:76%"></colgroup><thead><tr><th>항목</th><th>값</th></tr></thead><tbody><tr><td>OpenShell</td><td>openshell 0.0.116</td></tr><tr><td>정책 파일</td><td><code>policies/flydock.yaml</code></td></tr><tr><td>샌드박스</td><td><code>flydock</code></td></tr><tr><td>유효 정책 해시</td><td><code>06d74bdc4800769ed5d7922082fb0685…</code></td></tr><tr><td>허용 호스트</td><td>7곳. health.api.nvidia.com, integrate.api.nvidia.com, files.rcsb.org, drug.flybrain.kr, api.fda.gov, dailymed.nlm.nih.gov, eutils.ncbi.nlm.nih.gov</td></tr><tr><td>쓰기 허용 경로</td><td><code>/work/out</code>, <code>/tmp</code>, <code>/dev/null</code></td></tr><tr><td>프로세스 신원</td><td><code>run_as_user=1500</code></td></tr></tbody></table><h3>스모크 검증</h3><table class="keep small"><colgroup><col style="width:62%"><col style="width:38%"></colgroup><thead><tr><th>검증 항목</th><th>결과</th></tr></thead><tbody><tr><td>허용 도메인 (클라이언트: python)</td><td>7건 통과</td></tr><tr><td>허용 목록 밖(차단되어야 함)</td><td>2건 통과</td></tr><tr><td>허용 호스트, 정책에 없는 바이너리(curl)</td><td>1건 통과</td></tr><tr><td>허용 호스트, rules 에 없는 경로 (L7 거부)</td><td>1건 통과</td></tr><tr><td>파일시스템 쓰기</td><td>4건 통과</td></tr><tr><td>프로세스 신원 (process.run_as_user)</td><td>1건 통과</td></tr><tr><td>파이썬 인증서 검증 (https://health.api.nvidia.com/v1/biology/mit/diffdock)</td><td>2건 통과</td></tr><tr><td>합계</td><td><strong>18건 통과, 실패 0건</strong></td></tr></tbody></table><h3>차단 로그 원문 발췌</h3><p class="lead">허용 목록 밖 호스트, 정책에 없는 바이너리, 정책에 없는 경로가 각각 다른 계층에서 끊긴다. 파일시스템 거부는 커널이 EPERM 으로 끊어 DENIED 줄이 남지 않으므로 Landlock 적용 기록을 함께 싣는다.</p><pre class="keep">[1790324728.479] [sandbox] [OCSF ] [ocsf] NET:OPEN [MED] <b>DENIED</b> /usr/bin/python3.12(137) -&gt; example.com:443 [policy:- engine:opa] [reason:endpoint example.com:443 is not allowed by any policy]
+[1790324729.584] [sandbox] [OCSF ] [ocsf] NET:OPEN [MED] <b>DENIED</b> /usr/bin/python3.12(150) -&gt; github.com:443 [policy:- engine:opa] [reason:endpoint github.com:443 is not allowed by any policy]
+[1790324874.976] [sandbox] [OCSF ] [ocsf] NET:OPEN [MED] <b>DENIED</b> /usr/bin/curl(367) -&gt; integrate.api.nvidia.com:443 [policy:- engine:opa] [reason:binary '/usr/bin/curl' not allowed in policy 'nvidia_inference' (ancestors: [/usr/bin/dash -&gt; /usr/bin/dash -&gt; /opt/openshell/bin/openshell-sandbox], cmdline: [/dev/null, /sandbox]). SYMLINK HINT: the binary path is the kernel-resolved target from /proc/&lt;p...]
+[1790324943.052] [sandbox] [OCSF ] [ocsf] HTTP:GET [MED] <b>DENIED</b> GET http://api.fda.gov:443/drug/label.json [policy:openfda engine:l7] [reason:L7_REQUEST deny GET api.fda.gov:443/drug/label.json reason=GET /drug/label.json not permitted by policy]
+[1790324948.535] [sandbox] [OCSF ] [ocsf] CONFIG:APPLYING [INFO] Applying Landlock filesystem sandbox [abi:V2 compat:BestEffort ro:12 rw:3]</pre><p class="muted">출처 <code>eval/results/openshell_smoke_flydock.txt</code>. 각 종류의 첫 줄만 뽑았다. 전문은 저장소의 같은 파일에 있다.</p></section><section><h2><span class="num">6</span>기술 스택</h2><div class="quote keep"><p>NVIDIA Nemotron 3 Super 120B(nvidia/nemotron-3-super-120b-a12b)를 계획과 크리틱 판정에, Nemotron 3.5 Lightning 30B(nvidia/nemotron-3.5-lightning-30b-a3b)를 반복 작업에 씁니다. 두 모델 모두 build.nvidia.com NIM API(OpenAI 호환)로 호출합니다.</p><p>NVIDIA DiffDock NIM(health.api.nvidia.com/v1/biology/mit/diffdock)으로 단백질과 리간드의 결합 포즈를 예측합니다. 응답의 신뢰도 값은 포즈 타당성 지표이므로 결합 친화도로 환산하지 않습니다. NVIDIA 문서가 밝힌 한계를 크리틱 규칙에 그대로 넣었습니다.</p><p>NVIDIA NeMo Agent Toolkit 1.9.0으로 작성자 워크플로와 크리틱 워크플로를 분리했습니다. 도메인 도구 여덟 종을 NAT 함수로 등록해 에이전트가 직접 호출하고, nat eval로 크리틱 적발률을 측정합니다. 크리틱 워크플로에는 쓰기 도구가 없습니다. NeMo Guardrails 미들웨어로 가드레일 계층을 배선했습니다.</p><p>NVIDIA OpenShell 0.0.116으로 실행을 가둡니다. deny-by-default 정책으로 허용 호스트 일곱 곳만 열고, 쓰기는 지정한 출력 폴더만 허용하며, 그 밖의 접근은 차단 로그로 남습니다. 스모크 검증 열여덟 건이 모두 통과했습니다.</p><p>build.nvidia.com 스킬 카탈로그의 NVIDIA BioNeMo 에이전트 스킬 문서를 NIM 호출 규격의 참조로 썼습니다.</p><p>그 밖에 Python 3.12, 공개 데이터 소스로 openFDA FAERS, DailyMed SPL, PubMed E-utilities, RCSB PDB를 씁니다. 불균형 지표(PRR, ROR, 신뢰구간, 카이제곱)는 모델이 아니라 파이썬이 계산합니다.</p></div></section><section class="keep"><h2><span class="num">7</span>아직 하지 않은 것</h2><p class="lead">되지 않는 것을 되는 것처럼 쓰지 않는다. 이 저장소의 규율이다.</p><table><colgroup><col style="width:30%"><col style="width:70%"></colgroup><thead><tr><th>항목</th><th>실제 상태</th></tr></thead><tbody><tr><td><code>flybrain_pose</code></td><td>계획. 초파리 커넥톰 포즈 탐색은 아직 도구로 등록하지 않았다</td></tr><tr><td><code>jev_triage</code></td><td>계획. 판정 전용 모델을 앞단 분류기로 두는 구성이다</td></tr><tr><td>NemoGuard 판정 모델</td><td>배선까지 했다. 호스팅 쪽 오류로 시연하지 못했다</td></tr><tr><td>샌드박스 안 DiffDock 호출</td><td>TLS가 닿는 것까지 확인했다. POST는 부르지 않았다</td></tr><tr><td>NeMo Retriever 리랭커</td><td>이 계정 모델 목록 여든두 개에 없어 쓰지 않았다</td></tr><tr><td>NemoClaw</td><td>쓰지 않았다. 참조 스택으로 검토만 했다</td></tr></tbody></table><p class="muted">평가 케이스의 정답 라벨은 저자들이 붙였고 도메인 전문가 두 명 이상의 일치도는 아직 없다. <code>build.nvidia.com</code> 이 간헐적으로 503 을 내므로 측정을 다시 돌려야 할 때가 있다.</p></section><section><h2><span class="num">8</span>계보와 기여</h2><div class="quote keep"><p>주제와 초파리 도킹 경로는 팀원 제안이고, 에이전트 하네스와 검증 체계는 선행 프로젝트 PharmaSignal v0 에서 이어 온 자산입니다. 두 층을 하나의 파이프라인으로 이었습니다.</p></div><h3>층별 기여</h3><table class="small"><colgroup><col style="width:15%"><col style="width:42%"><col style="width:13%"><col style="width:30%"></colgroup><thead><tr><th>층</th><th>내용</th><th>기여자</th><th>근거</th></tr></thead><tbody><tr><td>주제와 훅</td><td>초파리 커넥톰을 신약개발에 붙이는 발상, 화제성 판단</td><td>팀원 A</td><td>2026-09-25 팀 논의에서 제안</td></tr><tr><td>도킹 자산</td><td>FDDD 데모. 타깃 3종, 화합물 6종, AutoDock Vina 1.2.3 실행 8건, 수용체와 포즈와 로그의 SHA256, BindingDB 참조, DailyMed PK</td><td>팀원 A</td><td><code>drug.flybrain.kr</code>, <code>docs/notes/fddd-and-jev.md</code></td></tr><tr><td>해석 한계 목록</td><td>하지 말아야 할 해석 8항목. 우리 크리틱 규칙의 뼈대가 됨</td><td>팀원 A</td><td>FDDD <code>multi-target.json</code> 의 <code>notes</code> 배열</td></tr><tr><td>Jev 접목 제안</td><td>판단 전용 모델을 파이프라인에 얹는 구성</td><td>팀원 A</td><td>공유된 아키텍처 도식을 보고 제안</td></tr><tr><td>약 도메인 검토</td><td>라벨 읽기, 약 정보 정합, 약사 관점</td><td>팀원 B</td><td></td></tr><tr><td>NAT 하네스</td><td>작성자와 크리틱 분리, 근거 ID 검증 구조, 도메인 중립 코어 약 500줄</td><td>팀장</td><td><code>src/harness/</code></td></tr><tr><td>약물감시 도구</td><td>openFDA FAERS 집계와 불균형 지표, DailyMed 라벨 섹션, PubMed 문헌, ROR 오라클</td><td>팀장</td><td><code>src/harness/tools/pharmasignal_*.py</code></td></tr><tr><td>샌드박스</td><td>OpenShell 정책과 차단 로그, provider profile 자격증명 격리</td><td>팀장</td><td><code>policies/</code>, <code>eval/results/openshell_smoke*.txt</code></td></tr><tr><td>평가 체계</td><td><code>nat eval</code> 적발률, 크리틱 판정 평가기</td><td>팀장</td><td><code>src/harness/evaluators.py</code></td></tr><tr><td>NIM 통합</td><td>생물학 NIM 접근 확인과 호출 계층, DiffDock 도구</td><td>팀장</td><td><code>docs/notes/bionemo-nim.md</code>, <code>eval/results/diffdock_smoke.txt</code></td></tr><tr><td>과잉해석 크리틱</td><td>규칙 12종과 부정 케이스, 3단 판정</td><td>팀장 설계, 팀원 A 의 목록을 출처로</td><td><code>docs/notes/topic-decision.md</code> 규칙 표</td></tr><tr><td>제작 파이프라인</td><td>영상 9단계, 이중언어 슬라이드, 그림 생성</td><td>팀장</td><td><code>assets/</code>, <code>scripts/make_figures.py</code></td></tr></tbody></table><p class="muted">층별 기여 표의 과잉해석 규칙 수 12종은 <code>docs/notes/credits.md</code> 를 적을 당시의 값이다. 지금 <code>src/harness/tools/overclaim_rules.py</code> 에 들어 있는 규칙은 15종이다.</p><div class="keep"><h3>외부 자산과 라이선스</h3><table class="small"><colgroup><col style="width:30%"><col style="width:38%"><col style="width:32%"></colgroup><thead><tr><th>자산</th><th>출처</th><th>라이선스</th></tr></thead><tbody><tr><td>AutoDock Vina 실행 결과와 준비된 수용체</td><td>Durrant Lab webina, MolModa</td><td>해당 저장소 표기를 따름</td></tr><tr><td>수용체 구조 4R6E, 2P16, 3LN1</td><td>RCSB PDB</td><td>공개</td></tr><tr><td>BindingDB 참조 친화도</td><td>BindingDB REST</td><td>해당 사이트 표기를 따름</td></tr><tr><td>NVIDIA BioNeMo 에이전트 스킬 문서</td><td>NVIDIA-BioNeMo/bionemo-agent-toolkit</td><td>문서 CC-BY-4.0, 코드 Apache-2.0. <strong>출처 표기 필요</strong></td></tr><tr><td>Pretendard 폰트</td><td>orioncactus/pretendard</td><td>OFL</td></tr><tr><td>초파리 커넥톰</td><td>MaleCNS, FlyWire</td><td>각 배포처 표기를 따름</td></tr></tbody></table></div><p class="muted">초파리 도킹 자산 FDDD 는 팀원의 별도 저작물이다. 복제하지 않고 도구로 참조하며 데이터 출처와 SHA256 을 그대로 인용한다. 공개 산출물에는 실명을 쓰지 않고 역할로만 적는다. 출처 <code>docs/notes/credits.md</code>.</p></section><section class="keep"><h2><span class="num">9</span>교육 미션</h2><div class="keep"><div class="placeholder"><div class="big">수료증 이미지를 여기에 넣는다</div><div>NVIDIA DLI S-FX-43 Securing Agents with OpenShell and NemoClaw</div><div class="muted" style="margin-top:3mm">아직 수료 전이라 비워 둔다. 수료 후 <code>scripts/make_submission_pdf.py</code> 의 <code>CERT_IMAGE</code> 에 이미지 경로를 넣고 다시 만든다.</div></div><p class="muted">과정 주소는 <code>https://learn.nvidia.com/courses/course-detail?course_id=course-v1:DLI+S-FX-43+V1</code> 이다. 레슨 1a와 1b를 들었다. 모듈 3과 4는 Brev 인스턴스를 띄워야 진도가 오른다. 원격 진도 기록은 기본으로 꺼져 있으니 도구 모음의 Activity에서 켠다. 수강 안내는 <code>docs/COURSE-GUIDE.md</code> 에 있다. 수료 전이므로 수료 사실을 적지 않는다.</p></div></section></div></body></html>

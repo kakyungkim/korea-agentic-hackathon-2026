@@ -24,3 +24,6 @@ docs/*.pdf
 # 원본은 구글 드라이브에 보관하고 docs/COURSE-GUIDE.md 가 링크를 가리킨다.
 docs/notes/dli-course/
 assets/video/slides/*.html
+
+# 작업 도구 설정. 저장소에 올리지 않는다.
+.claude/

@@ -46,6 +46,9 @@ def main(argv: list[str] | None = None) -> int:
                         help="응답 캐시를 쓰지 않는다. DiffDock 을 다시 부르므로 주의.")
     parser.add_argument("--num-poses", type=int, default=cr.DIFFDOCK_NUM_POSES,
                         help=f"DiffDock 포즈 수 (기본 {cr.DIFFDOCK_NUM_POSES})")
+    parser.add_argument("--no-vina", action="store_true",
+                        help="FDDD AutoDock Vina 실측 조회를 건너뛴다. 결합 근거는 DiffDock 만 쓴다. "
+                             "docs/notes/contingency-roster.md 참고")
     parser.add_argument("--model", default=None,
                         help="크리틱 3단 모델. 비우면 MODEL_PLANNER 환경변수를 쓴다.")
     args = parser.parse_args(argv)
@@ -55,12 +58,16 @@ def main(argv: list[str] | None = None) -> int:
 
     print(f"[1/4] 두 경로 실행 (offline={args.offline}, cache={use_cache}, "
           f"num_poses={args.num_poses})", flush=True)
-    case = cr.run_case(offline=args.offline, use_cache=use_cache, num_poses=args.num_poses)
+    case = cr.run_case(use_vina=not args.no_vina, offline=args.offline, use_cache=use_cache, num_poses=args.num_poses)
     for path in case["paths"]:
         skipped = [name for name, step in path["steps"].items() if step.get("skipped")]
         failed = sorted(path["errors"])
-        print(f"      경로 {path['path']} {path['title']}: "
-              f"Vina {path['steps']['vina']['score_kcal_mol']} kcal/mol, "
+        vina_step = path["steps"]["vina"]
+        vina_txt = (f"Vina {vina_step['score_kcal_mol']} kcal/mol"
+                    if "score_kcal_mol" in vina_step else "Vina 건너뜀")
+        dd = path["steps"].get("diffdock", {}).get("position_confidence")
+        dd_txt = f"DiffDock {dd[0]:.3f}" if dd else "DiffDock 없음"
+        print(f"      경로 {path['path']} {path['title']}: {vina_txt}, {dd_txt}, "
               f"건너뜀 {skipped or '없음'}, 오류 {failed or '없음'}", flush=True)
 
     print("[2/4] 주장 두 벌 조립", flush=True)

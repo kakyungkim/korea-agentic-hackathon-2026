@@ -674,10 +674,23 @@ def step_pubmed(*, offline: bool = False, use_cache: bool = True,
 def run_path(spec: PathSpec, docking: dict[str, Any], evidence: dict[str, Any], *,
              offline: bool = False, use_cache: bool = True,
              num_poses: int = DIFFDOCK_NUM_POSES,
+             use_vina: bool = True,
              diffdock_post: Callable[..., bc.NimResponse] | None = None) -> dict[str, Any]:
-    """한 경로(화합물 + 타깃)의 일곱 단계를 모아 구조화한다."""
+    """한 경로(화합물 + 타깃)의 일곱 단계를 모아 구조화한다.
+
+    ``use_vina=False`` 면 FDDD 의 AutoDock Vina 실측 조회를 건너뛴다. 그 자산은 팀원의
+    별도 저작물이므로 쓸 수 없게 되는 경우를 대비한 경로다. 결합 근거는 DiffDock NIM 하나로
+    줄지만 케이스의 요지(같은 화합물, 두 경로, 한쪽만 실험 근거가 있다)는 그대로 선다.
+    자세한 것은 ``docs/notes/contingency-roster.md``.
+    """
     structure = step_structure(spec, offline=offline, use_cache=use_cache)
-    vina = step_vina(spec, docking)
+    if use_vina:
+        vina = step_vina(spec, docking)
+    else:
+        vina = {"step": "vina", "ok": False, "skipped": True,
+                "skip_reason": "--no-vina 로 FDDD Vina 실측 조회를 건너뛰었다. "
+                               "결합 근거는 DiffDock NIM 만 쓴다.",
+                "evidence_ids": [], "errors": []}
     diffdock = step_diffdock(spec, structure, offline=offline, use_cache=use_cache,
                              num_poses=num_poses, post=diffdock_post)
     bindingdb = step_bindingdb(spec, evidence)
@@ -707,14 +720,23 @@ def run_path(spec: PathSpec, docking: dict[str, Any], evidence: dict[str, Any], 
 
 def run_case(*, offline: bool = False, use_cache: bool = True,
              num_poses: int = DIFFDOCK_NUM_POSES,
+             use_vina: bool = True,
              diffdock_post: Callable[..., bc.NimResponse] | None = None,
              paths: list[PathSpec] | None = None) -> dict[str, Any]:
-    """두 경로를 돌려 케이스 한 벌을 만든다. 주장 조립과 크리틱은 부르는 쪽에서 한다."""
+    """두 경로를 돌려 케이스 한 벌을 만든다. 주장 조립과 크리틱은 부르는 쪽에서 한다.
+
+    ``use_vina=False`` 면 FDDD 도킹 문서를 아예 받지 않는다. 결합 근거가 DiffDock 하나로
+    줄어도 두 경로 대조는 성립한다. 경로 A 의 신뢰도는 양수이고 경로 B 는 음수이며,
+    BindingDB 참조는 경로 A 에만 있다.
+    """
     specs = paths or PATHS
-    docking = fetch_fddd_docking(offline=offline, use_cache=use_cache)
+    if use_vina:
+        docking = fetch_fddd_docking(offline=offline, use_cache=use_cache)
+    else:
+        docking = {"combinations": [], "targets": [], "protocols": [], "notes": []}
     evidence = fetch_fddd_evidence(offline=offline, use_cache=use_cache)
     results = [run_path(spec, docking, evidence, offline=offline, use_cache=use_cache,
-                        num_poses=num_poses, diffdock_post=diffdock_post)
+                        num_poses=num_poses, use_vina=use_vina, diffdock_post=diffdock_post)
                for spec in specs]
     return {
         "case_id": "case_niraparib",

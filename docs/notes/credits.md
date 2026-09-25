@@ -19,7 +19,7 @@
 | 샌드박스 | OpenShell 정책과 차단 로그, provider profile 자격증명 격리 | 팀장 | `policies/`, `eval/results/openshell_smoke*.txt` |
 | 평가 체계 | `nat eval` 적발률, 크리틱 판정 평가기 | 팀장 | `src/harness/evaluators.py` |
 | NIM 통합 | 생물학 NIM 접근 확인과 호출 계층, DiffDock 도구 | 팀장 | `docs/notes/bionemo-nim.md`, `eval/results/diffdock_smoke.txt` |
-| 과잉해석 크리틱 | 규칙 12종과 부정 케이스, 3단 판정 | 팀장 설계, 팀원 A 의 목록을 출처로 | `docs/notes/topic-decision.md` 규칙 표 |
+| 과잉해석 크리틱 | 규칙 15종과 부정 케이스, 3단 판정 | 팀장 설계, 팀원 A 의 목록을 출처로 | `docs/notes/topic-decision.md` 규칙 표 |
 | 제작 파이프라인 | 영상 9단계, 이중언어 슬라이드, 그림 생성 | 팀장 | `assets/`, `scripts/make_figures.py` |
 
 ## 선행 프로젝트 계보

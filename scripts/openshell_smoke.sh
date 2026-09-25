@@ -4,7 +4,6 @@
 #   (2) 허용 목록 밖 도메인(example.com, github.com) 차단
 #   (3) 정책의 read_write 경로는 쓰기 성공, 그 밖의 경로는 쓰기 차단
 #   (4) process.run_as_user 가 있으면 샌드박스 안 uid 확인
-#   (5) nightshift 는 pip 로 실제 패키지를 받아 pypi.org 와 files.pythonhosted.org 를 함께 확인
 #   (6) 게이트웨이 감사 로그의 DENIED 줄을 원문 그대로 발췌
 #   (7) protocol: rest 엔드포인트에 파이썬 클라이언트가 인증서 검증을 통과하는지(CERT_URL)
 # 기대값은 정책 파일마다 다르므로 아래 "대상 목록" 블록에서 정책별로 정한다.
@@ -13,10 +12,8 @@
 #
 # ★ 확인에 쓰는 클라이언트는 정책이 허용한 바이너리여야 한다(PROBE 변수).
 #   flydock 은 추론과 데이터 소스 블록에서 /usr/bin/curl 을 빼고 파이썬만 올렸으므로 curl 로
-#   확인하면 허용 호스트조차 전부 거부된다. nightshift 의 pypi 블록도 python 과 pip 만 허용해
-#   같은 일이 있었다. 그때의 실패는 정책이 의도대로 동작한 증거였고 스모크 쪽 결함이었다.
 #
-# 사용:  scripts/openshell_smoke.sh [pharmasignal|nightshift|base|flydock]   (기본 pharmasignal)
+# 사용:  scripts/openshell_smoke.sh [pharmasignal|base|flydock]   (기본 pharmasignal)
 # 환경변수(선택):
 #   VM_BACKEND=colima|multipass   (기본 colima. VM 안에서 직접 돌리면 로컬 openshell 을 쓴다)
 #   VM_NAME=openshell             (multipass 백엔드에서만)
@@ -30,7 +27,7 @@
 set -uo pipefail
 
 POLICY="${1:-pharmasignal}"
-case "$POLICY" in pharmasignal|nightshift|base|flydock) ;; *) echo "정책은 pharmasignal | nightshift | base | flydock" >&2; exit 2;; esac
+case "$POLICY" in pharmasignal|base|flydock) ;; *) echo "정책은 pharmasignal | base | flydock" >&2; exit 2;; esac
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 VM_BACKEND="${VM_BACKEND:-colima}"
@@ -121,22 +118,6 @@ case "$POLICY" in
     EXPECT_UID="1500"
     PIP_PROBE=0
     PROBE=curl
-    CERT_URL=""
-    CURL_DENY_URL=""
-    L7_DENY_URL=""
-    ;;
-  nightshift)
-    ALLOWED_URLS=(
-      "https://pypi.org/simple/pip/"
-      "https://files.pythonhosted.org/"
-      "https://integrate.api.nvidia.com/v1/models"
-    )
-    WRITE_ALLOW=( /work/repo /work/out )
-    WRITE_DENY=( /etc /sandbox )
-    EXPECT_UID="1500"
-    PIP_PROBE=1
-    # pypi 블록의 binaries 가 python 과 pip 만 허용하므로 curl 로는 확인할 수 없다.
-    PROBE=python
     CERT_URL=""
     CURL_DENY_URL=""
     L7_DENY_URL=""

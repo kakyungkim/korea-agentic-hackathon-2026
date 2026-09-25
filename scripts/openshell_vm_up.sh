@@ -2,7 +2,7 @@
 # 리눅스 VM 안에서 Docker → OpenShell → 샌드박스 이미지 → provider → 샌드박스 → 정책 적용까지
 # 한 번에 한다. VM 백엔드는 Colima(기본)와 Multipass 둘 다 지원한다.
 #
-# 사용:  scripts/openshell_vm_up.sh [pharmasignal|nightshift|base|flydock]   (기본 pharmasignal)
+# 사용:  scripts/openshell_vm_up.sh [pharmasignal|base|flydock]   (기본 pharmasignal)
 # 환경변수(선택):
 #   VM_BACKEND=colima|multipass   (기본 colima)
 #   VM_NAME=openshell  VM_CPUS=2  VM_MEM=6G  VM_DISK=30G      (multipass 백엔드에서만 쓴다)
@@ -27,7 +27,7 @@
 set -euo pipefail
 
 POLICY="${1:-pharmasignal}"
-case "$POLICY" in pharmasignal|nightshift|base|flydock) ;; *) echo "정책은 pharmasignal | nightshift | base | flydock 중 하나" >&2; exit 2;; esac
+case "$POLICY" in pharmasignal|base|flydock) ;; *) echo "정책은 pharmasignal | base | flydock 중 하나" >&2; exit 2;; esac
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 VM_BACKEND="${VM_BACKEND:-colima}"

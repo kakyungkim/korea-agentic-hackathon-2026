@@ -1,5 +1,16 @@
 # Night Shift LLM 없는 구성요소 3종: 실행기, 규칙 크리틱, 아침 보고서
 
+> **2026-09-26. 코드는 main 에서 뺐다.** 후보에서 빠진 주제라 저장소에 남겨 두면 제출물과
+> 섞여 읽힌다. 이력에는 그대로 있으므로 아래로 꺼낸다.
+>
+> ```bash
+> git show archive/nightshift:src/harness/tools/nightshift_runner.py
+> git checkout archive/nightshift -- src/harness/tools/
+> ```
+>
+> 함께 뺀 것은 도구 4개, 테스트 3개(59건), 정책 1개, 실행 기록 3개다.
+> 이 문서는 무엇을 만들었는지의 기록으로 남긴다.
+
 작성 2026-09-24. 담당 경로 `src/harness/tools/nightshift_*.py`, `tests/test_nightshift_*.py`, `eval/results/nightshift_demo.json`, `eval/results/morning_report.{md,html}`. 이 문서의 수치는 모두 같은 날 로컬(Intel Mac, Python 3.12.8, `.venv`)에서 실행한 출력에서 가져왔다. 추정치는 추정이라 적었다.
 
 ## 역할과 위치

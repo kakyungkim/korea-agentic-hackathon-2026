@@ -20,7 +20,7 @@ import pytest
 yaml = pytest.importorskip("yaml")
 
 POLICY_DIR = Path(__file__).resolve().parents[1] / "policies"
-ALL_POLICIES = ["base", "pharmasignal", "nightshift", "flydock"]
+ALL_POLICIES = ["base", "pharmasignal", "flydock"]
 
 # 이미지(policies/sandbox-image/Dockerfile)가 만든 비루트 사용자.
 IMAGE_UID = "1500"
@@ -99,13 +99,9 @@ def test_flydock_opens_exactly_seven_hosts() -> None:
 
 @pytest.mark.parametrize("name", ALL_POLICIES)
 def test_forbidden_hosts_are_absent(name: str) -> None:
-    """github.com 을 빼 두는 것이 원본 push 를 구조적으로 막는 근거다.
-    nightshift 만 의존성 설치 때문에 pypi 를 연다(문서에 적어 둔 예외)."""
+    """github.com 을 빼 두는 것이 원본 push 를 구조적으로 막는 근거다."""
     hosts = {endpoint["host"] for _, endpoint in endpoints(load(name))}
-    forbidden = FORBIDDEN_HOSTS
-    if name == "nightshift":
-        forbidden = forbidden - {"pypi.org", "files.pythonhosted.org"}
-    assert hosts & forbidden == set(), f"{name}.yaml 이 열어서는 안 되는 호스트를 열었다"
+    assert hosts & FORBIDDEN_HOSTS == set(), f"{name}.yaml 이 열어서는 안 되는 호스트를 열었다"
 
 
 def test_flydock_has_no_stray_curl() -> None:

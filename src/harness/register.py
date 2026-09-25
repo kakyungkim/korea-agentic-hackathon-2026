@@ -159,5 +159,3 @@ from harness.tools import pharmasignal_pubmed as _pubmed  # noqa: F401,E402  (pu
 from harness.tools import dock_diffdock as _diffdock  # noqa: F401,E402  (diffdock_nim 등록)
 from harness.tools import dock_vina_reference as _vina_ref  # noqa: F401,E402  (vina_reference 등록)
 from harness.tools import dock_bindingdb_ref as _bindingdb_ref  # noqa: F401,E402  (bindingdb_ref 등록)
-# Night Shift 쪽 도구(nightshift_runner, nightshift_report 등)는 아직 @register_function 이 없어
-# import 하지 않는다. 예시로 적혀 있던 nightshift_repo 모듈은 존재하지 않는다.

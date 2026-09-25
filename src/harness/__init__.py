@@ -4,5 +4,5 @@
 - schemas.py    작성자 출력(AuthorOutput)과 크리틱 판정(CriticReport) pydantic 스키마.
 - critic.py     크리틱 판정 함수(critic_judge). 결정 규칙은 순수 파이썬, 의미 판단만 LLM.
 - evaluators.py `nat eval` 용 크리틱 적발률 평가기(critic_verdict).
-- tools/        도메인 도구(pharmasignal_*, nightshift_*). 별도 담당.
+- tools/        도메인 도구. 결합(dock_*), 사람 근거, 케이스 러너, 과잉해석 규칙.
 """

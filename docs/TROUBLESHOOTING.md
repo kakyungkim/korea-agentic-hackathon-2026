@@ -257,6 +257,8 @@ through the approved relay`), 우리 주소 형태가 그 릴레이의 허용 �
 ## 5-5-1. NVIDIA 에 제보한 기록
 
 2026-09-25 에 NVIDIA Enterprise Support Portal 로 케이스를 냈다. **접수 번호 01280022.**
+같은 날 `enterprisesupport@nvidia.com` 에서 접수 확인 메일을 받았고 담당자가 연락할 예정이다.
+답변이 오면 이 절에 이어 적는다.
 
 - 접수처: `https://enterprise-support.nvidia.com/s/create-case`
   (DLI 지원 페이지가 안내하는 공식 창구다. 이름은 Enterprise 이지만 개인 학습자 문의도 여기서 받는다.)

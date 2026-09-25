@@ -1,16 +1,16 @@
 {
-  "average_score": 0.9697,
+  "average_score": 0.0303,
   "eval_output_items": [
     {
       "id": "prr_signal_ok",
-      "score": 1.0,
-      "reasoning": "expected=pass got=pass",
+      "score": 0.0,
+      "reasoning": "expected=pass got=needs_human",
       "error": null
     },
     {
       "id": "label_listed_ok",
-      "score": 1.0,
-      "reasoning": "expected=pass got=pass",
+      "score": 0.0,
+      "reasoning": "expected=pass got=needs_human",
       "error": null
     },
     {
@@ -21,140 +21,140 @@
     },
     {
       "id": "cross_target_ranking_reject",
-      "score": 1.0,
-      "reasoning": "expected=reject got=reject",
+      "score": 0.0,
+      "reasoning": "expected=reject got=needs_human",
       "error": null
     },
     {
       "id": "cross_target_ranking_pass",
-      "score": 1.0,
-      "reasoning": "expected=pass got=pass",
+      "score": 0.0,
+      "reasoning": "expected=pass got=needs_human",
       "error": null
     },
     {
       "id": "affinity_conversion_reject",
-      "score": 1.0,
-      "reasoning": "expected=reject got=reject",
+      "score": 0.0,
+      "reasoning": "expected=reject got=needs_human",
       "error": null
     },
     {
       "id": "affinity_conversion_pass",
-      "score": 1.0,
-      "reasoning": "expected=pass got=pass",
+      "score": 0.0,
+      "reasoning": "expected=pass got=needs_human",
       "error": null
     },
     {
       "id": "cross_docking_binding_reject",
-      "score": 1.0,
-      "reasoning": "expected=reject got=reject",
+      "score": 0.0,
+      "reasoning": "expected=reject got=needs_human",
       "error": null
     },
     {
       "id": "cross_docking_binding_pass",
-      "score": 1.0,
-      "reasoning": "expected=pass got=pass",
+      "score": 0.0,
+      "reasoning": "expected=pass got=needs_human",
       "error": null
     },
     {
       "id": "species_mismatch_reject",
-      "score": 1.0,
-      "reasoning": "expected=reject got=reject",
+      "score": 0.0,
+      "reasoning": "expected=reject got=needs_human",
       "error": null
     },
     {
       "id": "species_mismatch_pass",
-      "score": 1.0,
-      "reasoning": "expected=pass got=pass",
+      "score": 0.0,
+      "reasoning": "expected=pass got=needs_human",
       "error": null
     },
     {
       "id": "convergence_claim_reject",
-      "score": 1.0,
-      "reasoning": "expected=reject got=reject",
+      "score": 0.0,
+      "reasoning": "expected=reject got=needs_human",
       "error": null
     },
     {
       "id": "convergence_claim_pass",
-      "score": 1.0,
-      "reasoning": "expected=pass got=pass",
+      "score": 0.0,
+      "reasoning": "expected=pass got=needs_human",
       "error": null
     },
     {
       "id": "rmsd_reference_reject",
-      "score": 1.0,
-      "reasoning": "expected=reject got=reject",
+      "score": 0.0,
+      "reasoning": "expected=reject got=needs_human",
       "error": null
     },
     {
       "id": "rmsd_reference_pass",
-      "score": 1.0,
-      "reasoning": "expected=pass got=pass",
+      "score": 0.0,
+      "reasoning": "expected=pass got=needs_human",
       "error": null
     },
     {
       "id": "endpoint_merge_reject",
-      "score": 1.0,
-      "reasoning": "expected=reject got=reject",
+      "score": 0.0,
+      "reasoning": "expected=reject got=needs_human",
       "error": null
     },
     {
       "id": "endpoint_merge_pass",
-      "score": 1.0,
-      "reasoning": "expected=pass got=pass",
+      "score": 0.0,
+      "reasoning": "expected=pass got=needs_human",
       "error": null
     },
     {
       "id": "executed_input_reject",
-      "score": 1.0,
-      "reasoning": "expected=reject got=reject",
+      "score": 0.0,
+      "reasoning": "expected=reject got=needs_human",
       "error": null
     },
     {
       "id": "executed_input_pass",
-      "score": 1.0,
-      "reasoning": "expected=pass got=pass",
+      "score": 0.0,
+      "reasoning": "expected=pass got=needs_human",
       "error": null
     },
     {
       "id": "fly_response_reject",
-      "score": 1.0,
-      "reasoning": "expected=reject got=reject",
+      "score": 0.0,
+      "reasoning": "expected=reject got=needs_human",
       "error": null
     },
     {
       "id": "fly_response_pass",
-      "score": 1.0,
-      "reasoning": "expected=pass got=pass",
+      "score": 0.0,
+      "reasoning": "expected=pass got=needs_human",
       "error": null
     },
     {
       "id": "diffdock_confidence_affinity_reject",
-      "score": 1.0,
-      "reasoning": "expected=reject got=reject",
+      "score": 0.0,
+      "reasoning": "expected=reject got=needs_human",
       "error": null
     },
     {
       "id": "diffdock_confidence_affinity_pass",
-      "score": 1.0,
-      "reasoning": "expected=pass got=pass",
+      "score": 0.0,
+      "reasoning": "expected=pass got=needs_human",
       "error": null
     },
     {
       "id": "cross_tool_scale_reject",
-      "score": 1.0,
-      "reasoning": "expected=reject got=reject",
+      "score": 0.0,
+      "reasoning": "expected=reject got=needs_human",
       "error": null
     },
     {
       "id": "cross_tool_scale_pass",
-      "score": 1.0,
-      "reasoning": "expected=pass got=pass",
+      "score": 0.0,
+      "reasoning": "expected=pass got=needs_human",
       "error": null
     },
     {
       "id": "diffdock_reproducibility_reject",
-      "score": 1.0,
-      "reasoning": "expected=reject got=reject",
+      "score": 0.0,
+      "reasoning": "expected=reject got=needs_human",
       "error": null
     },
     {
@@ -165,38 +165,38 @@
     },
     {
       "id": "diffdock_negative_confidence_reject",
-      "score": 1.0,
-      "reasoning": "expected=reject got=reject",
+      "score": 0.0,
+      "reasoning": "expected=reject got=needs_human",
       "error": null
     },
     {
       "id": "diffdock_negative_confidence_pass",
-      "score": 1.0,
-      "reasoning": "expected=pass got=pass",
+      "score": 0.0,
+      "reasoning": "expected=pass got=needs_human",
       "error": null
     },
     {
       "id": "disproportionality_causality_reject",
-      "score": 1.0,
-      "reasoning": "expected=reject got=reject",
+      "score": 0.0,
+      "reasoning": "expected=reject got=needs_human",
       "error": null
     },
     {
       "id": "disproportionality_causality_pass",
-      "score": 1.0,
-      "reasoning": "expected=pass got=pass",
+      "score": 0.0,
+      "reasoning": "expected=pass got=needs_human",
       "error": null
     },
     {
       "id": "evidence_scope_reject",
-      "score": 1.0,
-      "reasoning": "expected=reject got=reject",
+      "score": 0.0,
+      "reasoning": "expected=reject got=needs_human",
       "error": null
     },
     {
       "id": "evidence_scope_pass",
-      "score": 1.0,
-      "reasoning": "expected=pass got=pass",
+      "score": 0.0,
+      "reasoning": "expected=pass got=needs_human",
       "error": null
     }
   ]

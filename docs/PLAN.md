@@ -150,5 +150,8 @@
 - **선행 프로젝트 계보.** 2026-08 PharmaSignal v0(`github.com/kakyungkim/pharmasignal-v0`,
   미수상)의 후속임을 README 와 신청서에 밝힌다. v0 에서 ROR 오라클과 검증 지표, 영상과
   슬라이드 파이프라인을 가져왔다. 자세한 것은 `docs/notes/reuse-from-v1.md`.
+- **채점 항목 원문.** 계획에 요약해 둔 네 항목 중 넷째는 정확히
+  "기타 - 커스터마이징 수준, 독창성 등" 이다. "기타" 로 열려 있고 "등" 으로 끝나므로 목록이
+  닫히지 않았다. 원문과 해석은 `docs/notes/topic-decision.md` 를 따른다.
 - **카이제곱 정정.** Evans 등 2001 관례는 Yates 보정이다. 보정 없는 Pearson 을 쓰던 것을
   고쳤고 케이스 3건에서 판정이 뒤집힌 것은 없다.

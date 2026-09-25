@@ -1,0 +1,55 @@
+DiffDock 호출 계층 실호출 검증 (bionemo_client + dock_diffdock), 2026-09-25
+==============================================================================
+목적: 새 호출 계층이 실제 호스팅 경로를 그대로 타는지 1회 확인.
+      2026-09-25 스모크(eval/results/diffdock_smoke.txt)와 같은 입력으로 맞춰 보았다.
+
+경로
+  harness.tools.dock_diffdock.dock()
+    -> harness.tools.bionemo_client._post()
+    -> POST https://health.api.nvidia.com/v1/biology/mit/diffdock
+
+입력
+  수용체: RCSB 4R6E (files.rcsb.org 에서 내려받음, 1,879,848바이트)
+          체인 A B C D 중 chain A 의 ATOM 레코드만, 2,752줄 222,911바이트 인라인
+          (extract_atom_records(pdb, "A") 가 추린 값이고 스모크 기록과 같다)
+  리간드: niraparib SMILES
+          C1CC(CNC1)C2=CC=C(C=C2)N3C=C4C=CC=C(C4=N3)C(=O)N
+  파라미터: ligand_file_type=txt, num_poses=3, time_divisions=20, steps=18,
+            save_trajectory=false, is_staged 미사용
+  헤더: Content-Type, Authorization Bearer, NVCF-POLL-SECONDS=300
+
+결과 (1회차, 네트워크)
+  HTTP 200, 4.02초. 202 폴링 분기로 들어가지 않았다(동기 200 확인)
+  field_name_used: steps   (422 폴백이 발동하지 않았다)
+  status: success / details: success without retry
+  포즈 3개, position_confidence:
+    [0.7607949376106262, 0.693301260471344, 0.514950692653656]
+  request_sha256:  f31b513b3d160866e70e0804bf4b89181bfb06459436d40e06881e4ce523fb6a
+  response_sha256: a3f5fdbd1bb3ee98edbb0ee1cb8fe27c5743a599cd80cd3a93001fbfdfb1c85d
+  근거 ID: dock:diffdock:f31b513b:pose1 / :pose2 / :pose3
+  pose1 SDF 첫 줄 "protein_ligand", 둘째 줄 "     RDKit          3D"
+
+결과 (2회차, 캐시 재생)
+  같은 입력을 NVIDIA_API_KEY 없이 다시 불렀다. 0.01초, from_cache=True,
+  response_sha256 이 1회차와 같다. 네트워크를 타지 않는다.
+  캐시 파일: eval/results/pharmasignal_cache_bionemo_diffdock_c1702c6e3806.json (233,058바이트)
+  파일명 접두어를 pharmasignal_cache_ 로 둔 것은 .gitignore 가 그 패턴으로 캐시를
+  제외하고 있어서다. 도킹 응답은 단백질을 되돌려 주므로 한 건이 수백 KB 다.
+
+스모크 기록과 다른 점
+  position_confidence 값이 2026-09-25 스모크의 [0.798, 0.751, 0.725] 와 다르다.
+  DiffDock 은 확산모델이고 호스팅 API 에 시드 파라미터가 없어 호출마다 포즈가 달라진다.
+  같은 입력이라도 신뢰도 값의 재현은 보장되지 않는다. 그래서 요청과 응답의 SHA256 을
+  함께 남겨 "어느 호출의 결과인지"를 대조할 수 있게 했다.
+
+주의 (NVIDIA 문서 원문)
+  "Do not convert confidence directly into binding affinity."
+  position_confidence 는 포즈 신뢰도이고 결합 친화도가 아니다.
+  AutoDock Vina 의 kcal/mol 과 같은 척도로 비교하지 않는다.
+  도구 docstring 과 DiffDockResult.confidence_warning 에 이 문장을 그대로 실어 두었다.
+
+확인하지 못한 것
+  1. 202 분기의 실제 동작. 두 번 다 동기 200 이라 폴링 경로는 주입 테스트로만 검증했다
+  2. 429 백오프의 실제 동작. 레이트리밋에 닿은 적이 없다. 계산과 분기는 단위 테스트로 검증
+  3. num_steps 폴백의 실제 발동. 호스팅이 steps 를 받으므로 422 를 유발해 보지 않았다
+  4. 호출당 소모량과 모델별 레이트리밋. 여전히 비공개다

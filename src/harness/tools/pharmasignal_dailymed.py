@@ -156,6 +156,91 @@ def find_label_mentions(drug_name: str, reaction: str, name_type: str = "both",
     return out
 
 
+# ======================================================================================
+# NAT 등록 래퍼 (dailymed_label). 위 파싱 로직과 기존 함수는 그대로 두고 감싸기만 한다.
+#
+# 패턴은 src/harness/register.py 의 prr_calculator 를 그대로 따른다.
+#   FunctionBaseConfig(name=...)  -> YAML 의 _type 값
+#   @register_function            -> NAT 레지스트리 등록 (import 시점에 발동)
+#   FunctionInfo.from_fn(fn, description=..., converters=[모델 -> str])
+# register.py 하단의 "도메인 도구 import" 블록이 이 모듈을 import 해야 등록이 실린다.
+# ======================================================================================
+import asyncio  # noqa: E402
+import os  # noqa: E402
+
+from pydantic import BaseModel  # noqa: E402
+from pydantic import ConfigDict  # noqa: E402
+from pydantic import Field  # noqa: E402
+
+from nat.builder.builder import Builder  # noqa: E402
+from nat.builder.function_info import FunctionInfo  # noqa: E402
+from nat.cli.register_workflow import register_function  # noqa: E402
+from nat.data_models.function import FunctionBaseConfig  # noqa: E402
+
+
+class LabelMentionReport(BaseModel):
+    """dailymed_label 의 출력 스키마. `find_label_mentions` 반환 dict 를 그대로 담는다."""
+
+    model_config = ConfigDict(extra="allow")
+
+    tool: str = "dailymed_label_mentions"
+    drug_name: str
+    reaction: str
+    labels_checked: list[dict[str, Any]] = Field(
+        default_factory=list, description="setid, title, xml_url and the sections present in each label read")
+    label_mentions: list[dict[str, Any]] = Field(
+        default_factory=list, description="section, snippet and setid for every hit of the reaction term")
+    mentioned_sections: list[str] = Field(
+        default_factory=list,
+        description="LOINC section names holding the term: boxed_warning, contraindications, "
+                    "warnings_and_precautions, warnings, precautions, adverse_reactions")
+    labeled: bool | None = Field(
+        default=None, description="True if the reaction is in the label, False if absent, null if no label was read")
+    evidence_ids: list[str] = Field(default_factory=list, description="DailyMed SPL setids. Cite these.")
+    errors: list[str] = Field(default_factory=list)
+    retrieved_at: str | None = None
+    search_query_url: str | None = None
+    search_total: int | None = None
+
+
+class DailyMedLabelConfig(FunctionBaseConfig, name="dailymed_label"):
+    """DailyMed SPL 라벨 조회 도구. 설정값은 이름 매칭 방식, 볼 라벨 수, 캐시다."""
+
+    name_type: str = Field(default="both", description="DailyMed 검색의 이름 종류. generic, brand, both 중 하나.")
+    max_labels: int = Field(default=1, ge=1, le=5,
+                            description="검색 결과 상위 몇 개 라벨을 내려받아 볼지. 라벨 하나가 수 MB 라 기본 1개.")
+    use_cache: bool = Field(default=True, description="원응답 파일 캐시 사용 여부.")
+    cache_dir: str | None = Field(default=None, description="캐시 디렉터리. 비우면 eval/results 를 쓴다.")
+
+
+@register_function(config_type=DailyMedLabelConfig)
+async def dailymed_label(config: DailyMedLabelConfig, _builder: Builder):
+    if config.name_type not in ("generic", "brand", "both"):
+        raise ValueError(f"name_type 은 generic|brand|both 중 하나여야 합니다: {config.name_type!r}")
+    if config.cache_dir:
+        os.environ["PHARMASIGNAL_CACHE_DIR"] = config.cache_dir
+
+    async def _label(drug_name: str, reaction: str) -> LabelMentionReport:
+        """Check the US DailyMed SPL label of a drug for an adverse event and say where it appears.
+
+        drug_name: ingredient or brand name, for example "metformin".
+        reaction: the event term to look for, for example "lactic acidosis".
+        Returns labeled (true when the term is in the label, false when it is absent, null when no
+        label could be read), mentioned_sections naming the label sections that hold it, verbatim
+        snippets around each hit, and evidence_ids holding the DailyMed setids. Cite a setid in
+        every claim about label status. A labeled event is an already known risk, not a new signal.
+        """
+        raw = await asyncio.to_thread(find_label_mentions, drug_name, reaction, config.name_type,
+                                      config.max_labels, None, config.use_cache)
+        return LabelMentionReport.model_validate(raw)
+
+    def _report_to_str(report: LabelMentionReport) -> str:
+        """도구 출력이 문자열을 요구하는 경로(콘솔, 일부 도구 래퍼)용 변환기."""
+        return report.model_dump_json()
+
+    yield FunctionInfo.from_fn(_label, description=_label.__doc__, converters=[_report_to_str])
+
+
 if __name__ == "__main__":  # 수동 점검용
     import json
     import sys

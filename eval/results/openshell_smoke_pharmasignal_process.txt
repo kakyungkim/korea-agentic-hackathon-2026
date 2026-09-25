@@ -1,0 +1,126 @@
+# OpenShell smoke test
+date_utc: 2026-09-25T08:35:30Z
+policy: pharmasignal.yaml   sandbox: pharmasignal   via: colima
+openshell: openshell 0.0.116
+
+## 허용 도메인 (클라이언트: curl)
+PASS allowed api.fda.gov                2026-09-25 17:35:50.968 system_profiler[51068:49025449] Timed out waiting for the Activation Lock Status check http=200 rc=0 
+PASS allowed dailymed.nlm.nih.gov       2026-09-25 17:36:04.259 system_profiler[51733:49026872] Timed out waiting for the Activation Lock Status check http=200 rc=0 
+PASS allowed eutils.ncbi.nlm.nih.gov    2026-09-25 17:36:16.131 system_profiler[52244:49028248] Timed out waiting for the Activation Lock Status check http=200 rc=0 
+PASS allowed integrate.api.nvidia.com   2026-09-25 17:36:28.372 system_profiler[52755:49029856] Timed out waiting for the Activation Lock Status check http=200 rc=0 
+
+## 허용 목록 밖(차단되어야 함)
+PASS blocked example.com                2026-09-25 17:36:39.307 system_profiler[53438:49031308] Timed out waiting for the Activation Lock Status check curl: (56) CONNECT tunnel failed, response 403 http=000 rc=56 
+PASS blocked github.com                 2026-09-25 17:36:49.992 system_profiler[53872:49032336] Timed out waiting for the Activation Lock Status check curl: (56) CONNECT tunnel failed, response 403 http=000 rc=56 
+
+## 파일시스템 쓰기
+PASS denied write /etc                  2026-09-25 17:37:00.857 system_profiler[54350:49033492] Timed out waiting for the Activation Lock Status check sh: 1: cannot create /etc/openshell_smoke_probe: Permission denied rc=2 
+PASS denied write /sandbox              2026-09-25 17:37:12.764 system_profiler[54862:49034687] Timed out waiting for the Activation Lock Status check rc=2 sh: 1: cannot create /sandbox/openshell_smoke_probe: Permission denied 
+PASS allowed write /work/out            2026-09-25 17:37:23.470 system_profiler[55349:49035922] Timed out waiting for the Activation Lock Status check probe rc=0 
+
+## 프로세스 신원 (process.run_as_user)
+PASS run_as_user=1500                   2026-09-25 17:37:34.079 system_profiler[55946:49037187] Timed out waiting for the Activation Lock Status check uid=1500(sandbox) gid=1500(sandbox) groups=1500(sandbox),0(root) 
+
+## 차단 로그 원문 (openshell logs pharmasignal --since 15m, DENIED/BLOCKED 만)
+[1790325399.862] [sandbox] [OCSF ] [ocsf] NET:OPEN [MED] DENIED /usr/bin/curl(86) -> example.com:443 [policy:- engine:opa] [reason:endpoint example.com:443 is not allowed by any policy]
+[1790325407.766] [sandbox] [INFO ] [openshell_sandbox] Flushed activity summary to gateway denied_action_count=1 network_activity_count=1 sandbox_name=pharmasignal
+[1790325410.644] [sandbox] [OCSF ] [ocsf] NET:OPEN [MED] DENIED /usr/bin/curl(96) -> github.com:443 [policy:- engine:opa] [reason:endpoint github.com:443 is not allowed by any policy]
+[1790325417.659] [sandbox] [INFO ] [openshell_sandbox] Flushed activity summary to gateway denied_action_count=1 network_activity_count=1 sandbox_name=pharmasignal
+
+## Landlock 적용 기록 (파일시스템 거부는 커널이 EPERM 으로 끊어 로그에 DENIED 가 남지 않는다)
+[1790325443.921] [sandbox] [OCSF ] [ocsf] CONFIG:APPLYING [INFO] Applying Landlock filesystem sandbox [abi:V2 compat:BestEffort ro:12 rw:3]
+[1790325443.921] [sandbox] [OCSF ] [ocsf] CONFIG:BUILT [INFO] Landlock ruleset built [rules_applied:14 skipped:1]
+[1790325454.575] [sandbox] [OCSF ] [ocsf] CONFIG:APPLYING [INFO] Applying Landlock filesystem sandbox [abi:V2 compat:BestEffort ro:12 rw:3]
+[1790325454.576] [sandbox] [OCSF ] [ocsf] CONFIG:BUILT [INFO] Landlock ruleset built [rules_applied:14 skipped:1]
+
+## 유효 정책 (openshell policy get pharmasignal --full)
+Version:      1
+Hash:         b773b249e624051a6fd708b52ea668a912e2349c1f033cdd58f9072e09899c79
+Status:       Effective
+Source:       sandbox
+Config rev:   1471513975808836646
+---
+version: 1
+filesystem_policy:
+  include_workdir: false
+  read_only:
+  - /usr
+  - /lib
+  - /lib64
+  - /bin
+  - /sbin
+  - /proc
+  - /dev/urandom
+  - /app
+  - /etc
+  - /var/log
+  - /sandbox
+  - /work
+  read_write:
+  - /work/out
+  - /tmp
+  - /dev/null
+landlock:
+  compatibility: best_effort
+process:
+  run_as_user: '1500'
+  run_as_group: '1500'
+network_policies:
+  dailymed:
+    name: dailymed-label
+    endpoints:
+    - host: dailymed.nlm.nih.gov
+      port: 443
+      protocol: rest
+      enforcement: enforce
+      access: read-only
+    binaries:
+    - path: /usr/bin/curl
+    - path: /usr/bin/python3
+    - path: /usr/bin/python3.12
+    - path: /sandbox/.venv/**
+    - path: /work/.venv/**
+  nvidia_inference:
+    name: nvidia-inference
+    endpoints:
+    - host: integrate.api.nvidia.com
+      port: 443
+      protocol: rest
+      enforcement: enforce
+      access: read-write
+    binaries:
+    - path: /usr/bin/curl
+    - path: /usr/bin/python3
+    - path: /usr/bin/python3.12
+    - path: /sandbox/.venv/**
+    - path: /work/.venv/**
+  openfda:
+    name: openfda-faers
+    endpoints:
+    - host: api.fda.gov
+      port: 443
+      protocol: rest
+      enforcement: enforce
+      access: read-only
+    binaries:
+    - path: /usr/bin/curl
+    - path: /usr/bin/python3
+    - path: /usr/bin/python3.12
+    - path: /sandbox/.venv/**
+    - path: /work/.venv/**
+  pubmed:
+    name: pubmed-eutils
+    endpoints:
+    - host: eutils.ncbi.nlm.nih.gov
+      port: 443
+      protocol: rest
+      enforcement: enforce
+      access: read-only
+    binaries:
+    - path: /usr/bin/curl
+    - path: /usr/bin/python3
+    - path: /usr/bin/python3.12
+    - path: /sandbox/.venv/**
+    - path: /work/.venv/**
+
+summary: pass=10 fail=0

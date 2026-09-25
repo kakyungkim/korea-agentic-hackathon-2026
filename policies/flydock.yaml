@@ -1,0 +1,218 @@
+# OpenShell 샌드박스 정책: 도킹 결과 과잉해석 크리틱 파이프라인
+#
+# base.yaml 전문을 복사한 뒤 호스트 여섯을 더했다(OpenShell 에는 include 나 extends 가 없어
+# 파일마다 전체를 적는다). 각 키의 뜻은 base.yaml 주석에 있고 스키마 출처도 같다.
+#
+# ★ 프로젝트 이름은 이 머리말에만 나온다. 아래 본문은 이름을 참조하지 않는다.
+#   network_policies 의 맵 키와 name 은 기능으로만 지었고(nvidia_inference, biology_nim,
+#   structure_archive, docking_evidence, openfda, dailymed, pubmed), 파일시스템 경로도
+#   /work/out 처럼 일반 이름이다. 프로젝트 이름이 바뀌면 파일명과 이 머리말만 고치면 된다.
+#   샌드박스 이름은 정책 파일이 아니라 `openshell sandbox create --name` 이 정한다.
+#
+# 허용 호스트 일곱. 그 밖은 열지 않는다.
+#   health.api.nvidia.com      생물학 NIM(DiffDock)
+#   integrate.api.nvidia.com   Nemotron 추론(NIM API)
+#   files.rcsb.org             수용체 PDB 원본
+#   drug.flybrain.kr           FDDD 도킹 실측과 근거 요약
+#   api.fda.gov                openFDA FAERS 이상사례 집계
+#   dailymed.nlm.nih.gov       DailyMed SPL 허가 라벨
+#   eutils.ncbi.nlm.nih.gov    PubMed E-utilities 문헌 검색
+#
+# ★ github.com 은 허용 목록에 없다 ★
+#   에이전트가 원본 저장소에 push 하거나 PR 을 여는 일을 규칙이 아니라 구조로 막는다.
+#   deny-by-default 라 목록에 없는 github.com:443 은 CONNECT 단계에서 403 으로 끊기고
+#   `openshell logs` 에 DENIED ... github.com:443 이 남는다. 산출물은 /work/out 으로만 내보내고
+#   적용은 사람이 호스트에서 한다.
+#
+# DLI 강좌 기준선(docs/notes/dli-course/module3-4.md) 대조로 base.yaml 에서 세 가지를 고쳤다.
+#   1. 추론 엔드포인트의 `/usr/bin/curl` 을 뺐다. 강좌가 적색으로 분류한 경우이고("런타임이
+#      아닌 떠돌이 curl 로 추론 API 에 접근") 우리 도구는 전부 파이썬이라 필요가 없다.
+#      데이터 소스 블록에서도 같은 이유로 curl 을 뺐다. curl 로 확인이 필요하면 별도 블록에
+#      `enforcement: audit` 으로 두고 제출본에서는 지운다.
+#   2. `process` 블록을 명시했다. 생략하면 이미지 OCI USER 가 바뀔 때 조용히 root 로 돈다.
+#   3. `access:` 를 모두 `rules:` 로 바꿨다. `access: read-write` 는 메서드만 정하고 경로를
+#      가리지 않는다. `access` 와 `rules` 는 동시에 쓸 수 없으므로 `access` 줄은 지웠다.
+#
+# 적용
+#   scripts/openshell_vm_up.sh flydock
+#   scripts/openshell_smoke.sh flydock
+
+version: 1
+
+# ---------------------------------------------------------------------------
+# 파일시스템 (static). 여기 없는 경로는 읽기도 쓰기도 불가.
+# ---------------------------------------------------------------------------
+filesystem_policy:
+  # /sandbox 를 read_write 에 자동 추가하지 않는다. "쓰기는 /work/out 만"을 지킨다.
+  include_workdir: false
+  # 목록은 base.yaml 과 같게 두어 Landlock 적용 기록(ro/rw 개수)을 앞선 증거와 견줄 수 있게 했다.
+  # /app 은 이미지에 없어 best_effort 로 건너뛴다(로그의 skipped:1 이 이것이다).
+  read_only:
+    - /usr
+    - /lib
+    - /lib64
+    - /bin
+    - /sbin
+    - /proc
+    - /dev/urandom
+    - /app
+    - /etc
+    - /var/log
+    - /sandbox
+    - /work
+  # 쓰기는 산출물 디렉터리만. /tmp 와 /dev/null 은 런타임이 baseline 으로 요구한다.
+  read_write:
+    - /work/out
+    - /tmp
+    - /dev/null
+
+# ---------------------------------------------------------------------------
+# Landlock LSM 동작 (static).
+# ---------------------------------------------------------------------------
+landlock:
+  compatibility: best_effort
+
+# ---------------------------------------------------------------------------
+# 프로세스 신원 (static). 보강 2번.
+# 이미지(policies/sandbox-image/Dockerfile)가 만든 비루트 사용자 sandbox(1500:1500)로 못 박는다.
+# 생략하면 이미지의 OCI USER 를 따르므로, 이미지를 갈아타거나 USER 를 지우면 root 로 돈다.
+# 0(root)은 스키마가 거부한다. 이미지 USER 와 다르게 적으면 /work/out 소유권이 어긋나 쓰기가
+# 실패하니 이미지와 함께 맞춘다.
+# ---------------------------------------------------------------------------
+process:
+  run_as_user: "1500"
+  run_as_group: "1500"
+
+# ---------------------------------------------------------------------------
+# 네트워크 (dynamic, 실행 중 교체 가능).
+# 모든 블록이 rules 로 메서드와 경로까지 좁힌다(보강 3번). binaries 는 파이썬만 올린다(보강 1번).
+# /usr/bin/python3 는 Ubuntu 24.04 에서 /usr/bin/python3.12 로 해석되므로 두 경로를 모두 적는다.
+# venv 글롭은 심볼릭 링크가 기반 인터프리터로 해석될 수 있어 믿고 쓰지 않되 함께 남긴다.
+# ---------------------------------------------------------------------------
+network_policies:
+  # 생물학 NIM. DiffDock 은 POST 한 번, 202 를 받으면 GET /v1/status/<reqid> 로 결과를 기다린다.
+  # GET /v1/biology/mit/diffdock 은 원본 서버가 405 를 돌려주는 경로다. 추론을 시작하지 않으므로
+  # 크레딧을 쓰지 않고 TLS 와 라우팅만 확인할 수 있어 도달 확인 용도로 열어 둔다.
+  biology_nim:
+    name: biology-nim
+    endpoints:
+      - host: health.api.nvidia.com
+        port: 443
+        protocol: rest
+        enforcement: enforce
+        rules:
+          - allow: { method: POST, path: /v1/biology/mit/diffdock }
+          - allow: { method: GET,  path: /v1/biology/mit/diffdock }
+          - allow: { method: GET,  path: /v1/status/** }
+    binaries:
+      - path: /usr/bin/python3
+      - path: /usr/bin/python3.12
+      - path: /sandbox/.venv/**
+      - path: /work/.venv/**
+
+  # Nemotron 추론. 강좌 기준선과 같이 채팅 완성과 모델 목록만 연다.
+  nvidia_inference:
+    name: nvidia-inference
+    endpoints:
+      - host: integrate.api.nvidia.com
+        port: 443
+        protocol: rest
+        enforcement: enforce
+        rules:
+          - allow: { method: POST, path: /v1/chat/completions }
+          - allow: { method: GET,  path: /v1/models }
+    binaries:
+      - path: /usr/bin/python3
+      - path: /usr/bin/python3.12
+      - path: /sandbox/.venv/**
+      - path: /work/.venv/**
+
+  # 수용체 PDB 원본. files.rcsb.org/download/<PDB>.pdb 만 받는다.
+  structure_archive:
+    name: structure-archive
+    endpoints:
+      - host: files.rcsb.org
+        port: 443
+        protocol: rest
+        enforcement: enforce
+        rules:
+          - allow: { method: GET, path: /download/** }
+    binaries:
+      - path: /usr/bin/python3
+      - path: /usr/bin/python3.12
+      - path: /sandbox/.venv/**
+      - path: /work/.venv/**
+
+  # 도킹 실측과 근거 요약(JSON 두 갈래). 쓰기 메서드는 열지 않는다.
+  docking_evidence:
+    name: docking-evidence
+    endpoints:
+      - host: drug.flybrain.kr
+        port: 443
+        protocol: rest
+        enforcement: enforce
+        rules:
+          - allow: { method: GET, path: /data/docking/** }
+          - allow: { method: GET, path: /data/evidence/** }
+    binaries:
+      - path: /usr/bin/python3
+      - path: /usr/bin/python3.12
+      - path: /sandbox/.venv/**
+      - path: /work/.venv/**
+
+  # openFDA FAERS. 조회 경로 하나만 연다.
+  openfda:
+    name: openfda-faers
+    endpoints:
+      - host: api.fda.gov
+        port: 443
+        protocol: rest
+        enforcement: enforce
+        rules:
+          - allow: { method: GET, path: /drug/event.json }
+    binaries:
+      - path: /usr/bin/python3
+      - path: /usr/bin/python3.12
+      - path: /sandbox/.venv/**
+      - path: /work/.venv/**
+
+  # DailyMed SPL. 검색(spls.json)과 라벨 본문(spls/<SETID>.xml)만.
+  dailymed:
+    name: dailymed-label
+    endpoints:
+      - host: dailymed.nlm.nih.gov
+        port: 443
+        protocol: rest
+        enforcement: enforce
+        rules:
+          - allow: { method: GET, path: /dailymed/services/v2/spls.json }
+          - allow: { method: GET, path: /dailymed/services/v2/spls/** }
+    binaries:
+      - path: /usr/bin/python3
+      - path: /usr/bin/python3.12
+      - path: /sandbox/.venv/**
+      - path: /work/.venv/**
+
+  # PubMed E-utilities. esearch, efetch, einfo 가 모두 이 접두 아래에 있다.
+  # 호출 빈도는 초당 3회 이하로 지킨다(정책이 아니라 도구 쪽 제약이다).
+  pubmed:
+    name: pubmed-eutils
+    endpoints:
+      - host: eutils.ncbi.nlm.nih.gov
+        port: 443
+        protocol: rest
+        enforcement: enforce
+        rules:
+          - allow: { method: GET, path: /entrez/eutils/** }
+    binaries:
+      - path: /usr/bin/python3
+      - path: /usr/bin/python3.12
+      - path: /sandbox/.venv/**
+      - path: /work/.venv/**
+
+# github.com 과 pypi.org: 없음(위 머리말 참조). 여기에 항목을 추가하지 말 것.
+# 의존성은 이미지 빌드 시점에 설치하고 실행 정책에서는 pypi 를 열지 않는다.
+#
+# 참고: NVIDIA_API_KEY 는 여기 적지 않는다. provider profile
+# (policies/nvidia-provider-profile.yaml)이 프록시 단계에서 주입하고 샌드박스 안에서는
+# 자리표시자만 보인다. CPU, 메모리, 실행 시간 제한은 스키마에 없어 생성과 실행 플래그로 건다.

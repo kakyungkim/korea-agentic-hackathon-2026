@@ -202,6 +202,101 @@ def faers_disproportionality(drug: str, reaction: str, name_field: str = "generi
     return result
 
 
+# ======================================================================================
+# NAT 등록 래퍼 (openfda_faers). 위 계산 로직과 기존 함수는 그대로 두고 감싸기만 한다.
+#
+# 패턴은 src/harness/register.py 의 prr_calculator 를 그대로 따른다.
+#   FunctionBaseConfig(name=...)  -> YAML 의 _type 값
+#   @register_function            -> NAT 레지스트리 등록 (import 시점에 발동)
+#   FunctionInfo.from_fn(fn, description=..., converters=[모델 -> str])
+# register.py 하단의 "도메인 도구 import" 블록이 이 모듈을 import 해야 등록이 실린다.
+# ======================================================================================
+import asyncio  # noqa: E402
+import os  # noqa: E402
+
+from pydantic import BaseModel  # noqa: E402
+from pydantic import ConfigDict  # noqa: E402
+from pydantic import Field  # noqa: E402
+
+from nat.builder.builder import Builder  # noqa: E402
+from nat.builder.function_info import FunctionInfo  # noqa: E402
+from nat.cli.register_workflow import register_function  # noqa: E402
+from nat.data_models.function import FunctionBaseConfig  # noqa: E402
+
+
+class FaersReport(BaseModel):
+    """openfda_faers 의 출력 스키마. `faers_disproportionality` 반환 dict 를 그대로 담는다.
+
+    지표가 늘어도 도구가 깨지지 않게 extra 필드를 허용한다.
+    """
+
+    model_config = ConfigDict(extra="allow")
+
+    tool: str = "openfda_faers"
+    drug: str
+    reaction: str
+    name_field: str
+    counts: dict[str, int] | None = Field(
+        default=None, description="2x2 table cells a,b,c,d plus n_drug, n_reaction, n_total")
+    prr: float | None = Field(default=None, description="Proportional Reporting Ratio")
+    prr_ci95: list[float] | None = None
+    ror: float | None = Field(default=None, description="Reporting Odds Ratio, uncorrected")
+    ror_ci95: list[float] | None = None
+    chi2: float | None = Field(default=None, description="Pearson chi-square, no continuity correction")
+    chi2_yates: float | None = Field(default=None, description="Yates corrected chi-square, used by the Evans rule")
+    evans_signal: bool | None = Field(default=None, description="Evans 2001 rule: a>=3, PRR>=2, Yates chi-square>=4")
+    ror_haldane: float | None = Field(default=None, description="ROR with Haldane-Anscombe 0.5 correction")
+    ror_ci95_haldane: list[float] | None = None
+    haldane_applied: bool | None = None
+    ror_signal: bool | None = Field(default=None, description="ROR rule: a>=3 and lower 95% CI bound > 1")
+    query_urls: dict[str, str] = Field(default_factory=dict)
+    evidence_ids: list[str] = Field(default_factory=list,
+                                   description="openFDA query URLs. Cite one of these for every claim.")
+    errors: list[str] = Field(default_factory=list)
+    data_last_updated: str | None = None
+    retrieved_at: str | None = None
+    cache: dict[str, Any] | None = None
+
+
+class OpenFdaFaersConfig(FunctionBaseConfig, name="openfda_faers"):
+    """openFDA FAERS 불균형 분석 도구. 설정값은 약물명 매칭 필드와 캐시뿐이다."""
+
+    name_field: str = Field(default="generic",
+                            description="약물명 매칭 필드. generic, brand, medicinalproduct 중 하나.")
+    use_cache: bool = Field(default=True,
+                            description="원응답 파일 캐시 사용 여부. 키 없이 분당 240회, 일 1,000회 제한을 아낀다.")
+    cache_dir: str | None = Field(default=None, description="캐시 디렉터리. 비우면 eval/results 를 쓴다.")
+
+
+@register_function(config_type=OpenFdaFaersConfig)
+async def openfda_faers(config: OpenFdaFaersConfig, _builder: Builder):
+    if config.name_field not in NAME_FIELDS:
+        raise ValueError(f"name_field 는 {sorted(NAME_FIELDS)} 중 하나여야 합니다: {config.name_field!r}")
+    if config.cache_dir:
+        os.environ["PHARMASIGNAL_CACHE_DIR"] = config.cache_dir
+
+    async def _faers(drug: str, reaction: str) -> FaersReport:
+        """Query openFDA FAERS for one drug and one adverse event and return signal statistics.
+
+        drug: ingredient or product name, for example "metformin".
+        reaction: MedDRA preferred term, for example "Lactic acidosis".
+        Returns the 2x2 report counts (a, b, c, d), PRR and ROR with 95% confidence intervals,
+        Pearson and Yates chi-square, the Evans signal rule, the Haldane corrected ROR, and
+        evidence_ids holding the exact openFDA query URLs. Cite one of those URLs in every claim
+        built from these numbers. No matching report is returned as a zero count, not as an error;
+        when errors is non-empty the counts are missing and no claim may be made.
+        """
+        raw = await asyncio.to_thread(faers_disproportionality, drug, reaction,
+                                      config.name_field, config.use_cache)
+        return FaersReport.model_validate(raw)
+
+    def _report_to_str(report: FaersReport) -> str:
+        """도구 출력이 문자열을 요구하는 경로(콘솔, 일부 도구 래퍼)용 변환기."""
+        return report.model_dump_json()
+
+    yield FunctionInfo.from_fn(_faers, description=_faers.__doc__, converters=[_report_to_str])
+
+
 if __name__ == "__main__":  # 수동 점검용
     import json
     import sys

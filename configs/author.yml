@@ -40,23 +40,52 @@ functions:
     prefix: ""
   prr_calculator:
     _type: prr_calculator
-  # 도메인 도구는 아래에 같은 형식으로 추가한다 (src/harness/register.py 하단 안내 참고).
-  # openfda_faers:
-  #   _type: openfda_faers
+  openfda_faers:
+    _type: openfda_faers
+    name_field: generic      # 약물명 매칭 필드. brand, medicinalproduct 로 바꿀 수 있다.
+    use_cache: true          # 원응답을 eval/results 에 캐시해 분당 240회 제한을 아낀다.
+  dailymed_label:
+    _type: dailymed_label
+    name_type: both
+    max_labels: 1            # 라벨 XML 이 커서 상위 1개만 내려받는다.
+    use_cache: true
+  pubmed_search:
+    _type: pubmed_search
+    retmax: 5                # 관련도 상위 5편.
+    min_interval_seconds: 0.34   # NCBI 키 없이 초당 3회 제한.
+    use_cache: true
+  diffdock_nim:
+    _type: diffdock_nim
+    num_poses: 3             # 포즈 3개. 호스팅 상한은 100 이지만 레이트리밋을 아낀다.
+    time_divisions: 20
+    steps: 18                # 호스팅 필드명은 steps 다. 블루프린트의 num_steps 가 아니다.
+    timeout: 900             # NVIDIA 자체 스크립트가 900~1200초를 쓴다.
 
 workflow:
   # tool_calling_agent: 모델의 네이티브 tool calling 사용. ReAct 가 필요하면 _type: react_agent 로 바꾸고
   # tool_names 는 그대로 둔다 (react_agent 는 max_tool_calls, retry_agent_response_parsing_errors 키를 추가로 가진다).
   _type: tool_calling_agent
   llm_name: planner
-  tool_names: [echo_tool, prr_calculator]
+  tool_names: [echo_tool, prr_calculator, openfda_faers, dailymed_label, pubmed_search, diffdock_nim]
   description: "근거 ID 가 붙은 주장(claims)과 요약(summary)을 JSON 으로 내는 작성자 에이전트"
   verbose: true
   handle_tool_errors: true
   max_iterations: 8
   system_prompt: |
-    You are the author agent. Plan, call tools, then answer.
+    You are the pharmacovigilance author agent. Plan, call tools, then answer.
+
+    Tools:
+    - openfda_faers(drug, reaction): FAERS report counts and disproportionality metrics. Evidence IDs are openFDA query URLs.
+    - dailymed_label(drug_name, reaction): whether the US label already lists the event, and in which section. Evidence IDs are DailyMed setids.
+    - pubmed_search(drug, reaction): indexed literature with PMIDs, titles, journals and years. Evidence IDs are PMIDs.
+    - prr_calculator(a, b, c, d): PRR, ROR, 95% CIs and chi-square for a 2x2 table you already have.
     Never compute statistics yourself: use prr_calculator and cite its evidence_id.
+    Call each retrieval tool at most once per drug and event pair; they cache and rate limit themselves.
+    A triage needs all three views: signal statistics, label status, and literature. Say which one is missing when a tool fails.
+    When a tool returns errors or no result, report that; never invent counts, PMIDs, setids or URLs.
+    Disproportionality is association, not causation, and an event already in the label is a known risk rather than a new signal.
+
     Final answer must be a single JSON object with this shape and nothing else:
     {"claims": [{"text": "...", "evidence_ids": ["..."]}], "summary": "..."}
-    Every claim needs at least one evidence_id that came from a tool result. If you have no evidence, say so in summary and emit no claim.
+    Every claim needs at least one evidence_id that came from a tool result: an openFDA query URL, a DailyMed setid, a PMID, or a calc:prr:... id. Never cite an ID you did not receive from a tool.
+    If you have no evidence, say so in summary and emit no claim.

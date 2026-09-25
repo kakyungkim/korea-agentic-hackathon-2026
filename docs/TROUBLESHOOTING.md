@@ -160,6 +160,14 @@ its evidence_id.`가 그 자리다. 기록에 기대면 대화가 길어질 때 
 **해결.** 질문을 짧게 나눠 생각과 출력을 줄인다. 끊기면 `rewind here`로 그 지점으로 되돌리거나
 New chat으로 새로 시작해 다시 보낸다. 시간을 두고 재시도하면 통과할 때가 많다.
 
+**실측 사례(레슨 2a 실습).** 이 증상의 표식은 `finish_reason: null`이다. `stop`도 `length`도 아니라
+완결 신호 자체가 오지 않았다는 뜻이며, 예산이 모자라 멈춘 경우와 여기서 갈린다. 구조화 출력을 요구하는
+단계에서 특히 잘 드러난다. 자유 텍스트는 앞부분이라도 남지만 미완성 JSON은 파싱이 안 되므로 바로
+실패하기 때문이다. 레슨 2a의 ReWOO 플래너 노드에서
+`✗ Error: Planner did not finish a JSON answer (finish_reason: null).`로 멈췄고, `max_tokens`를 손대지
+않고 셀을 다시 돌리자 통과했다. `null`이 보이면 예산이 아니라 연결 쪽을 먼저 의심하고 재실행한다.
+자세한 내용은 `docs/notes/dli-course/lessons/02a-workflow-agent.md` 3절에 적었다.
+
 ## 5-4. "이번만"과 "계속"을 한 문장에 섞지 않는다 (프롬프트 설계)
 
 **증상.** 규칙을 주는 메시지에 `Reply "OK" only.`를 넣었더니, 기억이 켜진 상태에서 다음 질문에
@@ -196,6 +204,53 @@ If you have no source, write "no source". Acknowledge with OK.
 content-safety 계열은 타임아웃이다. `nvidia/nemotron-3.5-content-safety`만 응답하는데
 출력이 NemoGuard JSON이 아니라 한 줄 텍스트라 레일 파서와 맞는지 확인하지 못했다.
 **문서와 발표에서 "NemoGuard로 차단한다"고 쓰지 않는다.** 배선까지 했다는 사실만 적는다.
+
+## 8. 도구 모듈을 두 번 import 하면 NAT 가 `_type` 을 해석하지 못한다
+
+**증상.** `nat validate` 가 `union_tag_invalid` 로 실패한다. 기대 태그 목록에
+`pharmasignal_openfda/openfda_faers` 와 `harness.tools/openfda_faers` 가 나란히 찍힌다.
+
+**원인.** 테스트가 `sys.path.insert` 로 도구를 최상위 모듈(`pharmasignal_openfda`)로 불러오고
+`harness.register` 는 같은 파일을 `harness.tools.pharmasignal_openfda` 로 불러왔다.
+같은 파일이 서로 다른 모듈로 두 번 들어오면서 `@register_function` 이 두 번 돌고 짧은 이름
+`openfda_faers` 가 둘이 됐다. **NAT 는 짧은 이름이 겹치면 판별 유니온에서 빼 버린다**
+(`nat/cli/type_registry.py` 의 `_do_compute_annotation`). 그래서 YAML 의 `_type` 이 해석 불가가 된다.
+
+**해결.** 도구 테스트는 반드시 패키지 경로로 import 한다. `from harness.tools import ...` 다.
+회귀 방지로 `tests/test_harness_register.py` 에 `test_registered_tool_names_are_unique` 를 넣었다.
+
+**교훈.** 등록 이름이 겹치면 에러가 등록 시점에 나지 않고 **설정 검증 시점에 엉뚱한 메시지로**
+나타난다. 도구를 늘릴 때 짧은 이름 유일성을 테스트로 지킨다.
+
+## 9. tool calling 요청이 간헐적으로 500 을 돌려준다 (서버 쪽)
+
+**증상.** `nat run` 이 1초 만에 죽는다.
+`LLM returned an empty response (no content, no tool calls). finish_reason=None, response_metadata={}`
+
+**확인.** `integrate.api.nvidia.com` 에 같은 조건을 직접 반복해 보니 **500 이 무작위로 섞인다.**
+같은 본문이 두 번 연속 500 이었다가 다음에는 성공했고, 짧은 프롬프트에서도 한 번은 성공 한 번은
+500 이었다. 파라미터 조합이 원인이 아니다.
+
+**해결.** 재시도하면 통한다. 도구가 5개로 늘어 프롬프트가 커진 것 자체는 문제가 아니었다
+(성공 호출의 input_tokens 1,583).
+
+**교훈.** 빈 응답을 받으면 먼저 재시도한다. 프롬프트를 줄이거나 도구를 빼기 전에 서버 쪽
+간헐 실패를 의심한다. 데모 녹화와 제출 직전 실행에는 재시도 여유를 둔다.
+
+## 10. DiffDock 은 같은 입력에도 호출마다 결과가 다르다
+
+**증상.** 같은 수용체와 리간드로 두 번 불러 `position_confidence` 가
+`[0.798, 0.751, 0.725]` 와 `[0.761, 0.693, 0.515]` 로 갈렸다.
+
+**원인.** 확산모델이고 **호스팅 API 에 시드 파라미터가 없다.** 입력 ATOM 줄 수와 바이트가
+정확히 같아도 재현되지 않는다.
+
+**해결.** 요청과 응답의 SHA256 을 함께 기록해 어느 호출의 결과인지 대조한다. 응답 캐시로 같은
+입력에 같은 값을 재생한다(캐시 적중 0.01초, 네트워크 미사용).
+문서에는 "이 값이 나온다" 가 아니라 "이 호출에서 이 값이 나왔다" 로 적는다.
+
+**교훈.** 과잉해석 규칙에 "시드 없는 단일 호출에 재현성을 주장하면 반려" 를 넣었다.
+우리가 실측으로 보인 규칙이다.
 
 ## 알아 두면 좋은 것
 

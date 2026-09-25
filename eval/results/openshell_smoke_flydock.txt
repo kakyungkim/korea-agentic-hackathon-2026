@@ -1,0 +1,192 @@
+# OpenShell smoke test
+date_utc: 2026-09-25T08:28:43Z
+policy: flydock.yaml   sandbox: flydock   via: colima
+openshell: openshell 0.0.116
+
+## 허용 도메인 (클라이언트: python)
+PASS allowed health.api.nvidia.com      http=405 rc=0 
+PASS allowed integrate.api.nvidia.com   http=200 rc=0 
+PASS allowed files.rcsb.org             http=200 rc=0 
+PASS allowed drug.flybrain.kr           http=200 rc=0 
+PASS allowed api.fda.gov                http=200 rc=0 
+PASS allowed dailymed.nlm.nih.gov       http=200 rc=0 
+PASS allowed eutils.ncbi.nlm.nih.gov    http=200 rc=0 
+
+## 허용 목록 밖(차단되어야 함)
+PASS blocked example.com                http=000 rc=7 err=URLError <urlopen error Tunnel connection failed: 403 Forbidden> 
+PASS blocked github.com                 http=000 rc=7 err=URLError <urlopen error Tunnel connection failed: 403 Forbidden> 
+
+## 허용 호스트, 정책에 없는 바이너리(curl)
+PASS curl denied integrate.api.nvidia.com curl: (56) CONNECT tunnel failed, response 403 http=000 rc=56 
+
+## 허용 호스트, rules 에 없는 경로 (L7 거부)
+PASS l7 denied api.fda.gov/drug/label.json http=403 rc=0 
+
+## 파일시스템 쓰기
+PASS denied write /etc                  rc=2 sh: 1: cannot create /etc/openshell_smoke_probe: Permission denied 
+PASS denied write /sandbox              rc=2 sh: 1: cannot create /sandbox/openshell_smoke_probe: Permission denied 
+PASS denied write /work                 rc=2 sh: 1: cannot create /work/openshell_smoke_probe: Permission denied 
+PASS allowed write /work/out            probe rc=0 
+
+## 프로세스 신원 (process.run_as_user)
+PASS run_as_user=1500                   uid=1500(sandbox) gid=1500(sandbox) groups=1500(sandbox),0(root) 
+
+## 파이썬 인증서 검증 (https://health.api.nvidia.com/v1/biology/mit/diffdock)
+INFO 프록시 환경변수             ALL_PROXY=http://10.200.0.1:3128 HTTPS_PROXY=http://10.200.0.1:3128 HTTP_PROXY=http://10.200.0.1:3128 NODE_USE_ENV_PROXY=1 NO_PROXY=127.0.0.1,localhost,::1 grpc_proxy=http://10.200.0.1:3128 http_proxy=http://10.200.0.1:3128 https_proxy=http://10.200.0.1:3128 no_proxy=127.0.0.1,localhost,::1 
+     python=3.12.3 OpenSSL 3.0.13 30 Jan 2024
+     env_SSL_CERT_FILE=/etc/openshell-tls/ca-bundle.pem
+     env_REQUESTS_CA_BUNDLE=/etc/openshell-tls/ca-bundle.pem
+     default_verify cafile=/etc/openshell-tls/ca-bundle.pem capath=/usr/lib/ssl/certs
+     default_ctx http=405 rc=0
+     openshell_bundle=/etc/openshell-tls/ca-bundle.pem size=182784
+     openshell_ca http=405 rc=0
+     certifi_from=pip._vendor.certifi path=/etc/ssl/certs/ca-certificates.crt
+     certifi_ca http=000 rc=7 err=URLError <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1000)>
+PASS python TLS (default_ctx)           default_ctx http=405 rc=0
+PASS python TLS (openshell_ca)          openshell_ca http=405 rc=0
+INFO python TLS (certifi 강제)        certifi_ca http=000 rc=7 err=URLError <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1000)>
+
+## 차단 로그 원문 (openshell logs flydock --since 15m, DENIED/BLOCKED 만)
+[1790324728.479] [sandbox] [OCSF ] [ocsf] NET:OPEN [MED] DENIED /usr/bin/python3.12(137) -> example.com:443 [policy:- engine:opa] [reason:endpoint example.com:443 is not allowed by any policy]
+[1790324729.584] [sandbox] [OCSF ] [ocsf] NET:OPEN [MED] DENIED /usr/bin/python3.12(150) -> github.com:443 [policy:- engine:opa] [reason:endpoint github.com:443 is not allowed by any policy]
+[1790324731.395] [sandbox] [INFO ] [openshell_sandbox] Flushed activity summary to gateway denied_action_count=2 network_activity_count=2 sandbox_name=flydock
+[1790324873.201] [sandbox] [OCSF ] [ocsf] NET:OPEN [MED] DENIED /usr/bin/python3.12(343) -> example.com:443 [policy:- engine:opa] [reason:endpoint example.com:443 is not allowed by any policy]
+[1790324874.027] [sandbox] [OCSF ] [ocsf] NET:OPEN [MED] DENIED /usr/bin/python3.12(356) -> github.com:443 [policy:- engine:opa] [reason:endpoint github.com:443 is not allowed by any policy]
+[1790324874.976] [sandbox] [OCSF ] [ocsf] NET:OPEN [MED] DENIED /usr/bin/curl(367) -> integrate.api.nvidia.com:443 [policy:- engine:opa] [reason:binary '/usr/bin/curl' not allowed in policy 'nvidia_inference' (ancestors: [/usr/bin/dash -> /usr/bin/dash -> /opt/openshell/bin/openshell-sandbox], cmdline: [/dev/null, /sandbox]). SYMLINK HINT: the binary path is the kernel-resolved target from /proc/<p...]
+[1790324879.893] [sandbox] [INFO ] [openshell_sandbox] Flushed activity summary to gateway denied_action_count=3 network_activity_count=3 sandbox_name=flydock
+[1790324938.981] [sandbox] [OCSF ] [ocsf] NET:OPEN [MED] DENIED /usr/bin/python3.12(545) -> example.com:443 [policy:- engine:opa] [reason:endpoint example.com:443 is not allowed by any policy]
+[1790324939.439] [sandbox] [INFO ] [openshell_sandbox] Flushed activity summary to gateway denied_action_count=1 network_activity_count=1 sandbox_name=flydock
+[1790324940.186] [sandbox] [OCSF ] [ocsf] NET:OPEN [MED] DENIED /usr/bin/python3.12(558) -> github.com:443 [policy:- engine:opa] [reason:endpoint github.com:443 is not allowed by any policy]
+[1790324941.272] [sandbox] [OCSF ] [ocsf] NET:OPEN [MED] DENIED /usr/bin/curl(569) -> integrate.api.nvidia.com:443 [policy:- engine:opa] [reason:binary '/usr/bin/curl' not allowed in policy 'nvidia_inference' (ancestors: [/usr/bin/dash -> /usr/bin/dash -> /opt/openshell/bin/openshell-sandbox], cmdline: [/dev/null, /sandbox]). SYMLINK HINT: the binary path is the kernel-resolved target from /proc/<p...]
+[1790324943.052] [sandbox] [OCSF ] [ocsf] HTTP:GET [MED] DENIED GET http://api.fda.gov:443/drug/label.json [policy:openfda engine:l7] [reason:L7_REQUEST deny GET api.fda.gov:443/drug/label.json reason=GET /drug/label.json not permitted by policy]
+[1790324949.430] [sandbox] [INFO ] [openshell_sandbox] Flushed activity summary to gateway denied_action_count=2 network_activity_count=2 sandbox_name=flydock
+
+## Landlock 적용 기록 (파일시스템 거부는 커널이 EPERM 으로 끊어 로그에 DENIED 가 남지 않는다)
+[1790324948.535] [sandbox] [OCSF ] [ocsf] CONFIG:APPLYING [INFO] Applying Landlock filesystem sandbox [abi:V2 compat:BestEffort ro:12 rw:3]
+[1790324948.536] [sandbox] [OCSF ] [ocsf] CONFIG:BUILT [INFO] Landlock ruleset built [rules_applied:14 skipped:1]
+[1790324949.536] [sandbox] [OCSF ] [ocsf] CONFIG:APPLYING [INFO] Applying Landlock filesystem sandbox [abi:V2 compat:BestEffort ro:12 rw:3]
+[1790324949.536] [sandbox] [OCSF ] [ocsf] CONFIG:BUILT [INFO] Landlock ruleset built [rules_applied:14 skipped:1]
+
+## 유효 정책 (openshell policy get flydock --full)
+Version:      1
+Hash:         06d74bdc4800769ed5d7922082fb0685b9d1684fed45e63b1520932df8d1a91b
+Status:       Effective
+Source:       sandbox
+Config rev:   17049475927834376396
+---
+version: 1
+filesystem_policy:
+  include_workdir: false
+  read_only:
+  - /usr
+  - /lib
+  - /lib64
+  - /bin
+  - /sbin
+  - /proc
+  - /dev/urandom
+  - /app
+  - /etc
+  - /var/log
+  - /sandbox
+  - /work
+  read_write:
+  - /work/out
+  - /tmp
+  - /dev/null
+landlock:
+  compatibility: best_effort
+process:
+  run_as_user: '1500'
+  run_as_group: '1500'
+network_policies:
+  biology_nim:
+    name: biology-nim
+    endpoints:
+    - host: health.api.nvidia.com
+      port: 443
+      protocol: rest
+      enforcement: enforce
+      rules:
+      - allow:
+          method: POST
+          path: /v1/biology/mit/diffdock
+      - allow:
+          method: GET
+          path: /v1/biology/mit/diffdock
+      - allow:
+          method: GET
+          path: /v1/status/**
+    binaries:
+    - path: /usr/bin/python3
+    - path: /usr/bin/python3.12
+    - path: /sandbox/.venv/**
+    - path: /work/.venv/**
+  dailymed:
+    name: dailymed-label
+    endpoints:
+    - host: dailymed.nlm.nih.gov
+      port: 443
+      protocol: rest
+      enforcement: enforce
+      rules:
+      - allow:
+          method: GET
+          path: /dailymed/services/v2/spls.json
+      - allow:
+          method: GET
+          path: /dailymed/services/v2/spls/**
+    binaries:
+    - path: /usr/bin/python3
+    - path: /usr/bin/python3.12
+    - path: /sandbox/.venv/**
+    - path: /work/.venv/**
+  docking_evidence:
+    name: docking-evidence
+    endpoints:
+    - host: drug.flybrain.kr
+      port: 443
+      protocol: rest
+      enforcement: enforce
+      rules:
+      - allow:
+          method: GET
+          path: /data/docking/**
+      - allow:
+          method: GET
+          path: /data/evidence/**
+    binaries:
+    - path: /usr/bin/python3
+    - path: /usr/bin/python3.12
+    - path: /sandbox/.venv/**
+    - path: /work/.venv/**
+  nvidia_inference:
+    name: nvidia-inference
+    endpoints:
+    - host: integrate.api.nvidia.com
+      port: 443
+      protocol: rest
+      enforcement: enforce
+      rules:
+      - allow:
+          method: POST
+          path: /v1/chat/completions
+      - allow:
+          method: GET
+          path: /v1/models
+    binaries:
+    - path: /usr/bin/python3
+    - path: /usr/bin/python3.12
+    - path: /sandbox/.venv/**
+    - path: /work/.venv/**
+  openfda:
+    name: openfda-faers
+    endpoints:
+    - host: api.fda.gov
+      port: 443
+      protocol: rest
+      enforcement: enforce
+      rules:
+      - allow:
+
+summary: pass=18 fail=0

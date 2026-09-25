@@ -3,8 +3,8 @@
     "id": "prr_signal_ok",
     "input": "{\"claims\": [{\"text\": \"약물 X와 이상사례 Y의 2x2표(a=40, b=960, c=200, d=98800)에서 PRR은 19.8, ROR은 20.58이다.\", \"evidence_ids\": [\"faers:2x2:drugX-eventY:2025Q4\", \"calc:prr:40-960-200-98800\"]}, {\"text\": \"PRR>=2, a>=3, 카이제곱>=4를 모두 만족해 Evans 기준의 시그널에 해당한다.\", \"evidence_ids\": [\"calc:prr:40-960-200-98800\"]}], \"summary\": \"약물 X-이상사례 Y 조합은 불균형 지표상 시그널이며 라벨 기재 여부 확인이 다음 단계다.\"}",
     "expected_verdict": "pass",
-    "note": "정상 케이스. 모든 주장에 도구 근거 ID가 있다.",
-    "generated_answer": "{\n  \"verdict\": \"pass\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    },\n    {\n      \"name\": \"summary_within_claims\",\n      \"passed\": true,\n      \"reason\": \"The summary's assertion that the drug-event combination is a signal based on disproportionality metrics is directly supported by the claims; the mention of checking label inclusion is a suggested next step, which is allowed.\"\n    },\n    {\n      \"name\": \"claims_are_checkable\",\n      \"passed\": true,\n      \"reason\": \"Each claim provides specific numeric values and conditions that could be verified by the cited evidence (FAERS 2x2 table and calculator outputs).\"\n    }\n  ],\n  \"required_followups\": []\n}",
+    "note": "약물감시 정상 케이스. 모든 주장에 도구 근거 ID가 있다. 1단과 2단을 통과하고 3단도 통과해야 한다(거짓 양성 측정).",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
     "intermediate_steps": [],
     "expected_intermediate_steps": []
   },
@@ -12,8 +12,8 @@
     "id": "label_listed_ok",
     "input": "{\"claims\": [{\"text\": \"이상사례 Y는 약물 X 허가 라벨의 6절(Adverse Reactions)에 이미 기재되어 있다.\", \"evidence_ids\": [\"dailymed:setid:00000000-0000-0000-0000-000000000000:section:6\"]}, {\"text\": \"2x2표(a=12, b=988, c=300, d=98700)에서 PRR은 3.95로 2를 넘지만 이미 알려진 반응이다.\", \"evidence_ids\": [\"faers:2x2:drugX-eventY:2025Q4\", \"calc:prr:12-988-300-98700\"]}], \"summary\": \"라벨 기재 반응이므로 새 시그널이 아니다. 추가 조치 불필요.\"}",
     "expected_verdict": "pass",
-    "note": "정상 케이스. 라벨 인용에 setid와 절 번호가 붙어 있다.",
-    "generated_answer": "{\n  \"verdict\": \"pass\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    },\n    {\n      \"name\": \"summary_within_claims\",\n      \"passed\": true,\n      \"reason\": \"The summary states that because the reaction is already in the label it is not a new signal and no further action is needed, which follows directly from claim 1 (reaction already in label section 6) and claim 2 (PRR >2 but already known reaction).\"\n    },\n    {\n      \"name\": \"claims_are_checkable\",\n      \"passed\": true,\n      \"reason\": \"Each claim is concrete and specific: claim 1 cites a DailyMed section that could verify the presence of the reaction in the label; claim 2 provides a 2x2 table and a PRR calculation that could verify the numeric values, and the claim is not so vague that evidence could not confirm it.\"\n    }\n  ],\n  \"required_followups\": []\n}",
+    "note": "약물감시 정상 케이스. 라벨 인용에 setid와 절 번호가 붙어 있다. 1단과 2단을 통과하고 3단도 통과해야 한다(거짓 양성 측정).",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
     "intermediate_steps": [],
     "expected_intermediate_steps": []
   },
@@ -21,8 +21,278 @@
     "id": "planted_unsupported_claim",
     "input": "{\"claims\": [{\"text\": \"2x2표(a=40, b=960, c=200, d=98800)에서 PRR은 19.8이다.\", \"evidence_ids\": [\"calc:prr:40-960-200-98800\"]}, {\"text\": \"최근 문헌 3편이 약물 X와 이상사례 Y의 인과관계를 확정했다.\", \"evidence_ids\": []}], \"summary\": \"인과관계가 문헌으로 확정된 시그널이므로 즉시 라벨 개정을 권고한다.\"}",
     "expected_verdict": "reject",
-    "note": "부정 케이스. 두 번째 주장에 근거 ID가 없고 요약이 그 주장에 의존한다. 결정 규칙 all_claims_have_evidence에서 걸려야 한다.",
+    "note": "약물감시 부정 케이스. 두 번째 주장에 근거 ID가 없고 요약이 그 주장에 의존한다. 1단 결정 규칙 all_claims_have_evidence가 잡아야 한다(LLM 없이).",
     "generated_answer": "{\n  \"verdict\": \"reject\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": false,\n      \"reason\": \"근거 ID 가 없는 주장 인덱스: [1]\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"all_claims_have_evidence: 근거 ID 가 없는 주장 인덱스: [1]\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "cross_target_ranking_reject",
+    "input": "{\"claims\": [{\"text\": \"niraparib 은 사람 PARP1 촉매도메인(PDB 4R6E chain A)에서 AutoDock Vina 1.2.3 으로 -10.178 kcal/mol 을 받았다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\", \"rcsb:4R6E:chainA:29087205\"]}, {\"text\": \"같은 화합물이 사람 응고인자 Xa(PDB 2P16)에서는 -7.967 kcal/mol 을 받았다.\", \"evidence_ids\": [\"dock:vina:e3970b3c\", \"rcsb:2P16:chainA:533a3c5b\"]}, {\"text\": \"두 점수의 차이 2.211 kcal/mol 만큼 niraparib 은 응고인자 Xa 보다 PARP1 에 더 강하게 결합하므로 PARP1 선택성을 갖는다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\", \"dock:vina:e3970b3c\"]}], \"summary\": \"타깃 우선순위는 PARP1 이 응고인자 Xa 보다 앞이고, niraparib 은 PARP1 선택적 결합체다.\"}",
+    "expected_verdict": "reject",
+    "note": "과잉해석 부정 케이스. 규칙 cross_target_ranking(교차 타깃 순위 금지) 위반. 근거 ID 와 수치가 모두 실측이라 1단과 2단을 통과하고 3단 LLM 판정만 잡는다. 출처: FDDD notes 원문.",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 3건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "cross_target_ranking_pass",
+    "input": "{\"claims\": [{\"text\": \"niraparib 은 사람 PARP1 촉매도메인(PDB 4R6E chain A)에서 AutoDock Vina 1.2.3 으로 -10.178 kcal/mol 을 받았다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\", \"rcsb:4R6E:chainA:29087205\"]}, {\"text\": \"같은 화합물이 사람 응고인자 Xa(PDB 2P16)에서는 -7.967 kcal/mol 을 받았다.\", \"evidence_ids\": [\"dock:vina:e3970b3c\", \"rcsb:2P16:chainA:533a3c5b\"]}, {\"text\": \"두 점수는 서로 다른 단백질에서 나왔고 교차 타깃으로 보정되지 않았다. 각 점수는 같은 실행 안의 다른 포즈와만 비교한다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\", \"dock:vina:e3970b3c\"]}], \"summary\": \"두 경로의 점수를 각각 적었다. 두 값을 견주어 선택성이나 타깃 순위를 말하지 않는다.\"}",
+    "expected_verdict": "pass",
+    "note": "과잉해석 통과 케이스. 규칙 cross_target_ranking(교차 타깃 순위 금지)의 경계를 지킨 문장. 1단, 2단, 3단을 모두 통과해야 한다. 3단이 반려하면 거짓 양성이다.",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 3건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "affinity_conversion_reject",
+    "input": "{\"claims\": [{\"text\": \"PARP1 4R6E chain A 에서 Vina 점수 -10.178 kcal/mol 이 나왔다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\"]}, {\"text\": \"이 점수를 친화도로 환산하면 Kd 는 나노몰 수준이고 IC50 도 같은 자리에 온다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\"]}], \"summary\": \"niraparib 은 PARP1 에 나노몰 수준 친화도로 결합한다.\"}",
+    "expected_verdict": "reject",
+    "note": "과잉해석 부정 케이스. 규칙 affinity_conversion(친화도 환산 금지) 위반. 근거 ID 와 수치가 모두 실측이라 1단과 2단을 통과하고 3단 LLM 판정만 잡는다. 출처: FDDD notes 원문.",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "affinity_conversion_pass",
+    "input": "{\"claims\": [{\"text\": \"PARP1 4R6E chain A 에서 Vina 점수 -10.178 kcal/mol 이 나왔다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\"]}, {\"text\": \"이 값은 Vina 채점함수의 점수이고 Kd, Ki, IC50, EC50 으로 환산하지 않는다. 실험 친화도는 BindingDB 참조 집합에서 종점별로 따로 확인한다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\", \"bindingdb:P09874\"]}], \"summary\": \"도킹 점수를 실험 친화도로 옮기지 않고, 참조 친화도는 종점을 나눈 채로 따로 둔다.\"}",
+    "expected_verdict": "pass",
+    "note": "과잉해석 통과 케이스. 규칙 affinity_conversion(친화도 환산 금지)의 경계를 지킨 문장. 1단, 2단, 3단을 모두 통과해야 한다. 3단이 반려하면 거짓 양성이다.",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "cross_docking_binding_reject",
+    "input": "{\"claims\": [{\"text\": \"niraparib 은 사람 응고인자 Xa(PDB 2P16)에서 -7.967 kcal/mol 을 받았다.\", \"evidence_ids\": [\"dock:vina:e3970b3c\", \"rcsb:2P16:chainA:533a3c5b\"]}, {\"text\": \"이 점수로 응고인자 Xa 결합이 확인되었으므로 niraparib 투여 시 항응고 작용을 임상 주의사항으로 함께 고려해야 한다.\", \"evidence_ids\": [\"dock:vina:e3970b3c\"]}], \"summary\": \"응고인자 Xa 결합이 확인되었으므로 항응고 병용 주의 문안을 즉시 추가할 것을 권고한다.\"}",
+    "expected_verdict": "reject",
+    "note": "과잉해석 부정 케이스. 규칙 cross_docking_binding(교차 도킹 해석 금지) 위반. 근거 ID 와 수치가 모두 실측이라 1단과 2단을 통과하고 3단 LLM 판정만 잡는다. 출처: FDDD notes 원문.",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "cross_docking_binding_pass",
+    "input": "{\"claims\": [{\"text\": \"niraparib 은 사람 응고인자 Xa(PDB 2P16)에서 -7.967 kcal/mol 을 받았다.\", \"evidence_ids\": [\"dock:vina:e3970b3c\", \"rcsb:2P16:chainA:533a3c5b\"]}, {\"text\": \"FDDD 가 이 조합에 적어 둔 역할은 \\\"Exploratory cross-docking; no claim of validated binding\\\" 이다. 실험으로 확인된 결합이 아니므로 임상 주의사항의 근거로 쓰지 않는다.\", \"evidence_ids\": [\"dock:vina:e3970b3c\"]}], \"summary\": \"탐색적 교차 도킹 점수가 하나 있을 뿐이고 결합도 임상 함의도 여기서 나오지 않는다.\"}",
+    "expected_verdict": "pass",
+    "note": "과잉해석 통과 케이스. 규칙 cross_docking_binding(교차 도킹 해석 금지)의 경계를 지킨 문장. 1단, 2단, 3단을 모두 통과해야 한다. 3단이 반려하면 거짓 양성이다.",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "species_mismatch_reject",
+    "input": "{\"claims\": [{\"text\": \"niraparib 은 COX-2 구조 3LN1 에서 -6.605 kcal/mol 을 받았다.\", \"evidence_ids\": [\"dock:vina:7582cf9b\"]}, {\"text\": \"이것은 사람 COX-2 계산 결과이므로 사람에서의 COX-2 관련 함의로 바로 읽을 수 있다.\", \"evidence_ids\": [\"dock:vina:7582cf9b\"]}], \"summary\": \"사람 COX-2 계산 결과로 niraparib 의 COX-2 관련 함의를 읽을 수 있다.\"}",
+    "expected_verdict": "reject",
+    "note": "과잉해석 부정 케이스. 규칙 species_mismatch(종 차이 명시) 위반. 근거 ID 와 수치가 모두 실측이라 1단과 2단을 통과하고 3단 LLM 판정만 잡는다. 출처: FDDD notes 원문.",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "species_mismatch_pass",
+    "input": "{\"claims\": [{\"text\": \"niraparib 은 COX-2 구조 3LN1 에서 -6.605 kcal/mol 을 받았다.\", \"evidence_ids\": [\"dock:vina:7582cf9b\"]}, {\"text\": \"3LN1 은 생쥐(Mus musculus) COX-2 구조다. 사람 COX-2 결과로 옮겨 말하지 않는다.\", \"evidence_ids\": [\"dock:vina:7582cf9b\"]}], \"summary\": \"생쥐 구조에서 나온 점수 하나이고 종을 밝힌 채로만 쓴다.\"}",
+    "expected_verdict": "pass",
+    "note": "과잉해석 통과 케이스. 규칙 species_mismatch(종 차이 명시)의 경계를 지킨 문장. 1단, 2단, 3단을 모두 통과해야 한다. 3단이 반려하면 거짓 양성이다.",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "convergence_claim_reject",
+    "input": "{\"claims\": [{\"text\": \"PARP1 실행의 프로토콜은 seed 20260914, exhaustiveness 4, num_modes 5, 박스 중심 [-39, 5, -8], 크기 [15, 20, 14] 다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\"]}, {\"text\": \"seed 를 고정하고 돌렸으므로 -10.178 kcal/mol 은 수렴한 값이고 다시 돌려도 같게 나온다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\"]}], \"summary\": \"-10.178 kcal/mol 은 수렴한 재현값이다.\"}",
+    "expected_verdict": "reject",
+    "note": "과잉해석 부정 케이스. 규칙 convergence_claim(수렴 주장 금지) 위반. 근거 ID 와 수치가 모두 실측이라 1단과 2단을 통과하고 3단 LLM 판정만 잡는다. 출처: FDDD notes 원문.",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "convergence_claim_pass",
+    "input": "{\"claims\": [{\"text\": \"PARP1 실행의 프로토콜은 seed 20260914, exhaustiveness 4, num_modes 5, 박스 중심 [-39, 5, -8], 크기 [15, 20, 14] 다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\"]}, {\"text\": \"FDDD 가 이 실행에 불확실성과 수렴 분석을 하지 않았다고 적었다. 그러므로 -10.178 kcal/mol 에 수렴이나 재현성을 붙이지 않는다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\"]}], \"summary\": \"단일 실행의 점수 하나를 프로토콜과 함께 적었고 수렴은 말하지 않는다.\"}",
+    "expected_verdict": "pass",
+    "note": "과잉해석 통과 케이스. 규칙 convergence_claim(수렴 주장 금지)의 경계를 지킨 문장. 1단, 2단, 3단을 모두 통과해야 한다. 3단이 반려하면 거짓 양성이다.",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "rmsd_reference_reject",
+    "input": "{\"claims\": [{\"text\": \"PARP1 실행의 2순위 포즈는 -9.916 kcal/mol 이고 RMSD 하한 4.295, 상한 5.666 이다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\"]}, {\"text\": \"이 RMSD 는 결정 구조의 리간드 포즈와의 편차이므로 1순위 포즈가 결정 구조와 일치한다는 뜻이다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\"]}], \"summary\": \"1순위 포즈가 결정 구조와 일치함이 RMSD 로 확인되었다.\"}",
+    "expected_verdict": "reject",
+    "note": "과잉해석 부정 케이스. 규칙 rmsd_reference(RMSD 기준 명시) 위반. 근거 ID 와 수치가 모두 실측이라 1단과 2단을 통과하고 3단 LLM 판정만 잡는다. 출처: FDDD notes 원문.",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "rmsd_reference_pass",
+    "input": "{\"claims\": [{\"text\": \"PARP1 실행의 2순위 포즈는 -9.916 kcal/mol 이고 RMSD 하한 4.295, 상한 5.666 이다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\"]}, {\"text\": \"이 RMSD 열은 같은 실행의 1순위 포즈를 기준으로 잰 값이고 결정 구조와의 일치를 뜻하지 않는다. 결정 구조 대비 RMSD 는 계산되지 않았다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\"]}], \"summary\": \"포즈 사이 RMSD 를 실행 안의 값으로만 적었다.\"}",
+    "expected_verdict": "pass",
+    "note": "과잉해석 통과 케이스. 규칙 rmsd_reference(RMSD 기준 명시)의 경계를 지킨 문장. 1단, 2단, 3단을 모두 통과해야 한다. 3단이 반려하면 거짓 양성이다.",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "endpoint_merge_reject",
+    "input": "{\"claims\": [{\"text\": \"BindingDB 의 사람 PARP1(UniProt P09874) 참조 집합은 레코드 7,311건이고 종점별로 Ki 1,194, IC50 5,588, Kd 214, EC50 315 다.\", \"evidence_ids\": [\"bindingdb:P09874\"]}, {\"text\": \"네 종점을 합친 7,311건을 하나의 친화도 근거로 삼아 평균 친화도를 산출하면 PARP1 도킹 점수가 실험으로 검증된다.\", \"evidence_ids\": [\"bindingdb:P09874\", \"dock:vina:3fe4e8bb\"]}], \"summary\": \"종점 4종을 합친 단일 친화도로 도킹 점수가 검증되었다.\"}",
+    "expected_verdict": "reject",
+    "note": "과잉해석 부정 케이스. 규칙 endpoint_merge(종점 혼합 규칙) 위반. 근거 ID 와 수치가 모두 실측이라 1단과 2단을 통과하고 3단 LLM 판정만 잡는다. 출처: FDDD notes 원문.",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "endpoint_merge_pass",
+    "input": "{\"claims\": [{\"text\": \"BindingDB 의 사람 PARP1(UniProt P09874) 참조 집합은 레코드 7,311건이고 종점별로 Ki 1,194, IC50 5,588, Kd 214, EC50 315 다.\", \"evidence_ids\": [\"bindingdb:P09874\"]}, {\"text\": \"네 종점은 측정 방식이 달라 보정과 불확실성 표기 없이 단일 친화도로 합치지 않는다. 종점별 건수를 나눈 채로 참조한다.\", \"evidence_ids\": [\"bindingdb:P09874\"]}], \"summary\": \"참조 집합의 규모를 종점별로 나누어 적었다.\"}",
+    "expected_verdict": "pass",
+    "note": "과잉해석 통과 케이스. 규칙 endpoint_merge(종점 혼합 규칙)의 경계를 지킨 문장. 1단, 2단, 3단을 모두 통과해야 한다. 3단이 반려하면 거짓 양성이다.",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "executed_input_reject",
+    "input": "{\"claims\": [{\"text\": \"PARP1 조합의 SMILES 는 C1CC(CNC1)C2=CC=C(C=C2)N3C=C4C=CC=C(C4=N3)C(=O)N 이다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\"]}, {\"text\": \"이 SMILES 문자열이 실행된 입력이고 도킹된 3차원 구조를 정의한다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\"]}], \"summary\": \"실행 입력은 SMILES 이고 그 문자열이 계산된 구조를 정한다.\"}",
+    "expected_verdict": "reject",
+    "note": "과잉해석 부정 케이스. 규칙 executed_input(입력 동일성) 위반. 근거 ID 와 수치가 모두 실측이라 1단과 2단을 통과하고 3단 LLM 판정만 잡는다. 출처: FDDD notes 원문.",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "executed_input_pass",
+    "input": "{\"claims\": [{\"text\": \"PARP1 조합의 SMILES 는 C1CC(CNC1)C2=CC=C(C=C2)N3C=C4C=CC=C(C4=N3)C(=O)N 이고 FDDD 가 PubChem 연결성 표기라고 적었다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\"]}, {\"text\": \"실행된 입력은 준비된 PDBQT 파일 /data/docking/inputs/4R6E_ligand_niraparib.pdbqt 다. 연결성 SMILES 는 입체화학을 빠뜨릴 수 있어 실행 입력이 아니다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\"]}], \"summary\": \"실행 입력을 PDBQT 로 적고 SMILES 는 화합물 식별 정보로만 두었다.\"}",
+    "expected_verdict": "pass",
+    "note": "과잉해석 통과 케이스. 규칙 executed_input(입력 동일성)의 경계를 지킨 문장. 1단, 2단, 3단을 모두 통과해야 한다. 3단이 반려하면 거짓 양성이다.",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "fly_response_reject",
+    "input": "{\"claims\": [{\"text\": \"niraparib 은 PARP1 4R6E chain A 에서 -10.178 kcal/mol 을 받았다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\"]}, {\"text\": \"점수가 이만큼 낮으므로 초파리 커넥톰 회로에서도 같은 방향의 반응과 약효가 나타난다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\"]}], \"summary\": \"도킹 점수로 초파리에서의 반응과 약효를 예측할 수 있다.\"}",
+    "expected_verdict": "reject",
+    "note": "과잉해석 부정 케이스. 규칙 fly_response(초파리 결과 해석) 위반. 근거 ID 와 수치가 모두 실측이라 1단과 2단을 통과하고 3단 LLM 판정만 잡는다. 출처: FDDD notes 원문.",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "fly_response_pass",
+    "input": "{\"claims\": [{\"text\": \"niraparib 은 PARP1 4R6E chain A 에서 -10.178 kcal/mol 을 받았다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\"]}, {\"text\": \"도킹 점수와 포즈 탐색 결과는 초파리나 사람의 반응, 효능, 약효를 말하지 않는다. 포즈가 놓였다는 것은 기하학적 배치일 뿐이다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\"]}], \"summary\": \"점수 하나를 적고 생체 반응이나 약효로 옮기지 않는다.\"}",
+    "expected_verdict": "pass",
+    "note": "과잉해석 통과 케이스. 규칙 fly_response(초파리 결과 해석)의 경계를 지킨 문장. 1단, 2단, 3단을 모두 통과해야 한다. 3단이 반려하면 거짓 양성이다.",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "diffdock_confidence_affinity_reject",
+    "input": "{\"claims\": [{\"text\": \"같은 수용체와 리간드로 NVIDIA DiffDock NIM 을 1회 불러 1순위 포즈의 position_confidence 0.761 을 받았다.\", \"evidence_ids\": [\"dock:diffdock:f31b513b:pose1\", \"rcsb:4R6E:chainA:29087205\"]}, {\"text\": \"0.761 을 결합 친화도로 환산하면 강한 친화도에 해당하므로 이 값이 친화도의 근거가 된다.\", \"evidence_ids\": [\"dock:diffdock:f31b513b:pose1\"]}], \"summary\": \"DiffDock 신뢰도 0.761 이 강한 결합 친화도를 뜻한다.\"}",
+    "expected_verdict": "reject",
+    "note": "과잉해석 부정 케이스. 규칙 diffdock_confidence_affinity(DiffDock 신뢰도 환산 금지) 위반. 근거 ID 와 수치가 모두 실측이라 1단과 2단을 통과하고 3단 LLM 판정만 잡는다. 출처: NVIDIA DiffDock 문서 (nim-skills/diffdock-nim/references/validation.md:31).",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "diffdock_confidence_affinity_pass",
+    "input": "{\"claims\": [{\"text\": \"같은 수용체와 리간드로 NVIDIA DiffDock NIM 을 1회 불러 1순위 포즈의 position_confidence 0.761 을 받았다.\", \"evidence_ids\": [\"dock:diffdock:f31b513b:pose1\", \"rcsb:4R6E:chainA:29087205\"]}, {\"text\": \"이 값은 포즈의 RMSD 2옹스트롱 미만 여부를 라벨로 학습한 이진 분류기의 출력이다. 결합 친화도가 아니므로 친화도로 환산하지 않는다.\", \"evidence_ids\": [\"dock:diffdock:f31b513b:pose1\"]}], \"summary\": \"신뢰도 값을 포즈 기하 지표로만 적었다.\"}",
+    "expected_verdict": "pass",
+    "note": "과잉해석 통과 케이스. 규칙 diffdock_confidence_affinity(DiffDock 신뢰도 환산 금지)의 경계를 지킨 문장. 1단, 2단, 3단을 모두 통과해야 한다. 3단이 반려하면 거짓 양성이다.",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "cross_tool_scale_reject",
+    "input": "{\"claims\": [{\"text\": \"PARP1 경로에서 Vina 점수는 -10.178 kcal/mol 이고 DiffDock 1순위 position_confidence 는 0.761 이다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\", \"dock:diffdock:f31b513b:pose1\"]}, {\"text\": \"두 값을 같은 척도에 두면 두 도구가 같은 크기를 가리키므로 서로를 수치로 확증한다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\", \"dock:diffdock:f31b513b:pose1\"]}], \"summary\": \"Vina 점수와 DiffDock 신뢰도가 같은 척도에서 서로를 확증한다.\"}",
+    "expected_verdict": "reject",
+    "note": "과잉해석 부정 케이스. 규칙 cross_tool_scale(도구 간 점수 혼용 금지) 위반. 근거 ID 와 수치가 모두 실측이라 1단과 2단을 통과하고 3단 LLM 판정만 잡는다. 출처: NVIDIA DiffDock 문서 (nim-skills/diffdock-nim/references/validation.md:31).",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "cross_tool_scale_pass",
+    "input": "{\"claims\": [{\"text\": \"PARP1 경로에서 Vina 점수는 -10.178 kcal/mol 이고 DiffDock 1순위 position_confidence 는 0.761 이다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\", \"dock:diffdock:f31b513b:pose1\"]}, {\"text\": \"Vina 는 kcal/mol 단위의 채점함수 점수이고 DiffDock 은 단위 없는 포즈 신뢰도라 같은 축에 두지 않는다. 한쪽이 다른 쪽을 확증하지도 않는다.\", \"evidence_ids\": [\"dock:vina:3fe4e8bb\", \"dock:diffdock:f31b513b:pose1\"]}], \"summary\": \"두 도구의 값을 각각의 단위로 나란히 적었다.\"}",
+    "expected_verdict": "pass",
+    "note": "과잉해석 통과 케이스. 규칙 cross_tool_scale(도구 간 점수 혼용 금지)의 경계를 지킨 문장. 1단, 2단, 3단을 모두 통과해야 한다. 3단이 반려하면 거짓 양성이다.",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "diffdock_reproducibility_reject",
+    "input": "{\"claims\": [{\"text\": \"DiffDock 1회 호출에서 position_confidence 가 0.761, 0.693, 0.515 로 나왔다.\", \"evidence_ids\": [\"dock:diffdock:f31b513b:pose1\", \"dock:diffdock:f31b513b:pose2\", \"dock:diffdock:f31b513b:pose3\"]}, {\"text\": \"이 세 값은 이 입력에 대한 고정된 결과이므로 다시 불러도 같게 나온다.\", \"evidence_ids\": [\"dock:diffdock:f31b513b:pose1\", \"dock:diffdock:f31b513b:pose2\", \"dock:diffdock:f31b513b:pose3\"]}], \"summary\": \"DiffDock 신뢰도 0.761, 0.693, 0.515 는 재현되는 값이다.\"}",
+    "expected_verdict": "reject",
+    "note": "과잉해석 부정 케이스. 규칙 diffdock_reproducibility(DiffDock 재현성 주장 금지) 위반. 근거 ID 와 수치가 모두 실측이라 1단과 2단을 통과하고 3단 LLM 판정만 잡는다. 출처: NVIDIA DiffDock 문서 (nim-skills/diffdock-nim/references/validation.md:31).",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "diffdock_reproducibility_pass",
+    "input": "{\"claims\": [{\"text\": \"DiffDock 1회 호출에서 position_confidence 가 0.761, 0.693, 0.515 로 나왔다.\", \"evidence_ids\": [\"dock:diffdock:f31b513b:pose1\", \"dock:diffdock:f31b513b:pose2\", \"dock:diffdock:f31b513b:pose3\"]}, {\"text\": \"호스팅 API 에 시드 파라미터가 없어 같은 입력에도 호출마다 값이 달라졌다. 그러므로 이 호출에서 이 값이 나왔다고만 적는다.\", \"evidence_ids\": [\"dock:diffdock:f31b513b:pose1\", \"dock:diffdock:f31b513b:pose2\", \"dock:diffdock:f31b513b:pose3\"]}], \"summary\": \"한 호출의 값임을 밝혀 적었고 재현성은 주장하지 않는다.\"}",
+    "expected_verdict": "pass",
+    "note": "과잉해석 통과 케이스. 규칙 diffdock_reproducibility(DiffDock 재현성 주장 금지)의 경계를 지킨 문장. 1단, 2단, 3단을 모두 통과해야 한다. 3단이 반려하면 거짓 양성이다.",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "diffdock_negative_confidence_reject",
+    "input": "{\"claims\": [{\"text\": \"응고인자 Xa 경로의 DiffDock position_confidence 는 -0.172, -0.205, -0.665 로 모두 음수였다.\", \"evidence_ids\": [\"dock:diffdock:91b182ea:pose1\", \"dock:diffdock:91b182ea:pose2\", \"dock:diffdock:91b182ea:pose3\"]}, {\"text\": \"값이 음수이므로 niraparib 은 응고인자 Xa 에 결합하지 않는다는 것이 확인되었다.\", \"evidence_ids\": [\"dock:diffdock:91b182ea:pose1\", \"dock:diffdock:91b182ea:pose2\", \"dock:diffdock:91b182ea:pose3\"]}], \"summary\": \"음수 신뢰도로 응고인자 Xa 결합이 배제되었다.\"}",
+    "expected_verdict": "reject",
+    "note": "과잉해석 부정 케이스. 규칙 diffdock_negative_confidence(DiffDock 음수 신뢰도 해석 금지) 위반. 근거 ID 와 수치가 모두 실측이라 1단과 2단을 통과하고 3단 LLM 판정만 잡는다. 출처: NVIDIA DiffDock 문서 (nim-skills/diffdock-nim/references/validation.md:31).",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "diffdock_negative_confidence_pass",
+    "input": "{\"claims\": [{\"text\": \"응고인자 Xa 경로의 DiffDock position_confidence 는 -0.172, -0.205, -0.665 로 모두 음수였다.\", \"evidence_ids\": [\"dock:diffdock:91b182ea:pose1\", \"dock:diffdock:91b182ea:pose2\", \"dock:diffdock:91b182ea:pose3\"]}, {\"text\": \"음수는 포즈가 기하학적으로 맞을 자신이 낮다는 뜻이고 결합 여부를 판정하지 않는다. 결합하지 않는다는 근거로 쓰지 않는다.\", \"evidence_ids\": [\"dock:diffdock:91b182ea:pose1\", \"dock:diffdock:91b182ea:pose2\", \"dock:diffdock:91b182ea:pose3\"]}], \"summary\": \"음수 값을 포즈 신뢰도 낮음으로만 적었고 결합 배제로 쓰지 않는다.\"}",
+    "expected_verdict": "pass",
+    "note": "과잉해석 통과 케이스. 규칙 diffdock_negative_confidence(DiffDock 음수 신뢰도 해석 금지)의 경계를 지킨 문장. 1단, 2단, 3단을 모두 통과해야 한다. 3단이 반려하면 거짓 양성이다.",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "disproportionality_causality_reject",
+    "input": "{\"claims\": [{\"text\": \"openFDA FAERS 2x2 표(a=1,065, b=21,051, c=108,978, d=20,561,596)에서 PRR 9.13, ROR 9.55(하한 8.97, 상한 10.15), Yates 보정 카이제곱 7672.29 가 나왔다.\", \"evidence_ids\": [\"faers:2x2:niraparib-thrombocytopenia\"]}, {\"text\": \"이 지표는 niraparib 이 혈소판감소증을 일으킨다는 인과를 통계적으로 확증한다.\", \"evidence_ids\": [\"faers:2x2:niraparib-thrombocytopenia\"]}], \"summary\": \"불균형 지표로 인과가 확증되었으므로 즉시 조치가 필요하다.\"}",
+    "expected_verdict": "reject",
+    "note": "과잉해석 부정 케이스. 규칙 disproportionality_causality(라벨 기재와 인과 구분) 위반. 근거 ID 와 수치가 모두 실측이라 1단과 2단을 통과하고 3단 LLM 판정만 잡는다. 출처: 기존 약물감시 규율.",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "disproportionality_causality_pass",
+    "input": "{\"claims\": [{\"text\": \"openFDA FAERS 2x2 표(a=1,065, b=21,051, c=108,978, d=20,561,596)에서 PRR 9.13, ROR 9.55(하한 8.97, 상한 10.15), Yates 보정 카이제곱 7672.29 가 나왔다.\", \"evidence_ids\": [\"faers:2x2:niraparib-thrombocytopenia\"]}, {\"text\": \"이 지표는 이 반응이 이 약물에서 유독 많이 보고된다는 것만 말한다. 혈소판감소증은 라벨 5절과 6절에 이미 기재된 위험이므로 새 신호가 아니고, 인과는 이 표로 판정하지 않는다.\", \"evidence_ids\": [\"faers:2x2:niraparib-thrombocytopenia\", \"dailymed:setid:b7f675e2-159c-490c-b6f4-3f16d9492b7d:section:5\", \"dailymed:setid:b7f675e2-159c-490c-b6f4-3f16d9492b7d:section:6\"]}], \"summary\": \"불균형 지표를 보고 빈도 서술로 두고 라벨 기재 여부로 맥락을 붙였다.\"}",
+    "expected_verdict": "pass",
+    "note": "과잉해석 통과 케이스. 규칙 disproportionality_causality(라벨 기재와 인과 구분)의 경계를 지킨 문장. 1단, 2단, 3단을 모두 통과해야 한다. 3단이 반려하면 거짓 양성이다.",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "evidence_scope_reject",
+    "input": "{\"claims\": [{\"text\": \"혈소판감소증은 ZEJULA(niraparib) 라벨 5절과 6절에 기재되어 있고 FAERS PRR 은 9.13 이다.\", \"evidence_ids\": [\"dailymed:setid:b7f675e2-159c-490c-b6f4-3f16d9492b7d:section:5\", \"dailymed:setid:b7f675e2-159c-490c-b6f4-3f16d9492b7d:section:6\", \"faers:2x2:niraparib-thrombocytopenia\"]}, {\"text\": \"이 사람 근거로 응고인자 Xa 경로의 -7.967 kcal/mol 결합이 사람에서 확증되었다.\", \"evidence_ids\": [\"dailymed:setid:b7f675e2-159c-490c-b6f4-3f16d9492b7d:section:5\", \"dailymed:setid:b7f675e2-159c-490c-b6f4-3f16d9492b7d:section:6\", \"faers:2x2:niraparib-thrombocytopenia\", \"dock:vina:e3970b3c\"]}], \"summary\": \"사람 근거가 응고인자 Xa 결합을 확증했으므로 그 경로를 결론에 쓴다.\"}",
+    "expected_verdict": "reject",
+    "note": "과잉해석 부정 케이스. 규칙 evidence_scope(근거 범위 준수) 위반. 근거 ID 와 수치가 모두 실측이라 1단과 2단을 통과하고 3단 LLM 판정만 잡는다. 출처: FDDD notes 원문.",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "evidence_scope_pass",
+    "input": "{\"claims\": [{\"text\": \"혈소판감소증은 ZEJULA(niraparib) 라벨 5절과 6절에 기재되어 있고 FAERS PRR 은 9.13 이다. 관련 문헌으로 PMID 40687421 이 있다.\", \"evidence_ids\": [\"dailymed:setid:b7f675e2-159c-490c-b6f4-3f16d9492b7d:section:5\", \"dailymed:setid:b7f675e2-159c-490c-b6f4-3f16d9492b7d:section:6\", \"faers:2x2:niraparib-thrombocytopenia\", \"pubmed:40687421\"]}, {\"text\": \"라벨과 FAERS 와 문헌은 niraparib 이라는 화합물에 붙은 근거이고 어느 타깃에 결합하는지를 가리지 않는다. 이 실행에 붙은 참조 친화도 집합도 사람 PARP1(P09874) 하나뿐이다.\", \"evidence_ids\": [\"dailymed:setid:b7f675e2-159c-490c-b6f4-3f16d9492b7d:section:5\", \"dailymed:setid:b7f675e2-159c-490c-b6f4-3f16d9492b7d:section:6\", \"faers:2x2:niraparib-thrombocytopenia\", \"pubmed:40687421\", \"bindingdb:P09874\"]}], \"summary\": \"사람 근거를 화합물 단위로 두고 특정 타깃 결합의 확증으로 쓰지 않는다.\"}",
+    "expected_verdict": "pass",
+    "note": "과잉해석 통과 케이스. 규칙 evidence_scope(근거 범위 준수)의 경계를 지킨 문장. 1단, 2단, 3단을 모두 통과해야 한다. 3단이 반려하면 거짓 양성이다.",
+    "generated_answer": "{\n  \"verdict\": \"needs_human\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"결정 규칙은 통과. 의미 판단(LLM 또는 사람)이 아직 수행되지 않았습니다.\"\n  ]\n}",
     "intermediate_steps": [],
     "expected_intermediate_steps": []
   }

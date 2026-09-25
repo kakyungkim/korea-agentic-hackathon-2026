@@ -1,0 +1,40 @@
+DiffDock NIM 권한 스모크 (G1) — 2026-09-25
+=============================================
+POST https://health.api.nvidia.com/v1/biology/mit/diffdock
+계정: build.nvidia.com 키 (.env NVIDIA_API_KEY)
+
+입력
+  수용체: RCSB 4R6E, chain A 의 ATOM 레코드만 (2,752줄, 222,911바이트) 인라인
+          FDDD 가 쓴 타깃과 동일 (PARP1 촉매도메인)
+  리간드: niraparib, PubChem connectivity SMILES
+          C1CC(CNC1)C2=CC=C(C=C2)N3C=C4C=CC=C(C4=N3)C(=O)N
+  파라미터: ligand_file_type=txt, num_poses=3, time_divisions=20, steps=18,
+            save_trajectory=false
+  요청 헤더: NVCF-POLL-SECONDS=300
+
+결과
+  HTTP 200, 소요 4.1초, 응답 232,461바이트
+  Nvcf-Status: fulfilled
+  Nvcf-Reqid: 3b6e93b3-d0e1-4edd-9581-aeff11686a34
+  status: success
+  details: success without retry
+  응답 키: ligand_positions, trajectory, position_confidence, status, details,
+           protein, ligand
+  position_confidence: [0.7979534864425659, 0.7512781023979187, 0.7245222330093384]
+  포즈 3개, SDF 문자열 (RDKit 3D), 좌표는 원본 옹스트롱 좌표계
+
+이 스모크로 확인된 것
+  1. 계정에 생물학 NIM 호출 권한이 있다. Public API Endpoints 권한 문제 없음
+  2. 호출은 동기다. 202 폴링이 필요 없었다 (4.1초에 200 + 완전한 본문)
+  3. 호스팅 필드 이름은 steps 다. num_steps 가 아니다 (422 없이 통과)
+  4. 222KB 인라인 본문이 통과한다. is_staged 나 asset 업로드가 필요 없다
+  5. 점수 필드는 position_confidence 하나다. 도킹 점수 필드는 없다
+
+주의 (NVIDIA 문서 원문)
+  "Do not convert confidence directly into binding affinity."
+  confidence 를 친화도로 환산하지 않는다. 과잉해석 크리틱 규칙에 넣는다.
+  Vina 의 kcal/mol 과 같은 척도로 비교하지도 않는다.
+
+대조 참고 (FDDD 의 AutoDock Vina 1.2.3 실측, 같은 타깃과 리간드)
+  niraparib 대 PARP1 4R6E chain A: -10.178 kcal/mol
+  단위와 의미가 달라 위 confidence 와 직접 비교하지 않는다.

@@ -149,8 +149,13 @@ async def prr_calculator(_config: PRRCalculatorConfig, _builder: Builder):
 
 # --------------------------------------------------------------------------------------
 # 도메인 도구 import (담당자가 한 줄씩 추가)
+#
+# 여기서 import 된 모듈의 @register_function 만 레지스트리에 실린다. import 가 빠지면
+# YAML 의 _type 이 해석되지 않아 `nat validate` 가 실패한다.
 # --------------------------------------------------------------------------------------
-# from harness.tools import pharmasignal_openfda  # noqa: F401
-# from harness.tools import pharmasignal_dailymed  # noqa: F401
-# from harness.tools import pharmasignal_pubmed  # noqa: F401
-# from harness.tools import nightshift_repo  # noqa: F401
+from harness.tools import pharmasignal_openfda as _openfda  # noqa: F401,E402  (openfda_faers 등록)
+from harness.tools import pharmasignal_dailymed as _dailymed  # noqa: F401,E402  (dailymed_label 등록)
+from harness.tools import pharmasignal_pubmed as _pubmed  # noqa: F401,E402  (pubmed_search 등록)
+from harness.tools import dock_diffdock as _diffdock  # noqa: F401,E402  (diffdock_nim 등록)
+# Night Shift 쪽 도구(nightshift_runner, nightshift_report 등)는 아직 @register_function 이 없어
+# import 하지 않는다. 예시로 적혀 있던 nightshift_repo 모듈은 존재하지 않는다.

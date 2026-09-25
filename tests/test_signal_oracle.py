@@ -11,16 +11,15 @@ v1 구현은 이 저장소에 없다(읽기 전용 저장소다). 그래서 v1 �
 from __future__ import annotations
 
 import math
-import sys
-from pathlib import Path
 
 import pytest
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src" / "harness" / "tools"))
-
-import pharmasignal_openfda as ofda  # noqa: E402
-import pharmasignal_ror as oracle  # noqa: E402
-import pharmasignal_verify as verify  # noqa: E402
+# 도구 모듈은 반드시 패키지 경로로 import 한다. sys.path 로 최상위 모듈로도 불러오면
+# @register_function 이 두 번 돌아 같은 짧은 이름(openfda_faers 등)이 둘이 되고,
+# NAT 가 YAML 의 _type 을 해석하지 못한다 (nat/cli/type_registry.py _do_compute_annotation).
+from harness.tools import pharmasignal_openfda as ofda
+from harness.tools import pharmasignal_ror as oracle
+from harness.tools import pharmasignal_verify as verify
 
 # ---------------------------------------------------------------------------
 # v1 산술 원문 (AgentForgeAI code/src/pharmasignal/signal.py 의 analyze() 안쪽)

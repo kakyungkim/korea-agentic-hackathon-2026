@@ -31,8 +31,17 @@ GET https://health.api.nvidia.com/v1/models     ->  404
 | `health.api.nvidia.com/v1/biology/openfold/openfold2/predict-structure-from-msa-and-template` | 405 |
 | `integrate.api.nvidia.com/v1/biology/mit/diffdock` | 404 (경로 없음) |
 
-**POST가 이 키로 인가되는지는 확인하지 않았다 [unverified].** 크레딧과 레이트리밋을 쓰는
-호출이라 계획 단계에서 보내지 않았다. 아래 "가장 큰 위험"을 먼저 읽고 스모크 1회로 확인한다.
+**POST 인가는 2026-09-25에 실측으로 확인했다. 통과했다.** 4R6E chain A(2,752 ATOM, 222KB)와
+niraparib SMILES로 DiffDock을 불러 **HTTP 200, 4.1초, `Nvcf-Status: fulfilled`**를 받았다.
+`position_confidence`는 `[0.798, 0.751, 0.725]`이고 포즈 3개가 SDF로 왔다.
+원문 기록은 `eval/results/diffdock_smoke.txt`에 있다.
+
+이 한 번으로 아래 네 가지가 함께 풀렸다.
+
+1. 계정에 생물학 NIM 권한이 있다
+2. 호출은 동기다. 202 폴링 분기가 필요 없었다
+3. 호스팅 필드 이름은 **`steps`**다. `num_steps`가 아니다
+4. 222KB 인라인 본문이 통과한다. `is_staged`나 asset 업로드가 필요 없다
 
 `build.nvidia.com`의 생물학 목록에 올라온 모델은 alphafold2, alphafold2-multimer, openfold2,
 openfold3, diffdock, proteinmpnn, rfdiffusion, genmol, molmim, evo2 계열, msa-search, boltz-2다.
@@ -103,6 +112,54 @@ headers = {
 }
 ```
 
+## position_confidence 는 확률이 아니라 로짓이다 (실측)
+
+2026-09-25 케이스 시연에서 새로 관측했다. **음수 값이 나온다.**
+
+| 경로 | 타깃 | position_confidence |
+|---|---|---|
+| A | PARP1 4R6E chain A | 0.761, 0.693, 0.515 |
+| B | 응고인자 Xa 2P16 chain A | **-0.172, -0.205, -0.665** |
+
+확률이면 0 아래로 내려갈 수 없다. 원 논문의 학습 방식과 맞춰 보면 설명이 된다.
+confidence model 은 포즈의 RMSD 2옹스트롱 미만 여부를 라벨로 삼아 교차엔트로피로 학습된
+이진 분류기이고, **출력이 시그모이드를 지나기 전의 로짓**이다. 로짓 0.761 은 확률 약 0.68,
+로짓 -0.172 는 확률 약 0.46 에 해당한다. 이 해석은 학습 절차에서 추론한 것이고 NVIDIA 문서가
+명시한 것은 아니다 [unverified].
+
+**세 가지가 따라온다.**
+
+1. **임계값을 숫자 크기로 정하면 안 된다.** 0.5 를 기준으로 삼으면 확률 기준인지 로짓 기준인지에
+   따라 뜻이 완전히 달라진다
+2. **음수를 "결합하지 않는다" 의 증거로 읽으면 안 된다.** 포즈가 기하학적으로 맞을 자신이 낮다는
+   뜻이고 결합 여부를 판정하지 않는다. 과잉해석 규칙에 이 항목을 넣었다
+3. **친화도 환산 금지 규칙이 더 강해진다.** 로짓을 친화도로 환산한다는 것은 단위도 축도 맞지 않는
+   변환이다
+
+경로 B 가 교차 도킹이라 낮게 나왔을 가능성이 있으나 확인하지 않았다 [unverified].
+
+## DiffDock 은 호출마다 결과가 다르다 (실측)
+
+같은 입력으로 두 번 불러 신뢰도가 달랐다. 확산모델이고 **호스팅 API 에 시드 파라미터가 없다.**
+
+| 호출 | 입력 | position_confidence |
+|---|---|---|
+| 2026-09-25 스모크 | 4R6E chain A 2,752 ATOM + niraparib | 0.798, 0.751, 0.725 |
+| 2026-09-25 클라이언트 | 같은 입력 (ATOM 줄 수와 바이트 일치) | 0.761, 0.693, 0.515 |
+
+3순위 포즈에서 0.725 와 0.515 로 차이가 크다. 이것이 세 가지를 뜻한다.
+
+**첫째, 재현성을 주장할 수 없다.** 신청서와 영상에 DiffDock 수치를 적을 때 "이 값이 나온다"
+가 아니라 "이 호출에서 이 값이 나왔다" 로 적는다. 요청과 응답의 SHA256 을 함께 남겨
+어느 호출의 결과인지 대조할 수 있게 한다. `bionemo_client.py` 가 그렇게 기록한다.
+
+**둘째, 과잉해석 규칙이 하나 늘었다.** 단일 호출 결과에 재현성이나 수렴을 주장하면 반려한다.
+FDDD 의 Vina 쪽에도 같은 취지의 항목이 있다. 단일 seed, exhaustiveness 4, 불확실성 분석 없음.
+이쪽은 시드조차 없으므로 더 강하다. **우리가 실측으로 보인 규칙이라 발표에서 값이 크다.**
+
+**셋째, 캐시가 필수다.** 재실행마다 값이 달라지면 문서 수치와 결과 파일이 어긋난다.
+응답 캐시로 같은 입력에 같은 값을 재생한다. 캐시 적중은 0.01초이고 네트워크를 타지 않는다.
+
 ## DiffDock (우선순위 1)
 
 ```
@@ -150,8 +207,20 @@ NVIDIA 문서가 "No string-typed numeric fields"라고 못 박는다. GenMol과
 
 > Do not convert confidence directly into binding affinity.
 
-이 문장을 과잉해석 크리틱 규칙에 그대로 넣는다. NVIDIA가 스스로 금지한 추론을 우리 크리틱이
-잡는 구성이 된다.
+**출처를 정확히 적는다.** 이 문장은 NVIDIA NIM for DiffDock 개요 페이지가 아니라
+`nim-skills/diffdock-nim/references/validation.md:31` 에 있다.
+개요 페이지에서는 같은 문장을 찾지 못했다. 논문과 제출물에 인용할 때 이 경로와 접속일을 함께 밝힌다.
+
+같은 취지를 DiffDock 개발진도 공식 저장소 FAQ 에 적었고 그쪽이 인용하기 더 좋다.
+"No, DiffDock does not predict the binding affinity of the ligand to the protein. ...
+it is not a direct measure of it."(github.com/gcorso/DiffDock README FAQ)
+
+근거가 더 강한 이유는 원 논문에 있다. confidence model 은 생성된 포즈의 RMSD 가 2옹스트롱
+미만인지를 라벨로 삼아 교차엔트로피로 학습된 **이진 분류기**다(Corso 등, ICLR 2023,
+arXiv:2210.01776). 즉 포즈가 기하학적으로 맞을 확률이고 에너지 축이 아니다.
+원문 기준으로 1위 예측이 RMSD 2옹스트롱 미만인 비율은 38퍼센트였다.
+
+이 문장을 과잉해석 크리틱 규칙에 넣는다. NVIDIA가 스스로 금지한 추론을 우리 크리틱이 잡는다.
 
 `422`는 잘못된 `ligand_file_type`, 잘못된 SMILES나 SDF, 또는 ATOM 레코드 없음이다.
 
@@ -291,11 +360,11 @@ async def diffdock_nim(config: DiffDockConfig, _builder: Builder):
 
 ## 확인하지 못한 것
 
-1. 이 계정의 생물학 NIM POST 권한. 스모크 1회로 확인한다
-2. DiffDock 호스팅이 `steps`인지 `num_steps`인지
-3. `is_staged` 사용법과 asset 업로드 절차
-4. `health.api`의 요청과 응답 바이트 한도
-5. DiffDock 호스팅이 202를 반환하는 조건
+~~1. 이 계정의 생물학 NIM POST 권한~~ **확인 완료. 통과.**
+~~2. DiffDock 호스팅이 `steps`인지 `num_steps`인지~~ **`steps`다.**
+~~3. `is_staged` 사용법~~ **필요하지 않다. 222KB 인라인이 통과했다.**
+4. `health.api`의 요청 바이트 한도. 222KB는 되고 상한은 모른다
+5. DiffDock 호스팅이 202를 반환하는 조건. 4.1초 작업은 동기 200이었다
 6. 생물학 NIM의 모델별 레이트리밋과 호출당 소모량
 7. OpenFold2 호스팅 응답의 정확한 필드명
 8. GenMol 호스팅이 숫자형 `temperature`도 받아 주는지

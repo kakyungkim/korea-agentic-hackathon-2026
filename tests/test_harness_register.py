@@ -106,15 +106,39 @@ def test_judge_offline_rejects_planted_case_and_holds_good_case():
 
 
 def test_eval_cases_file_matches_offline_rules():
-    """eval/cases.jsonl 의 부정 케이스는 결정 규칙만으로 reject 되어야 한다."""
+    """eval/cases.jsonl 의 단별 기대를 결정 규칙으로 확인한다.
+
+    약물감시 부정 케이스 1건만 1단 결정 규칙으로 reject 되고, 과잉해석 부정 케이스는 근거 ID 와
+    수치가 모두 실측이라 1단을 통과해 needs_human 이 된다. 그래야 3단 LLM 판정을 재는 데이터가 된다.
+    """
     from pathlib import Path
     rows = [json.loads(line) for line in (Path(__file__).parents[1] / "eval" / "cases.jsonl").read_text().splitlines()
             if line.strip()]
-    assert len(rows) == 3
+    assert len(rows) == 33  # 약물감시 3건 + 과잉해석 규칙 15종 x (통과, 반려)
     verdicts = {r["id"]: judge_offline(r["input"]).verdict for r in rows}
-    assert verdicts["planted_unsupported_claim"] == "reject"
+
+    assert verdicts["planted_unsupported_claim"] == "reject"   # 1단이 잡는 유일한 케이스
     assert verdicts["prr_signal_ok"] == "needs_human"
     assert verdicts["label_listed_ok"] == "needs_human"
+
+    llm_only = [r["id"] for r in rows if r["id"] != "planted_unsupported_claim"]
+    assert all(verdicts[i] == "needs_human" for i in llm_only)
+    assert len([r for r in rows if r["expected_verdict"] == "reject"]) == 16
+    assert len([r for r in rows if r["expected_verdict"] == "pass"]) == 17
+
+
+def test_eval_case_inputs_pass_the_deterministic_evidence_rules():
+    """모든 케이스의 주장이 비지 않은 근거 ID 를 갖는지. 하나라도 비면 3단 측정이 무너진다."""
+    from pathlib import Path
+    rows = [json.loads(line) for line in (Path(__file__).parents[1] / "eval" / "cases.jsonl").read_text().splitlines()
+            if line.strip()]
+    for row in rows:
+        if row["id"] == "planted_unsupported_claim":
+            continue  # 일부러 근거를 비운 1단 케이스
+        author = AuthorOutput.model_validate_json(row["input"])
+        assert author.claims, row["id"]
+        for claim in author.claims:
+            assert claim.evidence_ids and all(e.strip() for e in claim.evidence_ids), row["id"]
 
 
 # --------------------------------------------------------------------------------------
@@ -171,3 +195,45 @@ def test_score_item_scores_match_and_mismatch():
     assert score_item(item("pass", None)).score == 0.0
     bad = score_item(item("maybe", {"verdict": "pass"}))
     assert bad.error is not None
+
+
+# --------------------------------------------------------------------------------------
+# NAT 레지스트리 등록 (register.py 하단 import 블록이 살아 있어야 통과한다)
+# --------------------------------------------------------------------------------------
+def test_domain_tools_are_registered_under_expected_names():
+    """도구 3종이 YAML 의 _type 이름으로 레지스트리에 실렸는지. import 가 빠지면 여기서 잡힌다."""
+    import harness.register  # noqa: F401  (entry point 와 같은 경로로 등록을 발동시킨다)
+    from nat.cli.type_registry import GlobalTypeRegistry
+
+    registered = {i.local_name for i in GlobalTypeRegistry.get().get_registered_functions()}
+    assert {"openfda_faers", "dailymed_label", "pubmed_search", "diffdock_nim"} <= registered
+    assert {"echo_tool", "prr_calculator", "critic_judge"} <= registered
+
+
+def test_registered_tool_names_are_unique():
+    """같은 짧은 이름이 둘이면 NAT 가 YAML 의 _type 을 해석하지 못한다.
+
+    도구 모듈을 패키지(harness.tools.X)와 최상위(X)로 두 번 import 하면 실제로 그렇게 된다.
+    """
+    import harness.register  # noqa: F401
+    from nat.cli.type_registry import GlobalTypeRegistry
+
+    names = [i.local_name for i in GlobalTypeRegistry.get().get_registered_functions()]
+    duplicated = sorted({n for n in names if names.count(n) > 1})
+    assert duplicated == [], f"짧은 이름이 겹친다: {duplicated}"
+
+
+def test_domain_tool_config_types_resolve_to_registered_builders():
+    """설정 클래스의 name= 이 YAML 의 _type 이고, 그 클래스로 빌더를 다시 찾을 수 있어야 한다."""
+    from harness.tools.pharmasignal_dailymed import DailyMedLabelConfig
+    from harness.tools.pharmasignal_openfda import OpenFdaFaersConfig
+    from harness.tools.pharmasignal_pubmed import PubmedSearchConfig
+    from nat.cli.type_registry import GlobalTypeRegistry
+
+    registry = GlobalTypeRegistry.get()
+    for config_type, expected in ((OpenFdaFaersConfig, "openfda_faers"),
+                                  (DailyMedLabelConfig, "dailymed_label"),
+                                  (PubmedSearchConfig, "pubmed_search")):
+        assert config_type.static_type() == expected
+        info = registry.get_function(config_type)
+        assert info.config_type is config_type

@@ -5,7 +5,15 @@
 # 실행: .venv/bin/nat validate --config_file configs/eval.yml
 #       .venv/bin/nat eval --config_file configs/eval.yml
 #       키 없이 결정 규칙만: CRITIC_DETERMINISTIC_ONLY=true .venv/bin/nat eval --config_file configs/eval.yml
-#       (부정 케이스 1건은 결정 규칙에서 reject 되고, 정상 2건은 needs_human 이 되어 점수 1/3 이 나온다. LLM 이 붙으면 3/3 목표.)
+#
+# 케이스는 33건이다. 약물감시 3건(정상 2, 근거 없는 주장 1)과 과잉해석 규칙 15종의 통과/반려 한 쌍씩 30건이다.
+# 과잉해석 반려 케이스는 근거 ID 와 수치가 모두 실측이라 1단 결정 규칙으로는 걸리지 않는다.
+# 그래서 결정 규칙만 돌리면 약물감시 부정 케이스 1건만 맞고, 나머지 32건은 needs_human 이 되어 점수가 1/33 이다.
+# 두 수치의 차이가 LLM 의미 판단의 실제 몫이다.
+#
+# workflow.system_prompt 는 crictic_judge 의 기본 프롬프트를 덮어쓴 것이고, 내용은
+# src/harness/tools/overclaim_rules.py 의 stage3_prompt(numbers_verified=False) 출력과 같다.
+# 규칙을 고칠 때는 그 모듈을 고치고 이 블록을 다시 붙인다. tests/test_overclaim_rules.py 가 둘의 일치를 확인한다.
 # 결과: eval/results/workflow_output.json, eval/results/critic_verdict_output.json (커밋하지 않음, .gitignore)
 #
 # 필드 이름은 nat/data_models/evaluate_config.py, nat/data_models/dataset_handler.py 에서 확인했다.
@@ -22,16 +30,40 @@ llms:
     temperature: 0.0
     max_tokens: 2048
     chat_template_kwargs:
-      enable_thinking: true
+      # 판정만 받으면 되므로 생각 과정을 끈다. 케이스 러너 3단도 같은 설정으로 돌았다.
+      enable_thinking: false
 
 workflow:
   _type: critic_judge
   llm_name: planner
   deterministic_only: ${CRITIC_DETERMINISTIC_ONLY:-false}
+  system_prompt: |-
+      You are the overclaim stage of a critic inside a drug-candidate evidence pipeline. A deterministic stage already checked that every claim carries a non-empty evidence id, and a separate numeric oracle owns the arithmetic. Do NOT re-check ids or arithmetic, and do not judge whether an evidence id looks real: treat every non-empty id as valid provenance.
+      Judge ONE thing: does any claim or the summary draw an inference that the cited evidence cannot support? Apply these rules, which come from the docking demo's own published restrictions, from the NVIDIA DiffDock documentation and from pharmacovigilance practice:
+      1. 교차 타깃 순위 금지. 서로 다른 targetId 에서 나온 Vina 점수를 견주어 선택성, 상대적 결합 세기, 타깃 우선순위, Kd, Ki, IC50, EC50, 효능을 추론하면 반려한다. 점수차(예: 2.211 kcal/mol)를 결합 세기 차이로 옮기는 것도 같다.
+      2. 친화도 환산 금지. Vina 점수(kcal/mol)나 DiffDock position_confidence 에서 Kd, Ki, IC50, EC50, 나노몰 수준 같은 실험 친화도나 효능을 환산하면 반려한다.
+      3. 교차 도킹 해석 금지. role 이 "Exploratory cross-docking; no claim of validated binding" 인 조합(niraparib 대 응고인자 Xa 2P16, niraparib 대 COX-2 3LN1)의 점수를 실험으로 확인된 결합, 오프타깃 작용, 병용 주의나 임상 주의사항으로 말하면 반려한다.
+      4. 종 차이 명시. 생쥐 COX-2 구조(PDB 3LN1)에서 나온 결과를 사람 COX-2 결과로 말하거나, 종을 밝히지 않고 사람에서의 함의로 옮기면 반려한다.
+      5. 수렴 주장 금지. 단일 seed 20260914, exhaustiveness 4, num_modes 5 로 한 번 돌린 Vina 결과에 수렴, 재현성, "다시 돌려도 같다" 를 말하면 반려한다. FDDD 가 불확실성과 수렴 분석을 하지 않았다.
+      6. RMSD 기준 명시. FDDD 포즈 표의 rmsdLowerBoundFromBest, rmsdUpperBoundFromBest 를 결정 구조의 리간드 포즈와의 일치로 말하면 반려한다. 그 값은 같은 실행 안의 1순위 포즈를 기준으로 잰 것이다.
+      7. 종점 혼합 규칙. BindingDB 참조 집합의 Ki 1,194건, IC50 5,588건, Kd 214건, EC50 315건을 보정과 불확실성 표기 없이 7,311건의 단일 친화도 근거로 합치면 반려한다. 종점을 나누어 적거나 보정과 불확실성을 함께 밝히면 반려하지 않는다.
+      8. 입력 동일성. SMILES 를 실행된 입력이라고 말하면 반려한다. 실행 입력은 준비된 PDBQT 파일(/data/docking/inputs/4R6E_ligand_niraparib.pdbqt)이고 연결성 SMILES 는 입체화학을 빠뜨릴 수 있다. 실행 입력이 준비된 PDBQT 라고 밝힌 문장은 규칙을 지킨 것이므로 반려하지 않는다.
+      9. 초파리 결과 해석. 도킹 점수나 초파리 커넥톰 포즈 탐색 결과를 초파리나 사람의 반응, 효능, 약효의 근거로 말하면 반려한다. 포즈 탐색이 성공한 것은 기하학적 배치일 뿐이다.
+      10. DiffDock 신뢰도 환산 금지. position_confidence(경로 A 의 0.761, 0.693, 0.515 등)를 결합 친화도로 환산하거나 친화도의 뒷받침으로 쓰면 반려한다. 그 값은 포즈 RMSD 2옹스트롱 미만 여부를 라벨로 학습한 이진 분류기의 출력이다.
+      11. 도구 간 점수 혼용 금지. Vina 의 kcal/mol 과 DiffDock 의 position_confidence 를 같은 척도에 두고 비교하거나, 한쪽이 다른 쪽을 수치로 확증한다고 말하면 반려한다.
+      12. DiffDock 재현성 주장 금지. 시드가 없는 단일 DiffDock 호출의 position_confidence 를 재현되는 값이나 고정된 값처럼 말하면 반려한다. 같은 입력 두 번에 3순위 포즈가 0.725 와 0.515 로 갈린 것을 실측했다. "이 호출에서 이 값이 나왔다" 로 적으면 반려하지 않는다.
+      13. DiffDock 음수 신뢰도 해석 금지. position_confidence 가 음수인 것(경로 B 의 -0.172, -0.205, -0.665)을 결합하지 않는다는 증거나 오프타깃 배제의 근거로 읽으면 반려한다. 포즈가 기하학적으로 맞을 자신이 낮다는 뜻이고 결합 여부를 판정하지 않는다.
+      14. 라벨 기재와 인과 구분. FAERS 불균형 지표(PRR 9.13, ROR 9.55, 카이제곱 7672.29 등)를 인과 관계의 확증이나 "약물이 이상사례를 일으킨다" 로 말하면 반려한다. 보고가 많다는 서술, 시그널 탐지 기준(PRR>=2, a>=3, 카이제곱>=4 같은 Evans 기준) 충족 여부, 다음 확인 단계 제안은 반려하지 않는다.
+      15. 근거 범위 준수. 화합물 단위 사람 근거(DailyMed 라벨, FAERS 2x2, PubMed 문헌)를 특정 타깃 결합의 확증으로 쓰면 반려한다. 이 셋은 niraparib 이라는 화합물에 붙은 근거이고 어느 타깃에 결합하는지를 가리지 않는다. 참조 친화도 집합이 없는 경로에 참조가 있다고 말하는 것도 같다.
+      A claim that states a limit, or that explicitly declines an inference, OBEYS the rule it mentions: never reject a claim for naming the boundary it is respecting.
+      Set verdict `reject` when one or more claims or the summary break a rule, `pass` when none do, and `needs_human` only when you genuinely cannot decide. Emit one check per rule you found broken, named after the rule, with the offending claim quoted in `reason`. Write every `reason` and `required_followups` entry in Korean.
+      Answer with a single JSON object and nothing else, no markdown fence and no commentary:
+      {"verdict": "pass|reject|needs_human", "checks": [{"name": "...", "passed": true, "reason": "..."}], "required_followups": ["..."]}
 
 eval:
   general:
-    max_concurrency: 2
+    # 동시 2 로 돌리면 build.nvidia.com 에서 429 와 503 이 섞여 나와 needs_human 으로 떨어진다(2026-09-25 실측).
+    max_concurrency: 1
     output_dir: eval/results
     dataset:
       _type: jsonl

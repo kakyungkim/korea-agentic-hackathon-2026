@@ -250,7 +250,17 @@ CRITIC_DETERMINISTIC_ONLY=true .venv/bin/nat eval --config_file configs/eval.yml
 5. `tests/test_<domain>_<tool>.py`를 두고, 네트워크가 필요한 테스트는 `@pytest.mark.network`.
 6. `.venv/bin/nat validate --config_file configs/author.yml`과 `nat info components -q <name>`으로 등록을 확인한다.
 
-현재 `src/harness/tools/`에 pharmasignal_*, nightshift_* 모듈이 들어와 있으나 register.py의 import 블록은 아직 주석 상태다. 해당 모듈이 `@register_function`을 갖추면 담당자가 주석을 해제한다.
+**2026-09-25 갱신.** import 블록 주석을 해제했다. 지금 등록된 도구는 `echo_tool`,
+`prr_calculator`, `openfda_faers`, `dailymed_label`, `pubmed_search`, `diffdock_nim` 여섯이고
+평가기 `critic_verdict` 와 크리틱 `critic_judge` 가 함께 실린다. 설정 검증 4종과 오프라인 테스트
+183건이 통과한다.
+
+nightshift_* 모듈은 `@register_function` 이 없어 import 하지 않는다. Night Shift 는 2026-09-25에
+후보에서 뺐다(`docs/notes/topic-decision.md`). 예시로 적혀 있던 `nightshift_repo` 모듈은 존재하지 않는다.
+
+**도구를 늘릴 때 짧은 이름이 겹치면 `nat validate` 가 엉뚱한 메시지로 실패한다.**
+같은 파일을 서로 다른 모듈 경로로 두 번 import 하면 그렇게 된다. 자세한 것은
+`docs/TROUBLESHOOTING.md` 8번이다. 도구 테스트는 반드시 `from harness.tools import ...` 로 쓴다.
 
 ## 실측 결과 (2026-09-24)
 

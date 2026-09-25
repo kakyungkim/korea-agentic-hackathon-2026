@@ -137,6 +137,88 @@ def search_pubmed(drug: str, reaction: str, retmax: int = 10, use_cache: bool = 
     return out
 
 
+# ======================================================================================
+# NAT 등록 래퍼 (pubmed_search). 위 파싱 로직과 기존 함수는 그대로 두고 감싸기만 한다.
+#
+# 패턴은 src/harness/register.py 의 prr_calculator 를 그대로 따른다.
+#   FunctionBaseConfig(name=...)  -> YAML 의 _type 값
+#   @register_function            -> NAT 레지스트리 등록 (import 시점에 발동)
+#   FunctionInfo.from_fn(fn, description=..., converters=[모델 -> str])
+# register.py 하단의 "도메인 도구 import" 블록이 이 모듈을 import 해야 등록이 실린다.
+# ======================================================================================
+import asyncio  # noqa: E402
+
+from pydantic import BaseModel  # noqa: E402
+from pydantic import ConfigDict  # noqa: E402
+from pydantic import Field  # noqa: E402
+
+from nat.builder.builder import Builder  # noqa: E402
+from nat.builder.function_info import FunctionInfo  # noqa: E402
+from nat.cli.register_workflow import register_function  # noqa: E402
+from nat.data_models.function import FunctionBaseConfig  # noqa: E402
+
+MIN_INTERVAL_FLOOR = 0.11  # NCBI api_key 가 있을 때의 초당 10회 상한
+
+
+class PubmedSearchReport(BaseModel):
+    """pubmed_search 의 출력 스키마. `search_pubmed` 반환 dict 를 그대로 담는다."""
+
+    model_config = ConfigDict(extra="allow")
+
+    tool: str = "pubmed_search"
+    drug: str
+    reaction: str
+    term: str = Field(description="PubMed query actually sent, for example: metformin AND \"Lactic acidosis\"")
+    total_count: int | None = Field(default=None, description="Total PubMed hits, not only the ones returned")
+    pmids: list[str] = Field(default_factory=list)
+    articles: list[dict[str, Any]] = Field(
+        default_factory=list,
+        description="pmid, title, journal, year, publication_types, first 300 chars of the abstract, and the URL")
+    query_urls: dict[str, str | None] = Field(default_factory=dict)
+    evidence_ids: list[str] = Field(default_factory=list, description="PMIDs. Cite these.")
+    errors: list[str] = Field(default_factory=list)
+    retrieved_at: str | None = None
+
+
+class PubmedSearchConfig(FunctionBaseConfig, name="pubmed_search"):
+    """PubMed E-utilities 문헌 검색 도구. 설정값은 결과 수, 호출 간격, 캐시다."""
+
+    retmax: int = Field(default=5, ge=1, le=100, description="가져올 상위 논문 수. 관련도 정렬 기준.")
+    min_interval_seconds: float = Field(
+        default=MIN_INTERVAL, ge=MIN_INTERVAL_FLOOR,
+        description="E-utilities 호출 사이 최소 간격. 키 없이 초당 3회 제한이라 기본 0.34초.")
+    use_cache: bool = Field(default=True, description="원응답 파일 캐시 사용 여부.")
+    cache_dir: str | None = Field(default=None, description="캐시 디렉터리. 비우면 eval/results 를 쓴다.")
+
+
+@register_function(config_type=PubmedSearchConfig)
+async def pubmed_search(config: PubmedSearchConfig, _builder: Builder):
+    # 모듈 전역 MIN_INTERVAL 이 호출 간격을 지킨다. 설정으로 늦추기만 하고 하한 아래로는 못 내려간다.
+    globals()["MIN_INTERVAL"] = max(config.min_interval_seconds, MIN_INTERVAL_FLOOR)
+    if config.cache_dir:
+        os.environ["PHARMASIGNAL_CACHE_DIR"] = config.cache_dir
+
+    async def _search(drug: str, reaction: str) -> PubmedSearchReport:
+        """Search PubMed for literature on one drug and one adverse event.
+
+        drug: ingredient or brand name, for example "metformin".
+        reaction: the event term, for example "Lactic acidosis".
+        Returns total_count (all hits), the top articles by relevance with PMID, title, journal,
+        year, publication types and the first 300 characters of the abstract, and evidence_ids
+        holding the PMIDs. Cite a PMID in every claim drawn from the literature. Case reports and
+        reviews describe association, never causation, so do not state causation from this tool.
+        An empty result means no indexed hit, not the absence of risk.
+        """
+        raw = await asyncio.to_thread(search_pubmed, drug, reaction, config.retmax, config.use_cache)
+        return PubmedSearchReport.model_validate(raw)
+
+    def _report_to_str(report: PubmedSearchReport) -> str:
+        """도구 출력이 문자열을 요구하는 경로(콘솔, 일부 도구 래퍼)용 변환기."""
+        return report.model_dump_json()
+
+    yield FunctionInfo.from_fn(_search, description=_search.__doc__, converters=[_report_to_str])
+
+
 if __name__ == "__main__":  # 수동 점검용
     import json
     import sys

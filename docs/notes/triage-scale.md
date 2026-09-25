@@ -128,7 +128,7 @@ env -u NVIDIA_API_KEY .venv/bin/python scripts/bench_triage_scale.py --offline -
 양쪽의 `http_get` 과 `judge_one` 을 예외를 던지는 함수로 바꿔 놓고 완주를 보는 방식이라,
 한 번이라도 밖으로 나가면 테스트가 깨진다.
 
-## 확인하지 못한 것
+## 미확인 사항
 
 - **판정이 갈리는 자리를 보지 못했다.** 10건 모두 판정과 규칙이 `yes` 였다. 보고 건수
   상위권은 신호가 강한 자리라서 두 판정이 어긋날 구간이 표본에 들어오지 않았다.

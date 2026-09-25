@@ -66,7 +66,7 @@ Applying Landlock filesystem sandbox [abi:V2 compat:BestEffort ro:12 rw:3]
 추론 자격증명이 정책 파일이 아니라 provider가 들고 있다는 점도 확인했다. 샌드박스 안에서
 `printenv NVIDIA_API_KEY`는 자리표시자를 돌려주는데 `integrate.api.nvidia.com` 호출은 200이 온다.
 
-## 동작하는 것
+## 동작 항목
 
 - 도구 3종이 공개 API로 실제 동작한다. openFDA FAERS 집계와 불균형 지표, DailyMed 라벨 섹션 검색,
   PubMed 문헌 조회다. 응답은 캐시되어 재실행이 빠르다.
@@ -77,7 +77,7 @@ Applying Landlock filesystem sandbox [abi:V2 compat:BestEffort ro:12 rw:3]
 - 제출용 그림 2종이 있다. 아키텍처 도식과 케이스 3건 포레스트 플롯이며 결과 파일에서 수치를 읽는다.
 - 영상과 슬라이드 제작 도구가 `assets/`에 있다. v0에서 가져왔고 원고와 내용만 갈면 된다.
 
-## 아직 못 한 것
+## 미시행 사항
 
 1. **팀 확정.** 폼의 "팀 구성 인원"이 2명부터라 최소 1명 합류가 사실상 필수다. 9/27(일)까지 합류해야
    각자 폼을 낼 수 있다. 연락 현황은 `docs/notes/recruiting.md`.

@@ -40,7 +40,7 @@ cp /tmp/pretendard/public/static/alternative/Pretendard-{Regular,Medium,SemiBold
 파이썬 계산, `PLUM`은 크리틱, `BRICK`은 차단). 원색과 컬러 이모지는 쓰지 않고, 아이콘은
 막대, 문서, 돋보기, 2x2 표, 체크, 사람 모양을 도형으로 직접 그린다.
 
-## 그림 1이 담은 것
+## 그림 1의 내용
 
 왼쪽 사용자 입력에서 시작해 계획 수립(Nemotron 3 Super), 도구 3종(openFDA FAERS, DailyMed 라벨,
 PubMed), 지표 계산(파이썬), 트리아지 메모(Nemotron 3.5 Lightning), 독립 크리틱(critic.yml, 쓰기 도구 없음)
@@ -58,7 +58,7 @@ NeMo Agent Toolkit은 두 워크플로 YAML, NeMo Guardrails 정책은 `configs/
 OpenShell은 `policies/pharmasignal.yaml`에서 확인한 것이다. **NeMo Retriever만 구현되어 있지 않아
 "라벨 RAG는 확장 계획"이라고 작은 글씨로 적었다.** 구현하면 이 문구를 도구 한 줄로 올린다.
 
-## 그림 2가 담은 것
+## 그림 2의 내용
 
 `eval/results/pharmasignal_cases.json`을 읽어 그린 포레스트 플롯이다. 하드코딩한 수치는 없고,
 `load_cases()`가 케이스별로 `faers.prr`, `faers.prr_ci95`, `summary.faers_a`, `summary.labeled`,
@@ -105,7 +105,7 @@ ROR 값은 별도 행이나 열로 넣지 않았다. 세 케이스 모두 Evans 
 1차 렌더에서 배지 아래 설명 "환자 개별 복약 조언을 차단 주제로 정의"가 그림 왼쪽 경계 밖으로 잘렸다.
 두 줄로 나눠 다시 뽑아 잘림이 사라진 것을 눈으로 확인했다. 두 그림 모두 tofu와 글씨 겹침은 없다.
 
-## 확인하지 못한 것
+## 미확인 사항
 
 - [unverified] 제출 PDF와 README에 넣었을 때의 인쇄 품질. 300dpi로 뽑았으나 실제 배치 후
   축소 배율은 아직 정하지 않았다.

@@ -554,8 +554,8 @@ def _brief(case: dict) -> str:
 
 def test_render_brief_has_required_sections():
     text = _brief(case_fixture())
-    for heading in ("# ", "## 단계별 근거", "## 크리틱 판정 두 벌", "## 말할 수 있는 것",
-                    "## 말할 수 없는 것", "## 시사점"):
+    for heading in ("# ", "## 단계별 근거", "## 크리틱 판정 두 벌", "## 근거 안의 진술",
+                    "## 근거 밖의 진술", "## 시사점"):
         assert heading in text
     for row in ("구조", "결합 1 (Vina 실측)", "결합 2 (DiffDock NIM)", "참조 (BindingDB)",
                 "사람 1 (DailyMed 라벨)", "사람 2 (FAERS)", "사람 3 (PubMed)"):

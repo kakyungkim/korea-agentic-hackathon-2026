@@ -367,7 +367,7 @@ content-safety 계열은 타임아웃이다. `nvidia/nemotron-3.5-content-safety
 **교훈.** 과잉해석 규칙에 "시드 없는 단일 호출에 재현성을 주장하면 반려" 를 넣었다.
 우리가 실측으로 보인 규칙이다.
 
-## 알아 두면 좋은 것
+## 참고 사항
 
 - **NAT의 `thinking:` 키는 Nemotron 3 ID를 거부한다.** 정규식이 맞지 않아 검증에서 실패한다.
   `chat_template_kwargs: {enable_thinking: true|false}`로 쓴다.

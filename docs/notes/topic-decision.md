@@ -133,7 +133,7 @@ $ grep -rn "register_function" src/harness/tools/ | wc -l
 검증     근거 ID 결정 규칙 → 숫자 오라클 → 과잉해석 LLM 판정
 ```
 
-### 이렇게 두면 풀리는 것
+### 이 구성의 이점
 
 - **팀원 세 사람의 관심이 전부 들어간다.** 초파리와 도킹은 면역학 박사이자 AI 신약개발 저자인
   팀원, 라벨과 약 정보는 약사인 팀원, 약물감시 지표와 검증 규율은 팀장이 맡는다
@@ -266,7 +266,7 @@ G2는 사실상 해소된 것으로 보인다. 팀원이 데모 주소를 먼저
 4. `rcsb_structure`와 구조 예측. FDDD의 준비된 PDBQT를 그대로 사용
 5. 그림 2장 중 결과 그림
 
-### 줄이지 않는 것
+### 축소 제외 항목
 
 - **도메인 도구가 NAT 함수로 등록되어 에이전트가 실제로 부르는 것.** 심사 1번 항목의 핵심이고
   지금 비어 있다
@@ -283,7 +283,7 @@ G2는 사실상 해소된 것으로 보인다. 팀원이 데모 주소를 먼저
 
 ## 고칠 파일
 
-### 그대로 두는 것
+### 유지 항목
 
 `src/harness/schemas.py`, `src/harness/critic.py`, `src/harness/evaluators.py`,
 `configs/critic.yml`, `configs/eval.yml`, `policies/base.yaml`,

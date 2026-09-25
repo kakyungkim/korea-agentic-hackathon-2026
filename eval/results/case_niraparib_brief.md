@@ -50,7 +50,7 @@
 
 심은 과잉해석 목록: 교차 타깃 순위와 선택성 추론, 도킹 점수와 DiffDock 신뢰도의 친화도 환산, 단일 seed 결과의 수렴과 재현성 주장, 교차 도킹을 확인된 결합으로 해석, 종점 4종을 보정 없이 단일 친화도로 합침, 불균형 지표를 인과로 해석, 화합물 단위 사람 근거를 특정 타깃 결합의 확증으로 사용.
 
-## 말할 수 있는 것
+## 근거 안의 진술
 
 - 경로 A 에서 niraparib 이 PARP1 4R6E chain A 에 대해 Vina -10.178 kcal/mol 을 받았다는 사실. 단 이 값은 같은 실행 안의 다른 포즈와만 비교한다.
 - 그 실행의 프로토콜(seed 20260914, exhaustiveness 4, 박스 좌표)과 로그 SHA256 으로 어느 실행의 값인지 대조할 수 있다는 사실.
@@ -61,7 +61,7 @@
 - PubMed 문헌 92건이 있고 그중 제목에 이 이상사례가 들어간 보고가 있다는 사실.
 - 경로 B 의 Vina 점수 -7.967 kcal/mol 자체와, FDDD 가 그 조합에 적어 둔 역할이 "Exploratory cross-docking; no claim of validated binding" 이라는 사실.
 
-## 말할 수 없는 것
+## 근거 밖의 진술
 
 - 두 점수(-10.178, -7.967)를 견주어 PARP1 선택성을 말하는 것. 서로 다른 단백질이고 교차 타깃으로 보정되지 않았다.
 - Vina 점수나 DiffDock 신뢰도를 Kd, Ki, IC50, EC50 으로 환산하는 것. NVIDIA 문서 원문이 "Do not convert confidence directly into binding affinity" 다.

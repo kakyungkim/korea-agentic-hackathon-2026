@@ -278,7 +278,7 @@ nightshift_* 모듈은 `@register_function` 이 없어 import 하지 않는다. 
 - `nat run --config_file configs/author.yml`: 작성자 에이전트가 `prr_calculator`를 호출해 PRR 19.8 을 받고, `claims`와 `summary`를 가진 JSON 하나로 답했다. 근거 ID `calc:prr:40-960-200-98800`이 주장에 붙어 나왔다. `tool_calling_agent`와 Nemotron 3 super 의 네이티브 tool calling 이 맞물린다.
 - 크리틱의 구조화 출력이 `response_format` json_schema 로 동작한다(위 절 참고).
 
-## 확인하지 못한 것
+## 미확인 사항
 
 - [unverified] NemoGuard 토픽 제어가 실제로 요청을 차단하는 모습. `nvidia/llama-3.1-nemoguard-8b-topic-control`이 500(서버 쪽 CUDA 오류)을 돌려줘 시연하지 못했다. 배선은 레일이 그 모델을 호출하는 데까지 확인했다.
 - [unverified] `nvidia/nemotron-3.5-content-safety`의 출력(`User Safety: unsafe` 한 줄)이 NeMo Guardrails 의 content safety 파서와 맞는지.

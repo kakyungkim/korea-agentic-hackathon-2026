@@ -358,7 +358,7 @@ async def diffdock_nim(config: DiffDockConfig, _builder: Builder):
     yield FunctionInfo.from_fn(_dock, description=_dock.__doc__, converters=[...])
 ```
 
-## 확인하지 못한 것
+## 미확인 사항
 
 ~~1. 이 계정의 생물학 NIM POST 권한~~ **확인 완료. 통과.**
 ~~2. DiffDock 호스팅이 `steps`인지 `num_steps`인지~~ **`steps`다.**

@@ -88,7 +88,7 @@ v1은 결과를 점추정값(ROR)이 아니라 **신뢰구간 하한**으로 정
 항목은 ROR이 커도 하한이 낮아 뒤로 밀리므로, 우연히 커진 비가 목록 위로 올라오는 것을 막는다.
 `pharmasignal_ror.rank()`로 옮겼다.
 
-### 가져오지 않은 것
+### 제외 항목
 
 v1의 `analyze()`는 ClinicalTrials.gov의 `adverseEventsModule`(영향 인원, 위험 인원)에서
 분할표를 짰다. 이번은 openFDA FAERS 보고 건수로 표를 짜므로 표를 만드는 부분은 데이터 구조에

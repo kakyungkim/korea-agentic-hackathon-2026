@@ -286,7 +286,7 @@ NemoClaw는 OpenShell을 설치하고 그 위에 OpenClaw, Hermes, LangChain Dee
 
 이 프로젝트에는 맞지 않는다고 판단한다. 첫째, 우리는 NAT 워크플로와 자체 도구를 담은 커스텀 이미지를 돌리는데, NemoClaw 문서가 이 경우를 "OpenShell 단독" 경로로 안내한다. 둘째, 요구 리소스(RAM 최소 8GB, 권장 16GB, 디스크 20~40GB, Node.js 22.19 이상)가 6GB VM에 맞지 않는다. 셋째, 검증 플랫폼이 DGX와 Ubuntu 24.04 네이티브 Linux, Apple Silicon macOS, WSL2이고 Intel Mac 위의 QEMU VM은 언급이 없다. 다만 DLI 교육 미션(S-FX-43)에서 NemoClaw를 다루므로 개념과 명령은 교육 환경(Brev)에서 익히고, 제출물에는 "OpenShell 정책을 직접 작성했고 NemoClaw는 참조 스택으로 검토했다"고 적는 편이 정확하다.
 
-## 안 되는 것
+## 제약 사항
 
 - Intel Mac 호스트에 OpenShell 설치. 설치 스크립트가 아키텍처 검사에서 종료한다. VM이 유일한 경로다.
 - 호스트의 Docker 27을 게이트웨이 런타임으로 사용. 지원 매트릭스 최소 버전이 28.0이고, 어차피 macOS x86_64 게이트웨이 바이너리가 없다.

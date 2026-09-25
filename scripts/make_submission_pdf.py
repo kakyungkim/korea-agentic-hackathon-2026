@@ -873,7 +873,7 @@ def case_html(data: dict) -> str:
                 widths=("21%", "39.5%", "39.5%"))
         + common_block
         + f'<p class="muted">두 경로를 가른 것은 점수 차이가 아니라 그 점수를 받쳐 줄 실험 근거의 '
-          f'유무였다. 케이스 브리프는 말할 수 있는 것 {len(case["can_say"])}항목과 말할 수 없는 것 '
+          f'유무였다. 케이스 브리프는 근거 안의 진술 {len(case["can_say"])}항목과 근거 밖의 진술 '
           f'{len(case["cannot_say"])}항목으로 끝난다. '
           f'출처 <code>eval/results/case_niraparib.json</code> '
           f'(생성 {esc(case["generated_at"])}). 도킹 원본 SHA256 '
@@ -931,7 +931,7 @@ def notyet_html(data: dict) -> str:
           "일치도는 아직 없다. <code>build.nvidia.com</code> 이 간헐적으로 503 을 내므로 "
           "측정을 다시 돌려야 할 때가 있다.</p>"
     )
-    return section("7", "아직 하지 않은 것", body,
+    return section("7", "미시행 사항", body,
                    lead="되지 않는 것을 되는 것처럼 쓰지 않는다. 이 저장소의 규율이다.",
                    keep=True)
 
@@ -1011,7 +1011,7 @@ def collect() -> dict:
         "solution_note": solution_note,
         "stack": md_fenced(submission, "활용한 핵심 기술 및 AI 모델", SUBMISSION_MD),
         "critic_table": md_table(readme, "크리틱 3단", README_MD),
-        "notyet_table": md_table(readme, "아직 하지 않은 것", README_MD),
+        "notyet_table": md_table(readme, "미시행 사항", README_MD),
         "credits_table": md_table(credits, "층별 기여", CREDITS_MD),
         "assets_table": md_table(credits, "외부 자산", CREDITS_MD),
         "case": load_case(),

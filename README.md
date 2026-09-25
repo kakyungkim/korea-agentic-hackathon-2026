@@ -70,8 +70,8 @@ LLM 에이전트를 이런 도구에 붙이면 그 선을 자주 넘는다. **�
 | 사람 근거 | 라벨 기재, PRR 9.13, 문헌 92건 | 화합물 단위라 타깃을 가리지 못함 |
 
 **두 경로를 가른 것은 점수 차이가 아니라 그 점수를 받쳐 줄 실험 근거의 유무였다.**
-전체 브리프는 `eval/results/case_niraparib_brief.md`에 있고 "말할 수 있는 것" 여덟 항목과
-"말할 수 없는 것" 열한 항목으로 끝난다.
+전체 브리프는 `eval/results/case_niraparib_brief.md`에 있고 "근거 안의 진술" 여덟 항목과
+"근거 밖의 진술" 열한 항목으로 끝난다.
 
 ## 쓴 기술
 
@@ -129,7 +129,7 @@ CRITIC_DETERMINISTIC_ONLY=true .venv/bin/nat eval --config_file configs/eval.yml
 자세한 것은 `docs/ONBOARDING.md` 하나면 된다. 막히면 `docs/TROUBLESHOOTING.md` 를 먼저 본다.
 겪고 푼 문제 열 건을 적어 두었다.
 
-## 아직 하지 않은 것
+## 미시행 사항
 
 되지 않는 것을 되는 것처럼 쓰지 않기로 했다.
 
@@ -179,6 +179,7 @@ v0도 생성 코드의 불일치율과 검증 커버리지를 직접 재서 남�
 | `docs/notes/bionemo-nim.md` | NVIDIA 생물학 NIM 접근 확인과 호출 규격, 구현 함정 |
 | `docs/notes/fddd-and-jev.md` | 초파리 데모와 Jev 실측 확인 |
 | `docs/notes/fddd-teardown.md` | 초파리 데모 기술 분해 |
+| `docs/notes/real-world-cases.md` | 현장에서 실제로 일어난 과잉해석 사례와 확인 결과 |
 | `docs/notes/jev-primer.md` | 판정 전용 모델 Jev 정리. 자체 측정과 독립 검증을 나눠 적음 |
 | `docs/notes/paper-plan.md` | 논문 계획, 선행연구와 정직한 한계 |
 | `docs/COURSE-GUIDE.md` | NVIDIA DLI 강좌 수강 안내 |

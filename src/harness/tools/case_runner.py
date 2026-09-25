@@ -1539,13 +1539,13 @@ def render_brief(case: dict[str, Any], supported: dict[str, Any], overclaim: dic
     lines.append("심은 과잉해석 목록: " + ", ".join(overclaim.get("planted_overclaims") or []) + ".")
     lines.append("")
 
-    lines.append("## 말할 수 있는 것")
+    lines.append("## 근거 안의 진술")
     lines.append("")
     for item in can_say(case):
         lines.append(f"- {item}")
     lines.append("")
 
-    lines.append("## 말할 수 없는 것")
+    lines.append("## 근거 밖의 진술")
     lines.append("")
     for item in cannot_say(case):
         lines.append(f"- {item}")

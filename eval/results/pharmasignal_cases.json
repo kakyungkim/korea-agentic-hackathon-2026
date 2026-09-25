@@ -1,0 +1,947 @@
+{
+ "generated_at": "2026-09-24T15:35:03+00:00",
+ "n_cases": 3,
+ "cases": [
+  {
+   "drug": "metformin",
+   "reaction": "Lactic acidosis",
+   "expectation": "라벨 기재 예상(박스 경고)",
+   "summary": {
+    "faers_a": 19411,
+    "prr": 72.83083197389885,
+    "ror": 76.14383770609265,
+    "chi2": 533148.6823089686,
+    "chi2_yates": 533120.2285900704,
+    "evans_signal": true,
+    "ror_signal": true,
+    "haldane_applied": false,
+    "labeled": true,
+    "label_sections": [
+     "adverse_reactions",
+     "boxed_warning",
+     "warnings_and_precautions"
+    ],
+    "pubmed_total": 1139,
+    "pubmed_returned": 10,
+    "errors": []
+   },
+   "evidence_ids": {
+    "faers_query_urls": [
+     "https://api.fda.gov/drug/event.json?limit=1",
+     "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:\"metformin\"&limit=1",
+     "https://api.fda.gov/drug/event.json?search=patient.reaction.reactionmeddrapt.exact:\"LACTIC%20ACIDOSIS\"&limit=1",
+     "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:\"metformin\"+AND+patient.reaction.reactionmeddrapt.exact:\"LACTIC%20ACIDOSIS\"&limit=1"
+    ],
+    "dailymed_setids": [
+     "014f2a32-8440-4d0c-8f5d-c4b3a49e0dec"
+    ],
+    "pubmed_pmids": [
+     "26773926",
+     "34244196",
+     "31372935",
+     "33373028",
+     "36811419",
+     "36652938",
+     "24326619",
+     "14746555",
+     "35955455",
+     "26800971"
+    ]
+   },
+   "faers": {
+    "tool": "openfda_faers",
+    "drug": "metformin",
+    "reaction": "Lactic acidosis",
+    "name_field": "generic",
+    "counts": {
+     "a": 19411,
+     "b": 420859,
+     "c": 12260,
+     "d": 20240160,
+     "n_drug": 440270,
+     "n_reaction": 31671,
+     "n_total": 20692690
+    },
+    "prr": 72.83083197389885,
+    "prr_ci95": [
+     71.21663990477805,
+     74.48161122319966
+    ],
+    "ror": 76.14383770609265,
+    "ror_ci95": [
+     74.426208219987,
+     77.90110714057266
+    ],
+    "chi2": 533148.6823089686,
+    "chi2_yates": 533120.2285900704,
+    "evans_signal": true,
+    "ror_haldane": 76.14383770609265,
+    "ror_ci95_haldane": [
+     74.426208219987,
+     77.90110714057266
+    ],
+    "haldane_applied": false,
+    "ror_signal": true,
+    "query_urls": {
+     "n_total": "https://api.fda.gov/drug/event.json?limit=1",
+     "n_drug": "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:\"metformin\"&limit=1",
+     "n_reaction": "https://api.fda.gov/drug/event.json?search=patient.reaction.reactionmeddrapt.exact:\"LACTIC%20ACIDOSIS\"&limit=1",
+     "a": "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:\"metformin\"+AND+patient.reaction.reactionmeddrapt.exact:\"LACTIC%20ACIDOSIS\"&limit=1"
+    },
+    "evidence_ids": [
+     "https://api.fda.gov/drug/event.json?limit=1",
+     "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:\"metformin\"&limit=1",
+     "https://api.fda.gov/drug/event.json?search=patient.reaction.reactionmeddrapt.exact:\"LACTIC%20ACIDOSIS\"&limit=1",
+     "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:\"metformin\"+AND+patient.reaction.reactionmeddrapt.exact:\"LACTIC%20ACIDOSIS\"&limit=1"
+    ],
+    "errors": [],
+    "data_last_updated": "2026-07-30",
+    "retrieved_at": "2026-09-24T15:35:03+00:00",
+    "cache": {
+     "path": "/Users/kkkim/projects/hackthon/KoreaAgenticAIhackathon/eval/results/pharmasignal_cache_openfda_11d876e90e1a.json",
+     "hits": 4,
+     "misses": 0
+    }
+   },
+   "label": {
+    "tool": "dailymed_label_mentions",
+    "drug_name": "metformin",
+    "reaction": "Lactic acidosis",
+    "labels_checked": [
+     {
+      "setid": "014f2a32-8440-4d0c-8f5d-c4b3a49e0dec",
+      "title": "These highlights do not include all the information needed to use METFORMIN HYDROCHLORIDE EXTENDED-RELEASE TABLETS safely and effectively. See full prescribing information for METFORMIN HYDROCHLORIDE EXTENDED-RELEASE TABLETS. METFORMIN HYDROCHLORIDE extended-release tablets, for oral use Initial U.S. Approval: 1995",
+      "xml_url": "https://dailymed.nlm.nih.gov/dailymed/services/v2/spls/014f2a32-8440-4d0c-8f5d-c4b3a49e0dec.xml",
+      "sections_present": [
+       "adverse_reactions",
+       "boxed_warning",
+       "contraindications",
+       "warnings_and_precautions"
+      ]
+     }
+    ],
+    "label_mentions": [
+     {
+      "section": "boxed_warning",
+      "snippet": "WARNING: LACTIC ACIDOSIS Postmarketing cases of metformin-associated lactic acidosis have resulted in death, hypothermia, hypotension, and resistant bradyarrhythmias. The ons...",
+      "setid": "014f2a32-8440-4d0c-8f5d-c4b3a49e0dec"
+     },
+     {
+      "section": "boxed_warning",
+      "snippet": "...formin-associated lactic acidosis have resulted in death, hypothermia, hypotension, and resistant bradyarrhythmias. The onset of metformin-associated lactic acidosis is often subtle, accompanied only by nonspecific symptoms such as malaise, myalgias, respiratory distress, somnolence, and abdominal pain. Metformin-...",
+      "setid": "014f2a32-8440-4d0c-8f5d-c4b3a49e0dec"
+     },
+     {
+      "section": "boxed_warning",
+      "snippet": "...btle, accompanied only by nonspecific symptoms such as malaise, myalgias, respiratory distress, somnolence, and abdominal pain. Metformin- associated lactic acidosis was characterized by elevated blood lactate levels (> 5 mmol/Liter), anion gap acidosis (without evidence of ketonuria or ketonemia), an increased la...",
+      "setid": "014f2a32-8440-4d0c-8f5d-c4b3a49e0dec"
+     },
+     {
+      "section": "warnings_and_precautions",
+      "snippet": "5 WARNINGS AND PRECAUTIONS Lactic Acidosis: See boxed warning. ( 5.1 ) Vitamin B 12 Deficiency: Metformin may lower vitamin B 12 levels. Measure hematological parameters annually and vitamin B...",
+      "setid": "014f2a32-8440-4d0c-8f5d-c4b3a49e0dec"
+     },
+     {
+      "section": "warnings_and_precautions",
+      "snippet": "...emia when used in combination with insulin and/or an insulin secretagogue. Lower dose of insulin or insulin secretagogue may be required. ( 5.3 ) 5.1 Lactic Acidosis There have been postmarketing cases of metformin-associated lactic acidosis, including fatal cases. These cases had a subtle onset and were accompani...",
+      "setid": "014f2a32-8440-4d0c-8f5d-c4b3a49e0dec"
+     },
+     {
+      "section": "warnings_and_precautions",
+      "snippet": "...atory distress, or increased somnolence; however, hypotension and resistant bradyarrhythmias have occurred with severe acidosis. Metformin-associated lactic acidosis was characterized by elevated blood lactate concentrations(> 5 mmol/L), anion gap acidosis (without evidence of ketonuria or ketonemia), and an incre...",
+      "setid": "014f2a32-8440-4d0c-8f5d-c4b3a49e0dec"
+     },
+     {
+      "section": "adverse_reactions",
+      "snippet": "6 ADVERSE REACTIONS The following adverse reactions are also discussed elsewhere in the labeling: Lactic Acidosis [ see Boxed Warning and Warnings and Precautions ( 5.1 ) ] Vitamin B 12 Deficiency [ see Warnings and Precautions ( 5.2 ) ] Hypoglycemia [ see Warnin...",
+      "setid": "014f2a32-8440-4d0c-8f5d-c4b3a49e0dec"
+     }
+    ],
+    "mentioned_sections": [
+     "adverse_reactions",
+     "boxed_warning",
+     "warnings_and_precautions"
+    ],
+    "labeled": true,
+    "evidence_ids": [
+     "014f2a32-8440-4d0c-8f5d-c4b3a49e0dec"
+    ],
+    "errors": [],
+    "retrieved_at": "2026-09-24T15:35:03+00:00",
+    "search_query_url": "https://dailymed.nlm.nih.gov/dailymed/services/v2/spls.json?drug_name=metformin&name_type=both&pagesize=1",
+    "search_total": 559
+   },
+   "pubmed": {
+    "tool": "pubmed_search",
+    "drug": "metformin",
+    "reaction": "Lactic acidosis",
+    "term": "metformin AND \"Lactic acidosis\"",
+    "total_count": 1139,
+    "pmids": [
+     "26773926",
+     "34244196",
+     "31372935",
+     "33373028",
+     "36811419",
+     "36652938",
+     "24326619",
+     "14746555",
+     "35955455",
+     "26800971"
+    ],
+    "articles": [
+     {
+      "pmid": "26773926",
+      "title": "Metformin-associated lactic acidosis: Current perspectives on causes and risk.",
+      "journal": "Metabolism: clinical and experimental",
+      "year": 2016,
+      "abstract_300": "Although metformin has become a drug of choice for the treatment of type 2 diabetes mellitus, some patients may not receive it owing to the risk of lactic acidosis. Metformin, along with other drugs in the biguanide class, increases plasma lactate levels in a plasma concentration-dependent manner by",
+      "has_abstract": true,
+      "publication_types": [
+       "Journal Article",
+       "Research Support, Non-U.S. Gov't",
+       "Review"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26773926/"
+     },
+     {
+      "pmid": "34244196",
+      "title": "Metformin-associated lactic acidosis.",
+      "journal": "BMJ case reports",
+      "year": 2021,
+      "abstract_300": "A 58-year-old female with known type 2 diabetes mellitus continued to take her usual medications, including metformin, an ACE inhibitor and a non-steroidal anti-inflammatory drug, while suffering from diarrhoea and vomiting. On presentation to the emergency department, she was found to have a profou",
+      "has_abstract": true,
+      "publication_types": [
+       "Case Reports",
+       "Journal Article"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34244196/"
+     },
+     {
+      "pmid": "31372935",
+      "title": "The Association between Metformin Therapy and Lactic Acidosis.",
+      "journal": "Drug safety",
+      "year": 2019,
+      "abstract_300": "There is increasing evidence to suggest that therapeutic doses of metformin are unlikely to cause lactic acidosis. The aims of this research were (1) to formally evaluate the association between metformin therapy and lactic acidosis in published case reports using two causality scoring systems, (2) ",
+      "has_abstract": true,
+      "publication_types": [
+       "Journal Article",
+       "Research Support, Non-U.S. Gov't",
+       "Systematic Review"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31372935/"
+     },
+     {
+      "pmid": "33373028",
+      "title": "Metformin, chronic nephropathy and lactic acidosis: a multi-faceted issue for the nephrologist.",
+      "journal": "Journal of nephrology",
+      "year": 2021,
+      "abstract_300": "Metformin is currently considered a first-line therapy in type 2 diabetic patients. After issuing warnings for decades about the risks of lactic acidosis in patients with chronic nephropathy, metformin is now being re-evaluated. The most recent evidence from the literature has demonstrated both a lo",
+      "has_abstract": true,
+      "publication_types": [
+       "Journal Article",
+       "Review"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33373028/"
+     },
+     {
+      "pmid": "36811419",
+      "title": "[Metformin-associated lactic acidosis].",
+      "journal": "Tidsskrift for den Norske laegeforening : tidsskrift for praktisk medicin, ny raekke",
+      "year": 2023,
+      "abstract_300": "Metformin accumulation is associated with lactic acidosis and haemodynamic instability. A woman in her seventies with diabetes, renal failure and hypertension presented unresponsive with severe acidosis, lactataemia, bradycardia and hypotension. After the initial survey, hypotension and bradycardia ",
+      "has_abstract": true,
+      "publication_types": [
+       "Case Reports",
+       "English Abstract",
+       "Journal Article"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/36811419/"
+     },
+     {
+      "pmid": "36652938",
+      "title": "Metformin's Role in Hyperlactatemia and Lactic Acidosis in ICU Patients: A Systematic Review.",
+      "journal": "Pharmacology",
+      "year": 2023,
+      "abstract_300": "Metformin-treated patients may experience severe hyperlactatemia or lactic acidosis (LA). LA often requires intensive-care-unit (ICU) treatment, and mortality rates are high. Here, we investigate the impact of renal dysfunction and renal replacement therapy (RRT) on the outcomes of critically ill pa",
+      "has_abstract": true,
+      "publication_types": [
+       "Systematic Review",
+       "Journal Article"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/36652938/"
+     },
+     {
+      "pmid": "24326619",
+      "title": "Metformin-associated lactic acidosis.",
+      "journal": "The American journal of the medical sciences",
+      "year": 2015,
+      "abstract_300": ": Metformin is the most commonly prescribed oral antidiabetic agent. Despite a good safety profile in most patients with diabetes, the risk of metformin-associated lactic acidosis is real if safety guidelines are ignored. Experience with 3 cases of metformin-associated lactic acidosis is reported. T",
+      "has_abstract": true,
+      "publication_types": [
+       "Case Reports",
+       "Journal Article",
+       "Review"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/24326619/"
+     },
+     {
+      "pmid": "14746555",
+      "title": "Metformin and lactic acidosis: cause or coincidence? A review of case reports.",
+      "journal": "Journal of internal medicine",
+      "year": 2004,
+      "abstract_300": "Metformin has been associated with the serious side-effect lactic acidosis. However, it remains unclear whether the use of metformin was a cause or a coincidence in lactic acidosis. A literature search of the Index Medicus (1959-66) and of the databases Embase, Medline, Medline Express (1966-99) was",
+      "has_abstract": true,
+      "publication_types": [
+       "Journal Article",
+       "Review"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/14746555/"
+     },
+     {
+      "pmid": "35955455",
+      "title": "Metformin: When Should We Fear Lactic Acidosis?",
+      "journal": "International journal of molecular sciences",
+      "year": 2022,
+      "abstract_300": "Metformin, a molecule belonging to the biguanide family, represents one of the most commonly prescribed medications for the treatment of diabetes mellitus in the world. Over the sixty years during which it has been used, many benefits have been described, which are not limited to the treatment of di",
+      "has_abstract": true,
+      "publication_types": [
+       "Journal Article",
+       "Review"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35955455/"
+     },
+     {
+      "pmid": "26800971",
+      "title": "Metformin associated lactic acidosis (MALA): clinical profiling and management.",
+      "journal": "Journal of nephrology",
+      "year": 2016,
+      "abstract_300": "Metformin (MF) accumulation during acute kidney injury is associated with high anion gap lactic acidosis type B (MF-associated lactic acidosis, MALA), a serious medical condition leading to high mortality. Despite dose adjustment for renal failure, diabetic patients with chronic kidney disease (CKD)",
+      "has_abstract": true,
+      "publication_types": [
+       "Journal Article",
+       "Review"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26800971/"
+     }
+    ],
+    "query_urls": {
+     "esearch": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmode=json&retmax=10&sort=relevance&term=metformin%20AND%20%22Lactic%20acidosis%22&tool=pharmasignal",
+     "efetch": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&retmode=xml&rettype=abstract&id=26773926,34244196,31372935,33373028,36811419,36652938,24326619,14746555,35955455,26800971&tool=pharmasignal"
+    },
+    "evidence_ids": [
+     "26773926",
+     "34244196",
+     "31372935",
+     "33373028",
+     "36811419",
+     "36652938",
+     "24326619",
+     "14746555",
+     "35955455",
+     "26800971"
+    ],
+    "errors": [],
+    "retrieved_at": "2026-09-24T15:35:03+00:00"
+   },
+   "run_at": "2026-09-24T15:35:03+00:00"
+  },
+  {
+   "drug": "semaglutide",
+   "reaction": "Pancreatitis",
+   "expectation": "라벨 기재 예상(Warnings and Precautions)",
+   "summary": {
+    "faers_a": 1302,
+    "prr": 7.2224479325271975,
+    "ror": 7.335442914439782,
+    "chi2": 6823.091248002771,
+    "chi2_yates": 6816.988421276239,
+    "evans_signal": true,
+    "ror_signal": true,
+    "haldane_applied": false,
+    "labeled": true,
+    "label_sections": [
+     "adverse_reactions",
+     "warnings_and_precautions"
+    ],
+    "pubmed_total": 119,
+    "pubmed_returned": 10,
+    "errors": []
+   },
+   "evidence_ids": {
+    "faers_query_urls": [
+     "https://api.fda.gov/drug/event.json?limit=1",
+     "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:\"semaglutide\"&limit=1",
+     "https://api.fda.gov/drug/event.json?search=patient.reaction.reactionmeddrapt.exact:\"PANCREATITIS\"&limit=1",
+     "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:\"semaglutide\"+AND+patient.reaction.reactionmeddrapt.exact:\"PANCREATITIS\"&limit=1"
+    ],
+    "dailymed_setids": [
+     "27f15fac-7d98-4114-a2ec-92494a91da98"
+    ],
+    "pubmed_pmids": [
+     "38774967",
+     "40196933",
+     "36578889",
+     "34305810",
+     "37879878",
+     "38555109",
+     "41177120",
+     "39332263",
+     "39902055",
+     "40892610"
+    ]
+   },
+   "faers": {
+    "tool": "openfda_faers",
+    "drug": "semaglutide",
+    "reaction": "Pancreatitis",
+    "name_field": "generic",
+    "counts": {
+     "a": 1302,
+     "b": 71699,
+     "c": 50919,
+     "d": 20568770,
+     "n_drug": 73001,
+     "n_reaction": 52221,
+     "n_total": 20692690
+    },
+    "prr": 7.2224479325271975,
+    "prr_ci95": [
+     6.8391751827654135,
+     7.627199588265852
+    ],
+    "ror": 7.335442914439782,
+    "ror_ci95": [
+     6.939448501879126,
+     7.754034450494732
+    ],
+    "chi2": 6823.091248002771,
+    "chi2_yates": 6816.988421276239,
+    "evans_signal": true,
+    "ror_haldane": 7.335442914439782,
+    "ror_ci95_haldane": [
+     6.939448501879126,
+     7.754034450494732
+    ],
+    "haldane_applied": false,
+    "ror_signal": true,
+    "query_urls": {
+     "n_total": "https://api.fda.gov/drug/event.json?limit=1",
+     "n_drug": "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:\"semaglutide\"&limit=1",
+     "n_reaction": "https://api.fda.gov/drug/event.json?search=patient.reaction.reactionmeddrapt.exact:\"PANCREATITIS\"&limit=1",
+     "a": "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:\"semaglutide\"+AND+patient.reaction.reactionmeddrapt.exact:\"PANCREATITIS\"&limit=1"
+    },
+    "evidence_ids": [
+     "https://api.fda.gov/drug/event.json?limit=1",
+     "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:\"semaglutide\"&limit=1",
+     "https://api.fda.gov/drug/event.json?search=patient.reaction.reactionmeddrapt.exact:\"PANCREATITIS\"&limit=1",
+     "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:\"semaglutide\"+AND+patient.reaction.reactionmeddrapt.exact:\"PANCREATITIS\"&limit=1"
+    ],
+    "errors": [],
+    "data_last_updated": "2026-07-30",
+    "retrieved_at": "2026-09-24T15:35:03+00:00",
+    "cache": {
+     "path": "/Users/kkkim/projects/hackthon/KoreaAgenticAIhackathon/eval/results/pharmasignal_cache_openfda_cb4217bbf66e.json",
+     "hits": 4,
+     "misses": 0
+    }
+   },
+   "label": {
+    "tool": "dailymed_label_mentions",
+    "drug_name": "semaglutide",
+    "reaction": "Pancreatitis",
+    "labels_checked": [
+     {
+      "setid": "27f15fac-7d98-4114-a2ec-92494a91da98",
+      "title": "These highlights do not include all the information needed to use RYBELSUS ® and OZEMPIC ® tablets safely and effectively. See full prescribing information for RYBELSUS and OZEMPIC tablets. RYBELSUS (semaglutide) tablets, for oral use OZEMPIC (semaglutide) tablets, for oral use Initial U.S. Approval: 2017",
+      "xml_url": "https://dailymed.nlm.nih.gov/dailymed/services/v2/spls/27f15fac-7d98-4114-a2ec-92494a91da98.xml",
+      "sections_present": [
+       "adverse_reactions",
+       "boxed_warning",
+       "contraindications",
+       "warnings_and_precautions"
+      ]
+     }
+    ],
+    "label_mentions": [
+     {
+      "section": "warnings_and_precautions",
+      "snippet": "5 WARNINGS AND PRECAUTIONS • Acute Pancreatitis : Has been observed in patients treated with GLP-1 receptor agonists, including RYBELSUS or OZEMPIC tablets. Discontinue if pancreatitis is suspected...",
+      "setid": "27f15fac-7d98-4114-a2ec-92494a91da98"
+     },
+     {
+      "section": "warnings_and_precautions",
+      "snippet": "... should be further evaluated. Patients with thyroid nodules noted on physical examination or neck imaging should also be further evaluated. 5.2 Acute Pancreatitis Acute pancreatitis, including fatal and non-fatal hemorrhagic or necrotizing pancreatitis, has been observed in patients treated with GLP-1 receptor ...",
+      "setid": "27f15fac-7d98-4114-a2ec-92494a91da98"
+     },
+     {
+      "section": "warnings_and_precautions",
+      "snippet": "...e tablets [see Adverse Reactions ( 6 )] . After initiation of RYBELSUS or OZEMPIC tablets, observe patients carefully for signs and symptoms of acute pancreatitis, which may include persistent or severe abdominal pain (sometimes radiating to the back), and which may or may not be accompanied by nausea or vomiti...",
+      "setid": "27f15fac-7d98-4114-a2ec-92494a91da98"
+     },
+     {
+      "section": "adverse_reactions",
+      "snippet": "...tions are described below or elsewhere in the prescribing information: • Risk of Thyroid C-cell Tumors [see Warnings and Precautions ( 5.1 )] • Acute Pancreatitis [see Warnings and Precautions ( 5.2 )] • Diabetic Retinopathy Complications [see Warnings and Precautions ( 5.3 )] • Hypoglycemia with Concomitant Us...",
+      "setid": "27f15fac-7d98-4114-a2ec-92494a91da98"
+     },
+     {
+      "section": "adverse_reactions",
+      "snippet": "...tation (2%, 0.6%, 0%,), flatulence (1%, 2%, 0%), gastroesophageal reflux disease (2%, 2%, 0.3%) and gastritis (2%, 2%, 0.8%). Other Adverse Reactions Pancreatitis : In the pool of placebo- and active-controlled trials with semaglutide tablets, pancreatitis was reported as a serious adverse event in 6 semaglutid...",
+      "setid": "27f15fac-7d98-4114-a2ec-92494a91da98"
+     },
+     {
+      "section": "adverse_reactions",
+      "snippet": "... size, it is not always possible to reliably estimate their frequency or establish a causal relationship to drug exposure. • Gastrointestinal : acute pancreatitis and necrotizing pancreatitis, sometimes resulting in death; ileus, intestinal obstruction, severe constipation including fecal impaction • Hypersensi...",
+      "setid": "27f15fac-7d98-4114-a2ec-92494a91da98"
+     }
+    ],
+    "mentioned_sections": [
+     "adverse_reactions",
+     "warnings_and_precautions"
+    ],
+    "labeled": true,
+    "evidence_ids": [
+     "27f15fac-7d98-4114-a2ec-92494a91da98"
+    ],
+    "errors": [],
+    "retrieved_at": "2026-09-24T15:35:03+00:00",
+    "search_query_url": "https://dailymed.nlm.nih.gov/dailymed/services/v2/spls.json?drug_name=semaglutide&name_type=both&pagesize=1",
+    "search_total": 9
+   },
+   "pubmed": {
+    "tool": "pubmed_search",
+    "drug": "semaglutide",
+    "reaction": "Pancreatitis",
+    "term": "semaglutide AND \"Pancreatitis\"",
+    "total_count": 119,
+    "pmids": [
+     "38774967",
+     "40196933",
+     "36578889",
+     "34305810",
+     "37879878",
+     "38555109",
+     "41177120",
+     "39332263",
+     "39902055",
+     "40892610"
+    ],
+    "articles": [
+     {
+      "pmid": "38774967",
+      "title": "Semaglutide for management of obesity in adolescents: efficacy, safety, and considerations for clinical practice.",
+      "journal": "Current opinion in pediatrics",
+      "year": 2024,
+      "abstract_300": "The purpose of this review is to describe the existing limited data related to the use of semaglutide in adolescents with obesity, supplementing with findings from adult studies of semaglutide use. Semaglutide, as a once weekly subcutaneous injection for weight management, effectively reduces body m",
+      "has_abstract": true,
+      "publication_types": [
+       "Journal Article",
+       "Review"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/38774967/"
+     },
+     {
+      "pmid": "40196933",
+      "title": "Real-world evidence on the utilization, clinical and comparative effectiveness, and adverse effects of newer GLP-1RA-based weight-loss therapies.",
+      "journal": "Diabetes, obesity & metabolism",
+      "year": 2025,
+      "abstract_300": "Glucagon-like peptide-1 receptor agonists (GLP-1RAs) have emerged as key agents for weight management, based on their marked efficacy as observed in randomized controlled trials. While still limited, real-world studies on GLP-1RA use in populations with obesity are increasingly available. This narra",
+      "has_abstract": true,
+      "publication_types": [
+       "Journal Article",
+       "Review"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40196933/"
+     },
+     {
+      "pmid": "36578889",
+      "title": "Efficacy and Safety of Semaglutide for Weight Loss in Obesity Without Diabetes: A Systematic Review and Meta-Analysis.",
+      "journal": "Journal of the ASEAN Federation of Endocrine Societies",
+      "year": 2022,
+      "abstract_300": "The weight loss benefit of semaglutide in patients with diabetes is well-documented, but its clinical utility in treating obesity among patients without diabetes is less described. We therefore assessed the efficacy and safety of subcutaneous semaglutide as treatment for obesity in patients without ",
+      "has_abstract": true,
+      "publication_types": [
+       "Meta-Analysis",
+       "Systematic Review",
+       "Journal Article"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/36578889/"
+     },
+     {
+      "pmid": "34305810",
+      "title": "Safety of Semaglutide.",
+      "journal": "Frontiers in endocrinology",
+      "year": 2021,
+      "abstract_300": "The glucagon-like peptide-1 receptor agonist (GLP-1RA) semaglutide is the most recently approved agent of this drug class, and the only GLP-1RA currently available as both subcutaneous and oral formulation. While GLP-1RAs effectively improve glycemic control and cause weight loss, potential safety c",
+      "has_abstract": true,
+      "publication_types": [
+       "Journal Article",
+       "Research Support, Non-U.S. Gov't",
+       "Review"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34305810/"
+     },
+     {
+      "pmid": "37879878",
+      "title": "Semaglutide: a new drug for the treatment of obesity.",
+      "journal": "Drug and therapeutics bulletin",
+      "year": 2023,
+      "abstract_300": "Semaglutide (▼Ozempic solution for injection, ▼Rybelsus tablets-Novo Nordisk) was initially granted market authorisation for the treatment of type 2 diabetes as an adjunct to diet and exercise. In 2021 and 2022, regulatory agencies in the USA and Europe licensed semaglutide (▼Wegovy solution for inj",
+      "has_abstract": true,
+      "publication_types": [
+       "Journal Article",
+       "Review"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/37879878/"
+     },
+     {
+      "pmid": "38555109",
+      "title": "Acute pancreatitis due to different semaglutide regimens: An updated meta-analysis.",
+      "journal": "Endocrinologia, diabetes y nutricion",
+      "year": 2024,
+      "abstract_300": "Some concerns persist regarding the safety of semaglutide. The objective of this updated meta-analysis is to assess the risk of acute pancreatitis with the use of semaglutide, assessing the results according to the different administration regimens. We performed an updated meta-analysis of randomise",
+      "has_abstract": true,
+      "publication_types": [
+       "Meta-Analysis",
+       "Journal Article",
+       "Review"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/38555109/"
+     },
+     {
+      "pmid": "41177120",
+      "title": "Comparative safety and side effects of semaglutide and tirzepatide: Implications for clinical decision-making in obesity management.",
+      "journal": "Biomedicine & pharmacotherapy = Biomedecine & pharmacotherapie",
+      "year": 2025,
+      "abstract_300": "Obesity and diabetes are two faces of the same coin, as both disorders are characterized by insulin action defects. The two gut-derived incretin hormones, glucose-dependent insulinotropic polypeptide (GIP) and Glucagon-like peptide-1 (GLP-1), play a crucial role in glycemic control. Semaglutide is a",
+      "has_abstract": true,
+      "publication_types": [
+       "Journal Article",
+       "Review",
+       "Comparative Study"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/41177120/"
+     },
+     {
+      "pmid": "39332263",
+      "title": "Decreased risk of recurrent acute pancreatitis with semaglutide and tirzepatide in people with type 2 diabetes or obesity with a history of acute pancreatitis: A propensity matched global federated TriNetX database-based retrospective cohort study.",
+      "journal": "Diabetes & metabolic syndrome",
+      "year": 2024,
+      "abstract_300": "Acute pancreatitis (AP) is a significant health concern with potential for recurrent episodes and serious complications. The risk of recurrence in type 2 diabetes (T2D) or obesity can be influenced by various factors and treatments, including GLP-1 receptor agonists (GLP-1RAs). This study evaluates ",
+      "has_abstract": true,
+      "publication_types": [
+       "Journal Article"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/39332263/"
+     },
+     {
+      "pmid": "39902055",
+      "title": "Semaglutide: Double-edged Sword with Risks and Benefits.",
+      "journal": "Archives of internal medicine research",
+      "year": 2025,
+      "abstract_300": "Type 2 Diabetes Mellitus therapy has evolved over the years to now include a new class of therapeutics, semaglutide. This article reviews the mechanism of action and formulation of semaglutide therapy, potential benefits, contraindications, adverse effects, and drug interactions. Oral and subcutaneo",
+      "has_abstract": true,
+      "publication_types": [
+       "Journal Article"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/39902055/"
+     },
+     {
+      "pmid": "40892610",
+      "title": "Cardiovascular Effects and Tolerability of GLP-1 Receptor Agonists: A Systematic Review and Meta-Analysis of 99,599 Patients.",
+      "journal": "Journal of the American College of Cardiology",
+      "year": 2025,
+      "abstract_300": "Glucagon-like peptide-1 receptor agonists (GLP-1 RAs) have demonstrated significant cardiovascular (CV) benefits, particularly in patients with diabetes mellitus, but the safety and efficacy of different GLP-1 RAs across diverse populations remain insufficiently defined. Previous meta-analyses of GL",
+      "has_abstract": true,
+      "publication_types": [
+       "Journal Article",
+       "Systematic Review",
+       "Meta-Analysis"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40892610/"
+     }
+    ],
+    "query_urls": {
+     "esearch": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmode=json&retmax=10&sort=relevance&term=semaglutide%20AND%20%22Pancreatitis%22&tool=pharmasignal",
+     "efetch": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&retmode=xml&rettype=abstract&id=38774967,40196933,36578889,34305810,37879878,38555109,41177120,39332263,39902055,40892610&tool=pharmasignal"
+    },
+    "evidence_ids": [
+     "38774967",
+     "40196933",
+     "36578889",
+     "34305810",
+     "37879878",
+     "38555109",
+     "41177120",
+     "39332263",
+     "39902055",
+     "40892610"
+    ],
+    "errors": [],
+    "retrieved_at": "2026-09-24T15:35:03+00:00"
+   },
+   "run_at": "2026-09-24T15:35:03+00:00"
+  },
+  {
+   "drug": "amoxicillin",
+   "reaction": "Retinal detachment",
+   "expectation": "근거 적음 예상(FAERS 소수, 라벨 미기재)",
+   "summary": {
+    "faers_a": 39,
+    "prr": 0.8748896520952893,
+    "ror": 0.8748415844011117,
+    "chi2": 0.695054033467155,
+    "chi2_yates": 0.5754537423051669,
+    "evans_signal": false,
+    "ror_signal": false,
+    "haldane_applied": false,
+    "labeled": false,
+    "label_sections": [],
+    "pubmed_total": 8,
+    "pubmed_returned": 8,
+    "errors": []
+   },
+   "evidence_ids": {
+    "faers_query_urls": [
+     "https://api.fda.gov/drug/event.json?limit=1",
+     "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:\"amoxicillin\"&limit=1",
+     "https://api.fda.gov/drug/event.json?search=patient.reaction.reactionmeddrapt.exact:\"RETINAL%20DETACHMENT\"&limit=1",
+     "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:\"amoxicillin\"+AND+patient.reaction.reactionmeddrapt.exact:\"RETINAL%20DETACHMENT\"&limit=1"
+    ],
+    "dailymed_setids": [
+     "5200ae31-8a79-45f9-84fc-98f8448483a7"
+    ],
+    "pubmed_pmids": [
+     "40775308",
+     "36201545",
+     "39723254",
+     "24170197",
+     "25389719",
+     "26582407",
+     "24610425",
+     "36996444"
+    ]
+   },
+   "faers": {
+    "tool": "openfda_faers",
+    "drug": "amoxicillin",
+    "reaction": "Retinal detachment",
+    "name_field": "generic",
+    "counts": {
+     "a": 39,
+     "b": 101509,
+     "c": 9039,
+     "d": 20582103,
+     "n_drug": 101548,
+     "n_reaction": 9078,
+     "n_total": 20692690
+    },
+    "prr": 0.8748896520952893,
+    "prr_ci95": [
+     0.6388250806789624,
+     1.198186994364549
+    ],
+    "ror": 0.8748415844011117,
+    "ror_ci95": [
+     0.6387127619749596,
+     1.1982660177807007
+    ],
+    "chi2": 0.695054033467155,
+    "chi2_yates": 0.5754537423051669,
+    "evans_signal": false,
+    "ror_haldane": 0.8748415844011117,
+    "ror_ci95_haldane": [
+     0.6387127619749596,
+     1.1982660177807007
+    ],
+    "haldane_applied": false,
+    "ror_signal": false,
+    "query_urls": {
+     "n_total": "https://api.fda.gov/drug/event.json?limit=1",
+     "n_drug": "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:\"amoxicillin\"&limit=1",
+     "n_reaction": "https://api.fda.gov/drug/event.json?search=patient.reaction.reactionmeddrapt.exact:\"RETINAL%20DETACHMENT\"&limit=1",
+     "a": "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:\"amoxicillin\"+AND+patient.reaction.reactionmeddrapt.exact:\"RETINAL%20DETACHMENT\"&limit=1"
+    },
+    "evidence_ids": [
+     "https://api.fda.gov/drug/event.json?limit=1",
+     "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:\"amoxicillin\"&limit=1",
+     "https://api.fda.gov/drug/event.json?search=patient.reaction.reactionmeddrapt.exact:\"RETINAL%20DETACHMENT\"&limit=1",
+     "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:\"amoxicillin\"+AND+patient.reaction.reactionmeddrapt.exact:\"RETINAL%20DETACHMENT\"&limit=1"
+    ],
+    "errors": [],
+    "data_last_updated": "2026-07-30",
+    "retrieved_at": "2026-09-24T15:35:03+00:00",
+    "cache": {
+     "path": "/Users/kkkim/projects/hackthon/KoreaAgenticAIhackathon/eval/results/pharmasignal_cache_openfda_6d15cd07bb28.json",
+     "hits": 4,
+     "misses": 0
+    }
+   },
+   "label": {
+    "tool": "dailymed_label_mentions",
+    "drug_name": "amoxicillin",
+    "reaction": "Retinal detachment",
+    "labels_checked": [
+     {
+      "setid": "5200ae31-8a79-45f9-84fc-98f8448483a7",
+      "title": "These highlights do not include all the information needed to use AMOXICILLIN AND CLAVULANATE POTASSIUM FOR ORAL SUSPENSION safely and effectively. See full prescribing information for AMOXICILLIN AND CLAVULANATE POTASSIUM FOR ORAL SUSPENSION. AMOXICILLIN and CLAVULANATE potassium for oral suspension Initial U.S. Approval: 1984",
+      "xml_url": "https://dailymed.nlm.nih.gov/dailymed/services/v2/spls/5200ae31-8a79-45f9-84fc-98f8448483a7.xml",
+      "sections_present": [
+       "adverse_reactions",
+       "contraindications",
+       "warnings_and_precautions"
+      ]
+     }
+    ],
+    "label_mentions": [],
+    "mentioned_sections": [],
+    "labeled": false,
+    "evidence_ids": [
+     "5200ae31-8a79-45f9-84fc-98f8448483a7"
+    ],
+    "errors": [],
+    "retrieved_at": "2026-09-24T15:35:03+00:00",
+    "search_query_url": "https://dailymed.nlm.nih.gov/dailymed/services/v2/spls.json?drug_name=amoxicillin&name_type=both&pagesize=1",
+    "search_total": 634
+   },
+   "pubmed": {
+    "tool": "pubmed_search",
+    "drug": "amoxicillin",
+    "reaction": "Retinal detachment",
+    "term": "amoxicillin AND \"Retinal detachment\"",
+    "total_count": 8,
+    "pmids": [
+     "40775308",
+     "36201545",
+     "39723254",
+     "24170197",
+     "25389719",
+     "26582407",
+     "24610425",
+     "36996444"
+    ],
+    "articles": [
+     {
+      "pmid": "40775308",
+      "title": "Association between fluoroquinolones and retinal detachment: insights from a large German health claims-based cohort study.",
+      "journal": "BMC ophthalmology",
+      "year": 2025,
+      "abstract_300": "Real-world evidence on fluoroquinolone-associated retinal detachment is contradictory. Therefore, we aim to examine the association between newly prescribed fluoroquinolones and the occurrence of retinal detachment with recent data from a large central European country. A cohort study with an active",
+      "has_abstract": true,
+      "publication_types": [
+       "Journal Article"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40775308/"
+     },
+     {
+      "pmid": "36201545",
+      "title": "Risk of retinal detachment and exposure to fluoroquinolones, common antibiotics, and febrile illness using a self-controlled case series study design: Retrospective analyses of three large healthcare databases in the US.",
+      "journal": "PloS one",
+      "year": 2022,
+      "abstract_300": "The risk of retinal detachment (RD) following exposure to fluoroquinolone (FQ) has been assessed in multiple studies, however, results have been mixed. This study was designed to estimate the risk of RD following exposure to FQ, other common antibiotics, and febrile illness not treated with antibiot",
+      "has_abstract": true,
+      "publication_types": [
+       "Journal Article",
+       "Research Support, Non-U.S. Gov't"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/36201545/"
+     },
+     {
+      "pmid": "39723254",
+      "title": "Use of fluoroquinolones and risk of rhegmatogenous retinal detachment: a retrospective cohort study using two nationwide representative claims databases.",
+      "journal": "Frontiers in pharmacology",
+      "year": 2024,
+      "abstract_300": "Although biological plausibility suggests that fluoroquinolones could lead to rhegmatogenous retinal detachment (RRD) through collagen degradation, real-world evidence on their relative risk of RRD is inconsistent, with limited information on absolute risk estimates. The study aimed to estimate the ",
+      "has_abstract": true,
+      "publication_types": [
+       "Journal Article"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/39723254/"
+     },
+     {
+      "pmid": "24170197",
+      "title": "Association between recent use of fluoroquinolones and rhegmatogenous retinal detachment: a population-based cohort study.",
+      "journal": "Clinical infectious diseases : an official publication of the Infectious Diseases Society of America",
+      "year": 2014,
+      "abstract_300": "An association between use of oral fluoroquinolones (FQs) and retinal detachment remains controversial. This study was to determine the association of recent use of oral FQs and rhegmatogenous retinal detachment (RRD) after adjustment for confounding factors known to be associated with RRD. This ret",
+      "has_abstract": true,
+      "publication_types": [
+       "Journal Article",
+       "Observational Study",
+       "Research Support, Non-U.S. Gov't"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/24170197/"
+     },
+     {
+      "pmid": "25389719",
+      "title": "Lyme disease: resolution of a serous retinal detachment and chorioretinal folds after antibiotic therapy.",
+      "journal": "Retinal cases & brief reports",
+      "year": 2012,
+      "abstract_300": "Ocular manifestations of Lyme disease are uncommon. There has not been a documented case of serous retinal detachment and chorioretinal folds because of Lyme disease that have resolved after only antibiotic treatment. A 69-year-old white man with a history of recent tick bites presented with a gradu",
+      "has_abstract": true,
+      "publication_types": [
+       "Journal Article"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25389719/"
+     },
+     {
+      "pmid": "26582407",
+      "title": "Fluoroquinolones and collagen associated severe adverse events: a longitudinal cohort study.",
+      "journal": "BMJ open",
+      "year": 2015,
+      "abstract_300": "Fluoroquinolone-associated tendon ruptures are a recognised complication, but other severe collagen-associated adverse events may also be possible. Our objectives were to confirm the association of fluoroquinolones and tendon rupture, to clarify the potential association of fluoroquinolones and reti",
+      "has_abstract": true,
+      "publication_types": [
+       "Journal Article",
+       "Research Support, Non-U.S. Gov't"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26582407/"
+     },
+     {
+      "pmid": "24610425",
+      "title": "Incidence rates of retinal detachment in 2 cohorts of patients treated with oral fluoroquinolones or amoxicillin.",
+      "journal": "Clinical infectious diseases : an official publication of the Infectious Diseases Society of America",
+      "year": 2014,
+      "abstract_300": "",
+      "has_abstract": false,
+      "publication_types": [
+       "Letter",
+       "Comment"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/24610425/"
+     },
+     {
+      "pmid": "36996444",
+      "title": "A SCLERAL BUCKLE INFECTION CAUSED BY CUTIBACTERIUM ACNES (FORMERLY PROPIONIBACTERIUM ACNES ) AN ATYPICAL, INDOLENT COURSE.",
+      "journal": "Retinal cases & brief reports",
+      "year": 2024,
+      "abstract_300": "To report a case of atypical, indolent presentation of scleral buckle infection, caused by Cutibacterium acnes (formerly known as Propionibacterium acnes ). Observational case report. A 44-year-old healthy woman with a history of scleral buckling procedure for retinal detachment repair 16 years befo",
+      "has_abstract": true,
+      "publication_types": [
+       "Case Reports",
+       "Journal Article"
+      ],
+      "url": "https://pubmed.ncbi.nlm.nih.gov/36996444/"
+     }
+    ],
+    "query_urls": {
+     "esearch": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmode=json&retmax=10&sort=relevance&term=amoxicillin%20AND%20%22Retinal%20detachment%22&tool=pharmasignal",
+     "efetch": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&retmode=xml&rettype=abstract&id=40775308,36201545,39723254,24170197,25389719,26582407,24610425,36996444&tool=pharmasignal"
+    },
+    "evidence_ids": [
+     "40775308",
+     "36201545",
+     "39723254",
+     "24170197",
+     "25389719",
+     "26582407",
+     "24610425",
+     "36996444"
+    ],
+    "errors": [],
+    "retrieved_at": "2026-09-24T15:35:03+00:00"
+   },
+   "run_at": "2026-09-24T15:35:03+00:00"
+  }
+ ]
+}

@@ -1,0 +1,123 @@
+# OpenShell 샌드박스 정책: 공통 템플릿 (base)
+#
+# 두 후보(PharmaSignal, Night Shift)가 공유하는 뼈대. 후보별 파일은 이 파일을
+# 복사해 network_policies 항목과 read_write 경로만 덧붙인다(OpenShell 정책에는
+# include/extends 같은 상속 문법이 없다. 파일마다 전체를 적어야 한다).
+#
+# 스키마 출처(2026-09-24 확인):
+#   - https://github.com/NVIDIA/OpenShell/blob/main/docs/reference/policy-schema.mdx
+#   - https://github.com/NVIDIA/OpenShell/blob/main/examples/sandbox-policy-quickstart/policy.yaml
+#   - https://github.com/NVIDIA/OpenShell/blob/main/examples/local-inference/sandbox-policy.yaml
+#   - https://github.com/NVIDIA/OpenShell/blob/main/providers/nvidia.yaml
+#
+# 원칙
+#   1. deny-by-default. 여기 적힌 경로와 호스트 밖은 전부 막힌다(정책이 없는 샌드박스도
+#      네트워크는 전부 거부가 기본값이다. docs/reference/default-policy.mdx).
+#   2. 쓰기는 /work/out(과 런타임이 요구하는 /tmp, /dev/null)만.
+#   3. 네트워크는 integrate.api.nvidia.com:443만. 추론 자격증명은 정책이 아니라
+#      "provider profile"(policies/nvidia-provider-profile.yaml)이 주입한다.
+#
+# 적용
+#   openshell sandbox create --name demo --from hackathon-sandbox:latest \
+#     --policy policies/base.yaml --detach -- sleep infinity
+#   openshell policy set demo --policy policies/base.yaml --wait   # 실행 중 교체(전체 치환)
+#   openshell policy get demo --full                               # provider가 합성한 항목까지 확인
+#
+# 주의: filesystem_policy, landlock, process는 "static" 구역이라 샌드박스 생성 시 고정된다.
+#       바꾸려면 샌드박스를 지우고 다시 만든다. network_policies만 실행 중 교체(hot reload)된다.
+
+# 스키마 버전. 현재 1만 허용된다(필수).
+version: 1
+
+# ---------------------------------------------------------------------------
+# 파일시스템 (static). 여기 없는 경로는 읽기도 쓰기도 불가.
+# ---------------------------------------------------------------------------
+filesystem_policy:
+  # true면 드라이버가 정한 작업 디렉터리(/sandbox)를 read_write에 자동 추가한다.
+  # "쓰기는 /work/out만"을 지키기 위해 false로 둔다. 대신 /sandbox는 아래 read_only에 넣어
+  # 이미지에 구워 넣은 코드는 읽을 수 있게 한다.
+  # (트레이드오프: `openshell sandbox upload`는 작업 디렉터리에 쓰므로 이 설정에서는 실패할
+  #  수 있다. 코드는 이미지에 COPY로 넣는다. 업로드가 꼭 필요하면 true로 바꾸고 /sandbox를
+  #  read_write로 옮긴다.)
+  include_workdir: false
+  # 읽기 전용. 예제 정책의 기본 목록(/usr /lib /proc /dev/urandom /app /etc /var/log)에
+  # /sandbox(코드)와 /work/repo(Night Shift에서 저장소 사본을 읽을 자리)를 더했다.
+  # 존재하지 않는 경로는 best_effort 모드에서 경고 후 건너뛴다.
+  read_only:
+    - /usr
+    - /lib
+    - /lib64
+    - /bin
+    - /sbin
+    - /proc
+    - /dev/urandom
+    - /app
+    - /etc
+    - /var/log
+    - /sandbox
+    - /work
+  # 읽기와 쓰기. /work/out은 결과물 전용. /tmp와 /dev/null은 런타임 기본 요구 경로라
+  # 런타임이 어차피 baseline으로 추가한다(docs/sandboxes/policies.mdx "Baseline Filesystem Paths").
+  read_write:
+    - /work/out
+    - /tmp
+    - /dev/null
+
+# ---------------------------------------------------------------------------
+# Landlock LSM 동작 (static). 커널 수준 파일시스템 강제 방식.
+# ---------------------------------------------------------------------------
+landlock:
+  # best_effort: 경로가 없으면 건너뛰고 나머지 규칙만 적용(기본값, 데모용으로 적절).
+  # hard_requirement: 하나라도 열 수 없으면 샌드박스 시작 자체를 중단.
+  # 어느 쪽이든 커널 Landlock ABI 3 이상(Linux 6.2+)은 필수다(support-matrix).
+  compatibility: best_effort
+
+# ---------------------------------------------------------------------------
+# 프로세스 신원 (static). 생략하면 이미지의 OCI USER를 따른다(Docker/Podman).
+# 값은 "sandbox" 또는 1~4294967294 범위의 숫자 UID/GID. 0(root)은 거부된다.
+# base에서는 생략해 드라이버가 고르게 둔다. Night Shift 정책에서 명시한다.
+# ---------------------------------------------------------------------------
+# process:
+#   run_as_user: "1500"
+#   run_as_group: "1500"
+
+# ---------------------------------------------------------------------------
+# 네트워크 (dynamic, 실행 중 교체 가능). 맵 키는 논리 이름, name은 로그 표시 이름.
+# 각 항목은 endpoints(어디로)와 binaries(어느 실행 파일이)를 반드시 가진다.
+# ---------------------------------------------------------------------------
+network_policies:
+  nvidia_inference:
+    name: nvidia-inference
+    endpoints:
+      # host: 정확한 호스트명. 와일드카드는 첫 라벨에만 허용(*.example.com)되나 쓰지 않는다.
+      # port: TCP 포트(필수).
+      # protocol: rest → 프록시가 TLS를 종단하고 HTTP 메서드와 경로를 검사한다(L7 로그가 남는다).
+      # enforcement: enforce → 위반을 실제로 차단. audit → 기록만 하고 통과(정책 만들 때 유용).
+      # access: read-only(GET/HEAD/OPTIONS) | read-write(+POST/PUT/PATCH) | full(전부).
+      #         rules와는 상호 배제. 추론 API는 POST /v1/chat/completions라 read-write.
+      - host: integrate.api.nvidia.com
+        port: 443
+        protocol: rest
+        enforcement: enforce
+        access: read-write
+    # 이 엔드포인트에 접속할 수 있는 실행 파일. 경로 글롭(*, **) 지원.
+    # 이미지(policies/sandbox-image/Dockerfile)의 실제 경로와 맞아야 한다. 맞지 않으면
+    # 정책은 있어도 요청이 전부 거부된다(providers/README.md 경고).
+    binaries:
+      - path: /usr/bin/curl
+      - path: /usr/bin/python3
+      - path: /usr/bin/python3.12
+      - path: /sandbox/.venv/**
+      - path: /work/.venv/**
+
+# 참고: NVIDIA_API_KEY는 여기 적지 않는다. provider profile을 import하고
+#   openshell provider create --name nvidia --type nvidia-hackathon --from-existing
+#   openshell sandbox create ... --provider nvidia
+# 로 붙이면 프록시가 integrate.api.nvidia.com 요청에만 진짜 키를 치환해 넣는다.
+# 샌드박스 안에서는 자리표시자만 보인다(docs/sandboxes/inference-routing.mdx).
+#
+# 참고: CPU, 메모리, 실행 시간 제한은 정책 스키마에 없다. 생성 시
+#   openshell sandbox create --cpu 2 --memory 4Gi ...
+# 와 명령 실행 시
+#   openshell sandbox exec -n demo --timeout 3600 -- <cmd>
+# 로 건다(docs/sandboxes/manage-sandboxes.mdx).

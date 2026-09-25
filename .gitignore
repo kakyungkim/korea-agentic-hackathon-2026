@@ -1,0 +1,21 @@
+# 비밀
+.env
+
+# 파이썬
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+
+# 캐시는 제외하고 결과는 남긴다. 결과 파일이 문서와 제출물의 근거다.
+eval/results/pharmasignal_cache_*.json
+eval/results/config_*.json
+eval/results/config_*.yml
+
+# 산출물
+docs/*.pdf
+.DS_Store
+
+# 키가 들어간 백업
+.env.*
+!.env.example

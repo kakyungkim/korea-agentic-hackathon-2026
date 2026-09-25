@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hackathon-harness"
+version = "0.1.0"
+description = "Korea Agentic AI Hackathon: NeMo Agent Toolkit 공통 하네스 (author/critic 워크플로, 도구, 평가기)"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+  "nvidia-nat[langchain]>=1.9.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# NAT 는 설치된 패키지의 entry point 그룹 `nat.components` 를 스캔해 컴포넌트를 찾는다.
+# (nat/runtime/loader.py: discover_entrypoints -> "nat.plugins", "nat.components")
+# 따라서 src/harness/register.py 가 import 되도록 여기 한 줄을 등록하고
+# `.venv/bin/pip install -e . --no-deps` 로 개발 설치한다.
+[project.entry-points.'nat.components']
+harness = "harness.register"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+  "network: 외부 네트워크가 필요한 테스트 (기본 실행에서 -m 'not network' 로 제외 가능)",
+]

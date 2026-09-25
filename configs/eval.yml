@@ -1,0 +1,50 @@
+# `nat eval` 설정. 평가 대상은 크리틱 워크플로(critic_judge)이고, 데이터셋은 eval/cases.jsonl.
+# 각 행의 input(AuthorOutput JSON) 을 크리틱에 넣고, 나온 verdict 가 expected_verdict 와 맞는 비율을
+# critic_verdict 평가기(src/harness/evaluators.py)가 계산한다. 평균 점수 = 크리틱 적발률.
+#
+# 실행: .venv/bin/nat validate --config_file configs/eval.yml
+#       .venv/bin/nat eval --config_file configs/eval.yml
+#       키 없이 결정 규칙만: CRITIC_DETERMINISTIC_ONLY=true .venv/bin/nat eval --config_file configs/eval.yml
+#       (부정 케이스 1건은 결정 규칙에서 reject 되고, 정상 2건은 needs_human 이 되어 점수 1/3 이 나온다. LLM 이 붙으면 3/3 목표.)
+# 결과: eval/results/workflow_output.json, eval/results/critic_verdict_output.json (커밋하지 않음, .gitignore)
+#
+# 필드 이름은 nat/data_models/evaluate_config.py, nat/data_models/dataset_handler.py 에서 확인했다.
+
+general:
+  use_uvloop: true
+
+llms:
+  planner:
+    _type: nim
+    model_name: nvidia/nemotron-3-super-120b-a12b
+    base_url: https://integrate.api.nvidia.com/v1
+    api_key: ${NVIDIA_API_KEY}
+    temperature: 0.0
+    max_tokens: 2048
+    chat_template_kwargs:
+      enable_thinking: true
+
+workflow:
+  _type: critic_judge
+  llm_name: planner
+  deterministic_only: ${CRITIC_DETERMINISTIC_ONLY:-false}
+
+eval:
+  general:
+    max_concurrency: 2
+    output_dir: eval/results
+    dataset:
+      _type: jsonl
+      file_path: eval/cases.jsonl
+      id_key: id
+      structure:
+        question_key: input            # 워크플로 입력 컬럼
+        answer_key: expected_verdict   # 기대 출력 컬럼 (평가기의 expected_output_obj)
+  evaluators:
+    critic_verdict:
+      _type: critic_verdict
+      strict_needs_human: true
+    # LLM 심판이 필요하면 아래처럼 langchain 플러그인의 trajectory 평가기를 추가할 수 있다 (키 필요).
+    # trajectory:
+    #   _type: trajectory
+    #   llm_name: planner

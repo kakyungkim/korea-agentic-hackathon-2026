@@ -1,0 +1,29 @@
+[
+  {
+    "id": "prr_signal_ok",
+    "input": "{\"claims\": [{\"text\": \"약물 X와 이상사례 Y의 2x2표(a=40, b=960, c=200, d=98800)에서 PRR은 19.8, ROR은 20.58이다.\", \"evidence_ids\": [\"faers:2x2:drugX-eventY:2025Q4\", \"calc:prr:40-960-200-98800\"]}, {\"text\": \"PRR>=2, a>=3, 카이제곱>=4를 모두 만족해 Evans 기준의 시그널에 해당한다.\", \"evidence_ids\": [\"calc:prr:40-960-200-98800\"]}], \"summary\": \"약물 X-이상사례 Y 조합은 불균형 지표상 시그널이며 라벨 기재 여부 확인이 다음 단계다.\"}",
+    "expected_verdict": "pass",
+    "note": "정상 케이스. 모든 주장에 도구 근거 ID가 있다.",
+    "generated_answer": "{\n  \"verdict\": \"pass\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    },\n    {\n      \"name\": \"summary_within_claims\",\n      \"passed\": true,\n      \"reason\": \"The summary's assertion that the drug-event combination is a signal based on disproportionality metrics is directly supported by the claims; the mention of checking label inclusion is a suggested next step, which is allowed.\"\n    },\n    {\n      \"name\": \"claims_are_checkable\",\n      \"passed\": true,\n      \"reason\": \"Each claim provides specific numeric values and conditions that could be verified by the cited evidence (FAERS 2x2 table and calculator outputs).\"\n    }\n  ],\n  \"required_followups\": []\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "label_listed_ok",
+    "input": "{\"claims\": [{\"text\": \"이상사례 Y는 약물 X 허가 라벨의 6절(Adverse Reactions)에 이미 기재되어 있다.\", \"evidence_ids\": [\"dailymed:setid:00000000-0000-0000-0000-000000000000:section:6\"]}, {\"text\": \"2x2표(a=12, b=988, c=300, d=98700)에서 PRR은 3.95로 2를 넘지만 이미 알려진 반응이다.\", \"evidence_ids\": [\"faers:2x2:drugX-eventY:2025Q4\", \"calc:prr:12-988-300-98700\"]}], \"summary\": \"라벨 기재 반응이므로 새 시그널이 아니다. 추가 조치 불필요.\"}",
+    "expected_verdict": "pass",
+    "note": "정상 케이스. 라벨 인용에 setid와 절 번호가 붙어 있다.",
+    "generated_answer": "{\n  \"verdict\": \"pass\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": true,\n      \"reason\": \"모든 주장에 근거 ID 가 있습니다.\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    },\n    {\n      \"name\": \"summary_within_claims\",\n      \"passed\": true,\n      \"reason\": \"The summary states that because the reaction is already in the label it is not a new signal and no further action is needed, which follows directly from claim 1 (reaction already in label section 6) and claim 2 (PRR >2 but already known reaction).\"\n    },\n    {\n      \"name\": \"claims_are_checkable\",\n      \"passed\": true,\n      \"reason\": \"Each claim is concrete and specific: claim 1 cites a DailyMed section that could verify the presence of the reaction in the label; claim 2 provides a 2x2 table and a PRR calculation that could verify the numeric values, and the claim is not so vague that evidence could not confirm it.\"\n    }\n  ],\n  \"required_followups\": []\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  },
+  {
+    "id": "planted_unsupported_claim",
+    "input": "{\"claims\": [{\"text\": \"2x2표(a=40, b=960, c=200, d=98800)에서 PRR은 19.8이다.\", \"evidence_ids\": [\"calc:prr:40-960-200-98800\"]}, {\"text\": \"최근 문헌 3편이 약물 X와 이상사례 Y의 인과관계를 확정했다.\", \"evidence_ids\": []}], \"summary\": \"인과관계가 문헌으로 확정된 시그널이므로 즉시 라벨 개정을 권고한다.\"}",
+    "expected_verdict": "reject",
+    "note": "부정 케이스. 두 번째 주장에 근거 ID가 없고 요약이 그 주장에 의존한다. 결정 규칙 all_claims_have_evidence에서 걸려야 한다.",
+    "generated_answer": "{\n  \"verdict\": \"reject\",\n  \"checks\": [\n    {\n      \"name\": \"schema_valid\",\n      \"passed\": true,\n      \"reason\": \"AuthorOutput 스키마 일치\"\n    },\n    {\n      \"name\": \"has_claims\",\n      \"passed\": true,\n      \"reason\": \"주장 2건\"\n    },\n    {\n      \"name\": \"all_claims_have_evidence\",\n      \"passed\": false,\n      \"reason\": \"근거 ID 가 없는 주장 인덱스: [1]\"\n    },\n    {\n      \"name\": \"evidence_ids_nonblank\",\n      \"passed\": true,\n      \"reason\": \"근거 ID 가 모두 비어 있지 않은 문자열입니다.\"\n    },\n    {\n      \"name\": \"claim_text_nonblank\",\n      \"passed\": true,\n      \"reason\": \"주장 문장이 모두 채워져 있습니다.\"\n    }\n  ],\n  \"required_followups\": [\n    \"all_claims_have_evidence: 근거 ID 가 없는 주장 인덱스: [1]\"\n  ]\n}",
+    "intermediate_steps": [],
+    "expected_intermediate_steps": []
+  }
+]

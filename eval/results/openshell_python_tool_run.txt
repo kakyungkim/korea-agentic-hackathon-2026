@@ -1,0 +1,83 @@
+# OpenShell 샌드박스: 파이썬 클라이언트와 실제 도구 실행 기록
+date_utc: 2026-09-24T22:55Z   (KST 2026-09-25 07:55)
+sandbox: pharmasignal   policy: policies/pharmasignal.yaml   openshell: 0.0.116
+via: colima ssh -> openshell sandbox exec -n pharmasignal --no-tty
+
+## 0. 샌드박스 런타임
+uid=1500(sandbox) gid=1500(sandbox) groups=1500(sandbox)
+Python 3.12.3 / OpenSSL 3.0.13 30 Jan 2024
+ssl default verify paths: /usr/lib/ssl/cert.pem , /usr/lib/ssl/certs   (ca-certificates 패키지)
+설치된 pip 패키지: pip 24.0, setuptools 68.1.2, wheel 0.42.0
+certifi / requests / httpx: 없음 (ModuleNotFoundError)
+NVIDIA_API_KEY 환경변수 값: openshell:resolve:env:... (자리표시자. 실제 키는 프록시가 끼워 넣는다)
+
+## 1. 파이썬 -> integrate.api.nvidia.com (protocol: rest, TLS 종단)
+urllib.request (표준 라이브러리, certifi 없음)
+
+GET https://integrate.api.nvidia.com/v1/models
+  -> status 200
+  {"object":"list","data":[{"id":"01-ai/yi-large","object":"model", ...
+
+POST https://integrate.api.nvidia.com/v1/chat/completions
+  payload: model=nvidia/nemotron-3.5-lightning-30b-a3b, max_tokens=8, temperature=0
+  -> status 200
+  model: nvidia/nemotron-3.5-lightning-30b-a3b
+  content: "Here's a thinking process:\n\n1."
+  usage: {'prompt_tokens': 23, 'completion_tokens': 8, 'total_tokens': 31}
+
+인증서 오류 없음. CA 주입 불필요. Authorization 헤더에 자리표시자를 그대로 실어 보내면
+프록시가 진짜 키로 바꿔 준다(200 + 정상 usage 가 그 증거).
+
+## 2. 실제 도구 실행 (src/harness/tools/pharmasignal_openfda.py)
+파일 주입: 호스트에서 tar.gz 를 만들어 `openshell sandbox exec -- sh -c "cat > /tmp/tools.tgz" < tools.tgz`
+          로 stdin 을 통해 밀어 넣고 샌드박스 안에서 풀었다. 업로드 명령 없이 된다.
+배치 경로: /tmp/app/src/harness/tools/  (pharmasignal_common.py 의 REPO_ROOT=parents[3] 때문에
+          최소 3단계 깊이가 필요하다. /tmp/tools 에 풀면 IndexError: 3 으로 죽는다)
+캐시 경로: PHARMASIGNAL_CACHE_DIR=/work/out (빈 디렉터리에서 시작했으므로 실제 호출이다)
+
+### 2a. 손대지 않은 원본 (부분 실패)
+errors:
+  n_drug: http_error:network: Remote end closed connection without response
+  n_reaction: http_error:network: Remote end closed connection without response
+  a: http_error:network: Remote end closed connection without response
+n_total 쿼리(?limit=1)만 통과. counts=null 이라 PRR/ROR 계산 불가.
+
+원인 (게이트웨이 로그 원문):
+  [ocsf] NET:OPEN [INFO] ALLOWED /usr/bin/python3.12(400) -> api.fda.gov:443 [policy:openfda engine:opa]
+  [ocsf] NET:OPEN [MED] DENIED api.fda.gov:443 [policy:openfda engine:l7] [reason:HTTP absolute-form request target contains an invalid URI]
+
+L4(opa)는 통과하고 L7 프록시가 요청 라인을 거부한다. 도구가 만드는 URL 에
+`search=...generic_name:"metformin"` 처럼 따옴표가 인코딩되지 않은 채 들어가기 때문이다.
+
+### 2b. 클라이언트별 대조 (같은 샌드박스, 같은 호스트)
+  curl  ?limit=1                                   -> http=200 rc=0
+  curl  ?search=...:"metformin"&limit=1            -> curl: (52) Empty reply from server, http=000 rc=52
+  curl  ?search=...:%22metformin%22&limit=1        -> http=200 rc=0
+  curl  ?limit=1&search=serious:1                  -> http=200 rc=0
+  py    ?limit=1                                   -> 200
+  py    ?search=...:%22metformin%22&limit=1        -> 200
+  py    ?search=...:"metformin"&limit=1            -> RemoteDisconnected
+=> 파이썬 문제가 아니다. 따옴표를 %22 로 인코딩하면 curl 과 파이썬 모두 통과한다.
+
+### 2c. 따옴표를 %22 로 바꾼 사본 (성공)
+샌드박스 안 사본에만 적용했다(저장소 파일은 건드리지 않았다).
+  _drug_clause:     f'{field}:"{quote(...)}"'          -> f'{field}:%22{quote(...)}%22'
+  _reaction_clause: f'{REACTION_FIELD}:"{quote(...)}"' -> f'{REACTION_FIELD}:%22{quote(...)}%22'
+
+python3 pharmasignal_openfda.py metformin "Lactic acidosis"
+  counts {'a': 19411, 'b': 420859, 'c': 12260, 'd': 20240160,
+          'n_drug': 440270, 'n_reaction': 31671, 'n_total': 20692690}
+  prr 72.83083197389885   prr_ci95 [71.21663990477805, 74.48161122319966]
+  ror 76.14383770609265   chi2_yates 533120.2285900704
+  evans_signal True   ror_signal True
+  errors []
+  data_last_updated 2026-07-30   retrieved_at 2026-09-24T22:53:42+00:00
+  cache {'path': '/work/out/pharmasignal_cache_openfda_11d876e90e1a.json', 'hits': 1, 'misses': 3}
+  ls /work/out -> pharmasignal_cache_openfda_11d876e90e1a.json (2637 bytes, 소유자 sandbox)
+
+호스트에서 2026-09-24 에 받아 둔 같은 해시의 캐시와 4건 모두 일치한다
+(20692690 / 440270 / 31671 / 19411). 샌드박스 안 호출이 정상 응답을 받았다는 교차 확인이다.
+
+### 2d. 성공 시 로그
+  [ocsf] NET:OPEN [INFO] ALLOWED /usr/bin/python3.12(426) -> api.fda.gov:443 [policy:openfda engine:opa]
+  [ocsf] HTTP:GET [INFO] ALLOWED GET http://api.fda.gov:443/drug/event.json [policy:openfda engine:l7]

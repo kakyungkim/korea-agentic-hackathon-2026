@@ -1,0 +1,47 @@
+# OpenShell provider profile: NVIDIA NIM API(integrate.api.nvidia.com)
+#
+# 공식 예제 providers/nvidia.yaml(client는 curl만)을 복사해 id를 바꾸고 Python 클라이언트
+# 경로를 더한 것. 공식 안내대로 예제를 그대로 import하지 않고 사본을 import한다.
+#   출처: https://github.com/NVIDIA/OpenShell/blob/main/providers/nvidia.yaml
+#         https://github.com/NVIDIA/OpenShell/blob/main/examples/local-inference/nvidia-inference.yaml
+#         https://github.com/NVIDIA/OpenShell/blob/main/docs/sandboxes/inference-routing.mdx
+#
+# 사용
+#   openshell provider profile lint   -f policies/nvidia-provider-profile.yaml
+#   openshell provider profile import -f policies/nvidia-provider-profile.yaml
+#   NVIDIA_API_KEY=... openshell provider create --name nvidia --type nvidia-hackathon --from-existing
+#   openshell sandbox create ... --provider nvidia
+#
+# 효과: 샌드박스 환경변수 NVIDIA_API_KEY에는 자리표시자만 들어가고, 프록시가
+# integrate.api.nvidia.com:443 으로 가는 요청의 Authorization 헤더에만 진짜 키를 넣는다.
+# 다른 호스트로 키를 보내려 해도 치환되지 않는다(credential_endpoint_mismatch).
+
+id: nvidia-hackathon
+display_name: NVIDIA NIM (hackathon)
+description: build.nvidia.com NIM API access for curl and Python clients
+category: inference
+# 정보 표시용 필드. 라우팅이나 요청 변환을 켜지 않는다(예제 주석 그대로).
+inference_capable: true
+credentials:
+  - name: api_key
+    description: NVIDIA API key
+    env_vars: [NVIDIA_API_KEY]
+    required: true
+    auth_style: bearer
+    header_name: authorization
+discovery:
+  credentials: [api_key]
+endpoints:
+  - host: integrate.api.nvidia.com
+    port: 443
+    protocol: rest
+    access: read-write
+    enforcement: enforce
+# 이미지(policies/sandbox-image/Dockerfile)의 실제 실행 파일 경로.
+binaries:
+  - /usr/bin/curl
+  - /usr/bin/python3
+  - /usr/bin/python3.12
+  - /sandbox/.venv/**
+  - /work/.venv/**
+  - /work/repo/.venv/**

@@ -1,0 +1,32 @@
+# NeMo Guardrails 정책 디렉터리 (Colang 1.0). NAT guardrails 미들웨어의 `guardrails_root` 가 이 폴더를 가리킨다.
+# 문법 출처: 설치본 nemoguardrails 0.21.0 examples/configs/nemoguards/config.yml, topic_safety/config.yml.
+# NAT 미들웨어(nvidia-nat-security 1.9.0)는 colang_version 1.0 만 받는다(nemo_guardrails_middleware_config.py).
+#
+# 모델 ID 는 nemoguardrails 예제와 nat 소스에서 문자열로 확인한 것만 적었다:
+#   nvidia/llama-3.1-nemoguard-8b-topic-control   (12회/8회 등장, 예제 config 사용)
+#   nvidia/llama-3.1-nemoguard-8b-content-safety
+#   jailbreak: nemoguard-jailbreak-detect 는 /v1/security/nvidia/nemoguard-jailbreak-detect 엔드포인트 (예제 config)
+# build.nvidia.com 에 실제 호스팅 중인지는 키가 없어 확인하지 못했다 [unverified].
+
+models:
+  # main 은 NAT 쪽에서 llm_bindings 로 planner 를 묶어 주므로 여기 값은 자리표시자다.
+  - type: main
+    engine: nim
+    model: nvidia/nemotron-3-super-120b-a12b
+
+  - type: topic_control
+    engine: nim
+    model: nvidia/llama-3.1-nemoguard-8b-topic-control
+
+  # 콘텐츠 안전까지 켜려면 주석 해제 후 rails.input.flows 에 "content safety check input $model=content_safety" 추가.
+  # - type: content_safety
+  #   engine: nim
+  #   model: nvidia/llama-3.1-nemoguard-8b-content-safety
+
+rails:
+  input:
+    flows:
+      - topic safety check input $model=topic_control
+  # output:
+  #   flows:
+  #     - content safety check output $model=content_safety

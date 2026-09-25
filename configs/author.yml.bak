@@ -1,0 +1,62 @@
+# 작성자(author) 워크플로. NAT 1.9.0 문법은 설치본(nat/data_models/config.py, nat/llm/nim_llm.py,
+# nat/plugins/langchain/agent/tool_calling_agent/register.py)에서 확인한 키만 쓴다.
+#
+# 실행: .venv/bin/nat validate --config_file configs/author.yml
+#       .venv/bin/nat run --config_file configs/author.yml --input "a=40, b=960, c=200, d=98800 의 PRR 을 계산해 근거 ID 와 함께 보고해."
+#       .venv/bin/nat serve --config_file configs/author.yml   (FastAPI, 기본 :8000/generate)
+# 환경변수: ${VAR} 또는 ${VAR:-default} 로 치환된다 (nat/utils/io/yaml_tools.py). NVIDIA_API_KEY 가 없으면 빈 문자열.
+
+general:
+  use_uvloop: true
+
+llms:
+  # 계획과 크리틱: super. NAT 1.9.0 의 `thinking:` 키는 정규식 ^nvidia/(llama|nvidia).*nemotron 에 걸려 Nemotron 3 ID 를 거부하므로
+  # 템플릿(config.yml.j2)과 같이 chat_template_kwargs.enable_thinking 을 쓴다 (ChatNVIDIA 가 model_kwargs 로 요청 본문에 실음).
+  planner:
+    _type: nim
+    model_name: nvidia/nemotron-3-super-120b-a12b
+    base_url: https://integrate.api.nvidia.com/v1
+    api_key: ${NVIDIA_API_KEY}
+    temperature: 0.2
+    top_p: 0.95
+    max_tokens: 2048
+    chat_template_kwargs:
+      enable_thinking: true
+  # 반복 작업자: nano. 도메인 도구 안에서 요약/추출처럼 잦은 호출에 쓴다.
+  worker:
+    _type: nim
+    model_name: nvidia/nemotron-3-nano-30b-a3b
+    base_url: https://integrate.api.nvidia.com/v1
+    api_key: ${NVIDIA_API_KEY}
+    temperature: 0.2
+    top_p: 0.95
+    max_tokens: 1024
+    chat_template_kwargs:
+      enable_thinking: false
+
+functions:
+  echo_tool:
+    _type: echo_tool
+    prefix: ""
+  prr_calculator:
+    _type: prr_calculator
+  # 도메인 도구는 아래에 같은 형식으로 추가한다 (src/harness/register.py 하단 안내 참고).
+  # openfda_faers:
+  #   _type: openfda_faers
+
+workflow:
+  # tool_calling_agent: 모델의 네이티브 tool calling 사용. ReAct 가 필요하면 _type: react_agent 로 바꾸고
+  # tool_names 는 그대로 둔다 (react_agent 는 max_tool_calls, retry_agent_response_parsing_errors 키를 추가로 가진다).
+  _type: tool_calling_agent
+  llm_name: planner
+  tool_names: [echo_tool, prr_calculator]
+  description: "근거 ID 가 붙은 주장(claims)과 요약(summary)을 JSON 으로 내는 작성자 에이전트"
+  verbose: true
+  handle_tool_errors: true
+  max_iterations: 8
+  system_prompt: |
+    You are the author agent. Plan, call tools, then answer.
+    Never compute statistics yourself: use prr_calculator and cite its evidence_id.
+    Final answer must be a single JSON object with this shape and nothing else:
+    {"claims": [{"text": "...", "evidence_ids": ["..."]}], "summary": "..."}
+    Every claim needs at least one evidence_id that came from a tool result. If you have no evidence, say so in summary and emit no claim.

@@ -1,0 +1,106 @@
+# OpenShell 샌드박스 정책: 후보 1 PharmaSignal (약물감시 시그널 트리아지)
+#
+# base.yaml을 그대로 두고 network_policies에 공개 데이터 소스 3곳을 더했다.
+# 각 키의 뜻은 base.yaml 주석 참조. 스키마 출처도 같다.
+#
+# 허용 호스트
+#   integrate.api.nvidia.com   Nemotron 추론(NIM API)
+#   api.fda.gov                openFDA FAERS 이상사례 집계
+#   dailymed.nlm.nih.gov       DailyMed SPL 허가 라벨
+#   eutils.ncbi.nlm.nih.gov    PubMed E-utilities 문헌 검색
+# 그 밖의 모든 목적지(예: example.com, github.com)는 거부되고 로그에 남는다.
+#
+# 적용
+#   openshell sandbox create --name pharmasignal --from hackathon-sandbox:latest \
+#     --policy policies/pharmasignal.yaml --provider nvidia --detach -- sleep infinity
+#   openshell policy set pharmasignal --policy policies/pharmasignal.yaml --wait
+
+version: 1
+
+filesystem_policy:
+  include_workdir: false
+  read_only:
+    - /usr
+    - /lib
+    - /lib64
+    - /bin
+    - /sbin
+    - /proc
+    - /dev/urandom
+    - /app
+    - /etc
+    - /var/log
+    - /sandbox
+    - /work
+  read_write:
+    - /work/out
+    - /tmp
+    - /dev/null
+
+landlock:
+  compatibility: best_effort
+
+network_policies:
+  nvidia_inference:
+    name: nvidia-inference
+    endpoints:
+      - host: integrate.api.nvidia.com
+        port: 443
+        protocol: rest
+        enforcement: enforce
+        access: read-write
+    binaries:
+      - path: /usr/bin/curl
+      - path: /usr/bin/python3
+      - path: /usr/bin/python3.12
+      - path: /sandbox/.venv/**
+      - path: /work/.venv/**
+
+  # openFDA. 조회는 GET만 쓰므로 read-only(GET/HEAD/OPTIONS). POST 시도는 L7에서 403.
+  openfda:
+    name: openfda-faers
+    endpoints:
+      - host: api.fda.gov
+        port: 443
+        protocol: rest
+        enforcement: enforce
+        access: read-only
+    binaries:
+      - path: /usr/bin/curl
+      - path: /usr/bin/python3
+      - path: /usr/bin/python3.12
+      - path: /sandbox/.venv/**
+      - path: /work/.venv/**
+
+  # DailyMed SPL 라벨. /dailymed/services/v2/spls.json 등 GET 조회.
+  dailymed:
+    name: dailymed-label
+    endpoints:
+      - host: dailymed.nlm.nih.gov
+        port: 443
+        protocol: rest
+        enforcement: enforce
+        access: read-only
+    binaries:
+      - path: /usr/bin/curl
+      - path: /usr/bin/python3
+      - path: /usr/bin/python3.12
+      - path: /sandbox/.venv/**
+      - path: /work/.venv/**
+
+  # PubMed E-utilities. esearch/efetch/esummary는 GET으로 충분하다.
+  # epost처럼 POST가 필요해지면 access를 read-write로 올린다(호출 빈도는 초당 3회 이하 유지).
+  pubmed:
+    name: pubmed-eutils
+    endpoints:
+      - host: eutils.ncbi.nlm.nih.gov
+        port: 443
+        protocol: rest
+        enforcement: enforce
+        access: read-only
+    binaries:
+      - path: /usr/bin/curl
+      - path: /usr/bin/python3
+      - path: /usr/bin/python3.12
+      - path: /sandbox/.venv/**
+      - path: /work/.venv/**

@@ -1,0 +1,25 @@
+# 크리틱(critic) 워크플로. 도구 없음(읽기 전용). 입력은 AuthorOutput JSON 문자열, 출력은 CriticReport.
+# 결정 규칙(근거 ID 누락 등)은 순수 파이썬으로 먼저 걸고, 통과분만 planner LLM 에 의미 판단을 맡긴다.
+#
+# 실행: .venv/bin/nat validate --config_file configs/critic.yml
+#       .venv/bin/nat run --config_file configs/critic.yml --input '{"claims":[{"text":"PRR 19.8","evidence_ids":[]}],"summary":"x"}'
+#       키가 없을 때 드라이런: CRITIC_DETERMINISTIC_ONLY=true .venv/bin/nat run --config_file configs/critic.yml --input '...'
+
+general:
+  use_uvloop: true
+
+llms:
+  planner:
+    _type: nim
+    model_name: nvidia/nemotron-3-super-120b-a12b
+    base_url: https://integrate.api.nvidia.com/v1
+    api_key: ${NVIDIA_API_KEY}
+    temperature: 0.0
+    max_tokens: 2048
+    chat_template_kwargs:
+      enable_thinking: true
+
+workflow:
+  _type: critic_judge
+  llm_name: planner
+  deterministic_only: ${CRITIC_DETERMINISTIC_ONLY:-false}

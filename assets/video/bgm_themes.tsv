@@ -1,0 +1,11 @@
+# 배경음악 테마 목록. bgm_pick.sh 가 읽는다.
+# 전부 macOS 기본 제공 Apple Loops의 Chillwave 계열 기타라 로열티가 없고 결이 고르다.
+# 신스 패드 계열은 나레이션과 겉돌아 뺐다.
+# 테마이름	루프 파일 이름 (확장자 없이)	어울리는 자리
+calm-guitar	Contrails Acoustic Guitar	차분한 해설. 기본값으로 쓴다
+bright	Chill Chords Acoustic Guitar	소개, 시작하는 이야기, 밝은 결과
+summers-end	Summers End Acoustic Guitar	회고, 겪은 일을 돌아보는 글
+nylon	Nylon Spanish Guitar	섬세한 마무리, 여운을 남기는 끝
+soft-waves	Soft Waves Harmonic Guitar	시스템·기술 설명. 배경으로 넓게 깔린다
+moving	Moving Pictures Acoustic Guitar	진행감이 필요한 대목, 단계를 밟아 가는 설명
+drifting	Drifting Off Guitar	문제 제기, 실패담, 가라앉은 대목

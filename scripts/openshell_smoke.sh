@@ -1,0 +1,220 @@
+#!/usr/bin/env bash
+# OpenShell 샌드박스 정책 스모크 테스트. 제출물의 "정책이 실제로 강제된다"는 증거를 만든다.
+#   (1) 허용 도메인 접속 성공(정책마다 목록이 다르다)
+#   (2) 허용 목록 밖 도메인(example.com, github.com) 차단
+#   (3) 정책의 read_write 경로는 쓰기 성공, 그 밖의 경로는 쓰기 차단
+#   (4) process.run_as_user 가 있으면 샌드박스 안 uid 확인
+#   (5) nightshift 는 pip 로 실제 패키지를 받아 pypi.org 와 files.pythonhosted.org 를 함께 확인
+#   (6) 게이트웨이 감사 로그의 DENIED 줄을 원문 그대로 발췌
+# 기대값은 정책 파일마다 다르므로 아래 "대상 목록" 블록에서 정책별로 정한다.
+# 결과는 pharmasignal 이면 eval/results/openshell_smoke.txt, 그 밖의 정책이면
+# eval/results/openshell_smoke_<정책>.txt 에 남긴다. 하나라도 실패하면 종료 코드 1.
+#
+# 사용:  scripts/openshell_smoke.sh [pharmasignal|nightshift|base]   (기본 pharmasignal)
+# 환경변수(선택):
+#   VM_BACKEND=colima|multipass   (기본 colima. VM 안에서 직접 돌리면 로컬 openshell 을 쓴다)
+#   VM_NAME=openshell             (multipass 백엔드에서만)
+#   SANDBOX_NAME=<정책명>
+#   OUT=<결과 파일 경로>        (기본은 위 규칙)
+#
+# 실측(2026-09-25, Colima + OpenShell 0.0.116): 차단은 프록시가 CONNECT 에 403 을 돌려주고
+# curl 이 종료 코드 56 으로 실패한다("curl: (56) CONNECT tunnel failed, response 403").
+# 쓰기 차단은 Landlock 이 걸어 "Permission denied" 와 종료 코드 2 로 나온다.
+
+set -uo pipefail
+
+POLICY="${1:-pharmasignal}"
+case "$POLICY" in pharmasignal|nightshift|base) ;; *) echo "정책은 pharmasignal | nightshift | base" >&2; exit 2;; esac
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+VM_BACKEND="${VM_BACKEND:-colima}"
+VM_NAME="${VM_NAME:-openshell}"
+SANDBOX_NAME="${SANDBOX_NAME:-$POLICY}"
+OUT_DIR="$REPO_ROOT/eval/results"
+# 결과 파일은 정책마다 따로 남긴다. pharmasignal 은 기존 파일명을 그대로 두어 앞선 기록을
+# 덮어쓰지 않는다. OUT 환경변수로 직접 지정할 수도 있다.
+case "$POLICY" in
+  pharmasignal) OUT="${OUT:-$OUT_DIR/openshell_smoke.txt}" ;;
+  *)            OUT="${OUT:-$OUT_DIR/openshell_smoke_$POLICY.txt}" ;;
+esac
+mkdir -p "$OUT_DIR"
+
+# ---------------------------------------------------------------- 실행 위치 결정
+# VM 안(또는 openshell 이 깔린 리눅스)에서 직접 돌리면 로컬 바이너리를, macOS 에서 돌리면
+# 고른 VM 백엔드를 거친다.
+# stdin 은 반드시 /dev/null 로 막는다. `openshell sandbox exec` 는 stdin 을 샌드박스로
+# 흘려보내므로, 터미널이 아닌 곳(백그라운드 실행, CI)에서 돌리면 EOF 를 기다리며 멈춘다. 실측 확인.
+if command -v openshell >/dev/null 2>&1; then
+  vm() { bash -lc "$*" </dev/null; }
+  WHERE="local"
+elif [ "$VM_BACKEND" = colima ] && command -v colima >/dev/null 2>&1; then
+  vm() { colima ssh -- bash -lc "$*" </dev/null; }
+  WHERE="colima"
+elif [ "$VM_BACKEND" = multipass ] && command -v multipass >/dev/null 2>&1; then
+  vm() { multipass exec "$VM_NAME" -- bash -lc "$*" </dev/null; }
+  WHERE="multipass:$VM_NAME"
+else
+  echo "openshell 도 $VM_BACKEND 도 없다" >&2; exit 2
+fi
+
+# 샌드박스 안에서 sh 명령 실행. 따옴표가 층층이 겹치지 않도록 base64 로 감싸 넘긴다.
+sb() {
+  local b64; b64="$(printf '%s' "$1" | base64 | tr -d '\n')"
+  vm "openshell sandbox exec -n $SANDBOX_NAME --no-tty --timeout 90 -- sh -c 'echo $b64 | base64 -d | sh'" 2>&1
+}
+
+# ---------------------------------------------------------------- 대상 목록
+# 정책 파일마다 허용 도메인, 쓰기 경로, 프로세스 신원이 다르다. 여기서 한 번에 정한다.
+#   ALLOWED_URLS  : network_policies 에 있는 호스트 (접속되어야 한다)
+#   WRITE_ALLOW   : filesystem_policy.read_write 에 있는 디렉터리 (써지고 지워져야 한다)
+#   WRITE_DENY    : read_only 에 있거나 아예 빠진 디렉터리 (Landlock 이 EPERM 으로 끊는다)
+#   EXPECT_UID    : process.run_as_user. 정책에 없으면 빈 값(이미지 USER 를 따른다)
+#   PIP_PROBE     : pip 로 실제 패키지를 받아 pypi.org 와 files.pythonhosted.org 를 함께 확인
+case "$POLICY" in
+  pharmasignal)
+    ALLOWED_URLS=(
+      "https://api.fda.gov/drug/event.json?limit=1"
+      "https://dailymed.nlm.nih.gov/dailymed/services/v2/spls.json?pagesize=1"
+      "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/einfo.fcgi?retmode=json"
+      "https://integrate.api.nvidia.com/v1/models"
+    )
+    WRITE_ALLOW=( /work/out )
+    WRITE_DENY=( /etc /sandbox )
+    EXPECT_UID=""
+    PIP_PROBE=0
+    ;;
+  nightshift)
+    ALLOWED_URLS=(
+      "https://pypi.org/simple/pip/"
+      "https://files.pythonhosted.org/"
+      "https://integrate.api.nvidia.com/v1/models"
+    )
+    WRITE_ALLOW=( /work/repo /work/out )
+    WRITE_DENY=( /etc /sandbox )
+    EXPECT_UID="1500"
+    PIP_PROBE=1
+    ;;
+  base)
+    ALLOWED_URLS=( "https://integrate.api.nvidia.com/v1/models" )
+    WRITE_ALLOW=( /work/out )
+    WRITE_DENY=( /etc /sandbox )
+    EXPECT_UID=""
+    PIP_PROBE=0
+    ;;
+esac
+BLOCKED_URLS=( "https://example.com/" "https://github.com/" )
+
+PASS=0; FAIL=0
+{
+  echo "# OpenShell smoke test"
+  echo "date_utc: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  echo "policy: $POLICY.yaml   sandbox: $SANDBOX_NAME   via: $WHERE"
+  echo "openshell: $(vm 'openshell --version' 2>/dev/null | tr -d '\r')"
+  echo
+} > "$OUT"
+
+record() {  # record <PASS|FAIL> <이름> <상세>
+  printf '%-4s %-34s %s\n' "$1" "$2" "$3" | tee -a "$OUT"
+  if [ "$1" = PASS ]; then PASS=$((PASS+1)); else FAIL=$((FAIL+1)); fi
+}
+
+probe_url() {  # probe_url <url>  → "http=NNN rc=N" 한 줄
+  sb "curl -sS --max-time 25 -o /dev/null -w \"http=%{http_code}\" \"$1\" 2>&1; echo \" rc=\$?\"" | tr -d '\r' | tr '\n' ' ' | sed 's/  */ /g'
+}
+
+# ---------------------------------------------------------------- 1. 허용 도메인
+echo "## 허용 도메인" | tee -a "$OUT"
+for u in "${ALLOWED_URLS[@]}"; do
+  host="$(echo "$u" | cut -d/ -f3)"
+  out="$(probe_url "$u")"
+  # http=000 은 프록시가 CONNECT 를 막았다는 뜻이다. 2xx, 401(키 없음), 404(경로 없음)는
+  # 모두 원본 서버가 응답했다는 증거라 "허용"으로 본다.
+  if echo "$out" | grep -q 'rc=0' && echo "$out" | grep -qE 'http=(2[0-9][0-9]|401|404)'; then
+    record PASS "allowed $host" "$out"
+  else
+    record FAIL "allowed $host" "$out (정책 binaries 에 /usr/bin/curl 이 있는지, 호스트가 endpoints 에 있는지 확인)"
+  fi
+done
+
+# ---------------------------------------------------------------- 2. 허용 목록 밖 차단
+echo | tee -a "$OUT"; echo "## 허용 목록 밖(차단되어야 함)" | tee -a "$OUT"
+for u in "${BLOCKED_URLS[@]}"; do
+  host="$(echo "$u" | cut -d/ -f3)"
+  out="$(probe_url "$u")"
+  # 프록시가 CONNECT 에 403 을 돌려주면 curl 은 56 으로 끝난다. 7/35/22 도 차단 신호로 본다.
+  if echo "$out" | grep -qE 'rc=(56|7|35|22)' || echo "$out" | grep -qi 'tunnel failed\|policy_denied\|http=403'; then
+    record PASS "blocked $host" "$out"
+  else
+    record FAIL "blocked $host" "차단되지 않았다: $out"
+  fi
+done
+
+# ---------------------------------------------------------------- 3. 쓰기 제한
+echo | tee -a "$OUT"; echo "## 파일시스템 쓰기" | tee -a "$OUT"
+for d in "${WRITE_DENY[@]}"; do
+  out="$(sb "echo probe > $d/openshell_smoke_probe 2>&1; echo \"rc=\$?\"" | tr '\n' ' ' | sed 's/  */ /g')"
+  if echo "$out" | grep -qE 'rc=[1-9]'; then
+    record PASS "denied write $d" "$out"
+  else
+    record FAIL "denied write $d" "쓰기가 성공했다(read_write 에 들어갔거나 Landlock 미적용): $out"
+    sb "rm -f $d/openshell_smoke_probe" >/dev/null 2>&1
+  fi
+done
+
+for d in "${WRITE_ALLOW[@]}"; do
+  out="$(sb "echo probe > $d/openshell_smoke_probe 2>&1 && cat $d/openshell_smoke_probe && rm -f $d/openshell_smoke_probe; echo \"rc=\$?\"" | tr '\n' ' ' | sed 's/  */ /g')"
+  if echo "$out" | grep -q 'rc=0'; then
+    record PASS "allowed write $d" "$out"
+  else
+    record FAIL "allowed write $d" "$out (이미지에 $d 가 있고 소유자가 샌드박스 사용자인지 확인)"
+  fi
+done
+
+# ---------------------------------------------------------------- 3b. 프로세스 신원
+# process.run_as_user 가 정책에 있으면 샌드박스 안의 uid 가 그 값이어야 한다.
+echo | tee -a "$OUT"; echo "## 프로세스 신원 (process.run_as_user)" | tee -a "$OUT"
+idout="$(sb 'id' | tr '\n' ' ' | sed 's/  */ /g')"
+if [ -n "$EXPECT_UID" ]; then
+  if echo "$idout" | grep -q "uid=$EXPECT_UID("; then
+    record PASS "run_as_user=$EXPECT_UID" "$idout"
+  else
+    record FAIL "run_as_user=$EXPECT_UID" "기대한 uid 가 아니다: $idout"
+  fi
+else
+  printf '%-4s %-34s %s\n' "INFO" "run_as_user 미지정" "$idout" | tee -a "$OUT"
+fi
+
+# ---------------------------------------------------------------- 3c. pip 실제 설치 (선택)
+# pypi.org 와 files.pythonhosted.org 두 호스트를 한 번에 쓰는 실제 작업이다.
+# HOME 이 쓰기 불가라 --no-cache-dir 를 반드시 준다.
+if [ "$PIP_PROBE" = 1 ]; then
+  echo | tee -a "$OUT"; echo "## pip 다운로드 (pypi.org + files.pythonhosted.org)" | tee -a "$OUT"
+  out="$(sb 'rm -rf /tmp/pipdl; pip3 download --no-deps --no-cache-dir --dest /tmp/pipdl six 2>&1 | tail -3; echo "rc=$?"; ls /tmp/pipdl 2>/dev/null' | tr '\n' ' ' | sed 's/  */ /g')"
+  if echo "$out" | grep -q 'six.*\.whl'; then
+    record PASS "pip download six" "$out"
+  else
+    record FAIL "pip download six" "$out"
+  fi
+  sb 'rm -rf /tmp/pipdl' >/dev/null 2>&1
+fi
+
+# ---------------------------------------------------------------- 4. 감사 로그 + 유효 정책
+{
+  echo
+  echo "## 차단 로그 원문 (openshell logs $SANDBOX_NAME --since 15m, DENIED/BLOCKED 만)"
+  vm "openshell logs $SANDBOX_NAME --since 15m -n 500" 2>/dev/null \
+    | grep -aiE 'DENIED|BLOCKED' | tail -40 || echo "(로그 없음 또는 logs 명령 실패)"
+  echo
+  echo "## Landlock 적용 기록 (파일시스템 거부는 커널이 EPERM 으로 끊어 로그에 DENIED 가 남지 않는다)"
+  vm "openshell logs $SANDBOX_NAME --since 15m -n 500 --level debug" 2>/dev/null \
+    | grep -aE 'Landlock' | tail -4 || echo "(Landlock 로그 없음)"
+  echo
+  echo "## 유효 정책 (openshell policy get $SANDBOX_NAME --full)"
+  vm "openshell policy get $SANDBOX_NAME --full" 2>/dev/null | head -120 || echo "(policy get 실패)"
+  echo
+  echo "summary: pass=$PASS fail=$FAIL"
+} >> "$OUT"
+
+echo
+echo "결과 파일: $OUT   (pass=$PASS fail=$FAIL)"
+[ "$FAIL" -eq 0 ]

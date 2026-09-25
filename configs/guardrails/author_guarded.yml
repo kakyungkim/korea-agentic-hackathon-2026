@@ -1,0 +1,80 @@
+# 작성자 워크플로 + NAT Guardrails 미들웨어(nvidia-nat-security 1.9.0, `_type: guardrails`).
+# configs/author.yml 과 같고 middleware 블록과 workflow.middleware 만 추가됐다.
+#
+# 문법 출처(설치본): nat/plugins/security/middleware/guardrails/nemo_guardrails_middleware_config.py
+#   guardrails | guardrails_root  둘 중 정확히 하나. guardrails_root 는 RailsConfig.from_path 로 읽는 정책 폴더.
+#   llm_bindings: {rail 모델 타입: NAT llms 키}. "main"/"default" 는 주 LLM, 그 외는 "<type>_llm" 액션 파라미터로 묶인다.
+#   workflow_functions: 가로챌 함수 이름 목록 또는 {함수: {필드: [하위경로]}} 매핑.
+#   stream_output_rails: 출력 레일을 토큰 단위로 (Colang 정책에 rails.output.streaming.enabled 필요).
+# 부착 방법은 두 가지다. (1) 함수 설정의 `middleware: [이름]` (nat/data_models/function.py FunctionBaseConfig),
+# (2) 미들웨어 설정의 workflow_functions / register_workflow_functions 로 자동 발견. 여기서는 (1)을 쓴다.
+#
+# guardrails_root 는 실행 디렉터리 기준 상대경로이므로 저장소 루트에서 실행한다.
+# 실행: .venv/bin/nat validate --config_file configs/guardrails/author_guarded.yml
+#       .venv/bin/nat run --config_file configs/guardrails/author_guarded.yml --input "이 약을 제가 하루 두 번 먹어도 될까요?"
+#       2026-09-24 실측: 레일이 nvidia/llama-3.1-nemoguard-8b-topic-control 까지 요청을 보내지만 그 모델이 500
+#       (서버 쪽 TensorRT-LLM CUDA 오류)을 돌려줘 워크플로가 멈춘다. 차단 시연은 아직 못 했다 [unverified].
+#       자세한 내용과 우회 후보는 docs/notes/nat-harness.md 의 "가드레일 미들웨어의 실행 시점 결함 두 가지" 절.
+
+general:
+  use_uvloop: true
+
+llms:
+  planner:
+    _type: nim
+    model_name: nvidia/nemotron-3-super-120b-a12b
+    base_url: https://integrate.api.nvidia.com/v1
+    api_key: ${NVIDIA_API_KEY}
+    temperature: 0.2
+    top_p: 0.95
+    max_tokens: 2048
+    chat_template_kwargs:
+      enable_thinking: true
+  worker:
+    _type: nim
+    model_name: nvidia/nemotron-3.5-lightning-30b-a3b
+    base_url: https://integrate.api.nvidia.com/v1
+    api_key: ${NVIDIA_API_KEY}
+    temperature: 0.2
+    top_p: 0.95
+    max_tokens: 1024
+    chat_template_kwargs:
+      enable_thinking: false
+
+functions:
+  echo_tool:
+    _type: echo_tool
+  prr_calculator:
+    _type: prr_calculator
+
+middleware:
+  topic_guard:
+    _type: guardrails
+    guardrails_root: configs/guardrails/rails
+    # llms 는 LLMRef 라 의존 그래프에 planner 를 먼저 만들라고 알려 준다. 없으면 미들웨어가 먼저 만들어져
+    # "LLM `planner` not found" 로 죽는다(실측). llm_bindings 는 평범한 문자열이라 그래프에 안 잡힌다.
+    llms: [planner]
+    # llm_bindings 로 planner 를 묶으면 NAT 가 돌려주는 객체가 RunnableConfigurableFields 라
+    # "must resolve to a LangChain BaseLanguageModel" 로 죽는다(실측, NAT 1.9.0). 레일이 스스로
+    # rails/config.yml 의 models 정의(engine nim + NVIDIA_API_KEY)로 모델을 만들게 둔다.
+    # llm_bindings:
+    #   main: planner
+      # topic_control 레일 모델도 NAT llms 로 묶으려면 llms 에 nim 항목(model_name: nvidia/llama-3.1-nemoguard-8b-topic-control)을
+      # 만들고 여기 `topic_control: <키>` 를 추가한다. 지금은 rails/config.yml 의 models 정의(engine nim + NVIDIA_API_KEY)를 쓴다.
+    stream_output_rails: false
+
+workflow:
+  _type: tool_calling_agent
+  llm_name: planner
+  tool_names: [echo_tool, prr_calculator]
+  middleware: [topic_guard]
+  description: "근거 ID 가 붙은 주장과 요약을 JSON 으로 내는 작성자 에이전트 (토픽 제어 레일 부착)"
+  verbose: true
+  handle_tool_errors: true
+  max_iterations: 8
+  system_prompt: |
+    You are the author agent. Plan, call tools, then answer.
+    Never compute statistics yourself: use prr_calculator and cite its evidence_id.
+    Final answer must be a single JSON object with this shape and nothing else:
+    {"claims": [{"text": "...", "evidence_ids": ["..."]}], "summary": "..."}
+    Every claim needs at least one evidence_id that came from a tool result. If you have no evidence, say so in summary and emit no claim.

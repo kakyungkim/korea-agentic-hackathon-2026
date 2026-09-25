@@ -1,0 +1,23 @@
+{
+  "average_score": 1.0,
+  "eval_output_items": [
+    {
+      "id": "prr_signal_ok",
+      "score": 1.0,
+      "reasoning": "expected=pass got=pass",
+      "error": null
+    },
+    {
+      "id": "label_listed_ok",
+      "score": 1.0,
+      "reasoning": "expected=pass got=pass",
+      "error": null
+    },
+    {
+      "id": "planted_unsupported_claim",
+      "score": 1.0,
+      "reasoning": "expected=reject got=reject",
+      "error": null
+    }
+  ]
+}

@@ -115,7 +115,7 @@ JSON 형식, 주장 존재, 근거 ID 유무와 공백 여부뿐이다. **숫자
 근거 ID가 붙은 틀린 숫자는 그대로 통과한다. LLM 판정 단계도 근거를 열어 보지 말라고 프롬프트에
 명시돼 있어("You cannot open them"), 이 빈자리는 LLM 쪽에서도 메워지지 않는다.
 
-그 자리를 메우는 것이 `pharmasignal_verify`다. 오라클은 `pharmasignal_ror.ror_2x2`와
+그것을 메우는 것이 `pharmasignal_verify`다. 오라클은 `pharmasignal_ror.ror_2x2`와
 `pharmasignal_openfda.disproportionality`가 맡고, 작성자 출력의 숫자를 다시 구한 값과
 맞춰 본다. 적발률이 1.0이라 더 잴 것이 없어 보이는 상태에서, 제출 심사에 내놓을 숫자가
 하나 더 생긴다.
@@ -255,7 +255,7 @@ Vanna와 PandasAI의 CVE(분석 에이전트의 코드 실행이 실제 공격�
 
 **고쳐 쓴 것 하나.** v1은 "민감도에 따라 모델을 나누는 것이 새롭다"를 금지 목록에 넣었다
 (LiteLLM `sensitive_data_routing`, Portkey 문서 한 줄로 반박된다). 이번 제출은 민감도 라우팅을
-기능으로 내세우지 않지만, OpenShell 정책이 추론 라우팅을 통제한다고 말할 자리가 생기면 같은
+기능으로 내세우지 않지만, OpenShell 정책이 추론 라우팅을 통제한다고 말할 수 있게 되면 같은
 반박이 온다. 그때는 "새 기능"이 아니라 **"규제 도메인을 위한 새 기본값"**으로 표현한다.
 
 **뺀 것 하나.** v1의 "분산 GPU 마켓플레이스를 반출 금지의 근거로 제시" 항목은 Nosana에만

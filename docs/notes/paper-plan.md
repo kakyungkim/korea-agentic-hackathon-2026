@@ -181,7 +181,7 @@ responses based on chemical accuracy and task completeness, EvaluatorGPT favours
 basing its evaluation on the fluency and apparent completeness of GPT-4's responses." 저자들은
 실제 지식이 필요한 과학 과제에서 LLM 평가가 전문가 평가를 대체할 수 없다고 덧붙였다.
 
-### 빈 자리
+### 남은 공백
 
 1. **도구 문서가 명시한 해석 한계를 규칙으로 부호화한 평가가 없다.** 진술들이 문헌과 문서에
    흩어져 있고 에이전트 출력을 그것에 대고 기계적으로 검사하는 평가 집합은 확인되지 않았다

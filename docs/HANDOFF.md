@@ -33,7 +33,7 @@
 
 | 항목 | 값 | 어디서 |
 |---|---|---|
-| 오프라인 테스트 | **330개 통과** (2026-09-26 갱신, 이전 313) | `pytest -q -m "not network"` |
+| 오프라인 테스트 | **293개 통과** (2026-09-26 갱신, 이전 330. Night Shift 제거로 65건 감소) | `pytest -q -m "not network"` |
 | 도구 NAT 등록 | **8종.** openfda_faers, dailymed_label, pubmed_search, prr_calculator, diffdock_nim, vina_reference, bindingdb_ref, echo_tool | `configs/author.yml` tool_names |
 | 설정 검증 | 4종 전부 유효 | `nat validate` |
 | **에이전트 도구 호출(도킹 포함)** | **4종 연속 호출.** `vina_reference`, `openfda_faers`, `dailymed_label`, `pubmed_search`. 주장 4건 전부 근거 ID 있음, 근거 없는 주장 0건 | `eval/results/nat_run_author_flydock.json` |

@@ -41,7 +41,7 @@ LLM 에이전트를 이런 도구에 붙이면 그 선을 자주 넘는다. **�
 
 | 항목 | 값 | 어디서 |
 |---|---|---|
-| 오프라인 테스트 | 330개 통과 | `pytest -q -m "not network"` |
+| 오프라인 테스트 | 293개 통과 | `pytest -q -m "not network"` |
 | NAT 등록 도구 | 8종 | `configs/author.yml` |
 | 에이전트 도구 호출 | 4종 연속, 주장 4건 전부 근거 있음 | `eval/results/nat_run_author_flydock.json` |
 | 과잉해석 규칙 | 15종 | `src/harness/tools/overclaim_rules.py` |
@@ -110,6 +110,12 @@ cp .env.example .env            # NVIDIA_API_KEY 를 채운다. .env 는 커밋�
 set -a; source .env; set +a
 .venv/bin/python scripts/run_case_demo.py --out eval/results
 cat eval/results/case_niraparib_brief.md
+```
+
+문서에 적힌 수치가 출처와 같은지 대조한다. 어긋난 항목 수가 종료 코드로 나온다.
+
+```bash
+.venv/bin/python scripts/verify_numbers.py
 ```
 
 적발률을 잰다. **두 수치를 함께 봐야 의미가 있다.**

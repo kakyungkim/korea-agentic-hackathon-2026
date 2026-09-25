@@ -218,6 +218,23 @@ If you have no source, write "no source". Acknowledge with OK.
   정책을 적용하고 허용 목록 밖 접속이 403 으로 끊기는 로그까지 확보했다
   (`eval/results/openshell_smoke.txt`). 강좌가 가르치려는 것을 실제로 해 본 기록이다.
 
+**인증을 꺼도 안 된다 (2026-09-25 실측).** Brev 상세 페이지의 Secure Links 에서 `Share` 를 눌러
+`Disable authentication` 을 켜면 Authorization 이 `Public` 으로 바뀌고 쿠키가 필요 없어진다.
+네 점검 중 하나는 이때 통과한다. 그러나 나머지 셋은 여전히 실패한다.
+
+터미널에서 직접 불러 확인한 결과, `/healthz` 와 `/api/agent` 는 **200 을 돌려주지만 응답에
+`Access-Control-Allow-Origin` 헤더가 없다.** 서버는 멀쩡하고 브라우저만 막는다. 강좌 페이지는
+`nvdli.github.io` 에서 돌고 launchable 은 다른 출처라, 그 헤더가 없으면 브라우저가 응답을 버린다.
+`Failed to fetch` 가 그 뜻이다.
+
+강좌 본문은 이런 경우 승인된 릴레이를 거치도록 설계돼 있다고 적는데(`Cloudflare sends HTTP checks
+through the approved relay`), 우리 주소 형태가 그 릴레이의 허용 목록에 없는 것으로 보인다.
+**사용자 쪽에서 고칠 수 없다.**
+
+인증을 껐다면 실습을 접은 뒤 **반드시 되돌린다.** 같은 Share 화면에서 체크를 해제하고 `Done`,
+그다음 인스턴스를 `Stop` 한다. 공개된 동안에는 주소를 아는 누구나 게이트웨이에 닿고,
+그 사람은 에이전트에 명령을 넣고 예약 작업을 걸 수 있는 운영자 권한을 가진다.
+
 **진도에 미치는 영향.** 이 연결이 안 되면 진도가 50% 에서 멈춘다. 모듈 3 과 4 의 체크포인트
 다섯 개가 모두 살아 있는 launchable 연결을 요구하기 때문이다.
 

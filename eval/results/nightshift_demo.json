@@ -9,12 +9,12 @@
   "env": {
     "python": "3.12.8",
     "platform": "macOS-10.16-x86_64-i386-64bit",
-    "cmd_test": "/Users/kkkim/projects/hackthon/KoreaAgenticAIhackathon/.venv/bin/python -m pytest -q -p no:cacheprovider"
+    "cmd_test": ".venv/bin/python -m pytest -q -p no:cacheprovider"
   },
   "baseline": {
     "sha": "4e5faa3d7e4008d89e0d8bf1ea87b6d9a061a16d",
     "tests": {
-      "cmd": "/Users/kkkim/projects/hackthon/KoreaAgenticAIhackathon/.venv/bin/python -m coverage run --data-file=/private/tmp/claude-501/-Users-kkkim-projects-hackthon-KoreaAgenticAIhackathon/dbe5d683-9e11-4375-ac5d-21e988e6601d/scratchpad/.nightshift_tmp/.coverage.83755.1790253252428 --source=. '--omit=tests/*,*/tests/*,test_*.py,*_test.py,conftest.py,setup.py' -m pytest -q -p no:cacheprovider",
+      "cmd": ".venv/bin/python -m coverage run --data-file=/private/tmp/claude-501/-Users-kkkim-projects-hackthon-KoreaAgenticAIhackathon/dbe5d683-9e11-4375-ac5d-21e988e6601d/scratchpad/.nightshift_tmp/.coverage.83755.1790253252428 --source=. '--omit=tests/*,*/tests/*,test_*.py,*_test.py,conftest.py,setup.py' -m pytest -q -p no:cacheprovider",
       "returncode": 0,
       "timed_out": false,
       "duration_s": 13.745,
@@ -65,7 +65,7 @@
         "before": {
           "sha": "4e5faa3d7e4008d89e0d8bf1ea87b6d9a061a16d",
           "tests": {
-            "cmd": "/Users/kkkim/projects/hackthon/KoreaAgenticAIhackathon/.venv/bin/python -m coverage run --data-file=/private/tmp/claude-501/-Users-kkkim-projects-hackthon-KoreaAgenticAIhackathon/dbe5d683-9e11-4375-ac5d-21e988e6601d/scratchpad/.nightshift_tmp/.coverage.83755.1790253252428 --source=. '--omit=tests/*,*/tests/*,test_*.py,*_test.py,conftest.py,setup.py' -m pytest -q -p no:cacheprovider",
+            "cmd": ".venv/bin/python -m coverage run --data-file=/private/tmp/claude-501/-Users-kkkim-projects-hackthon-KoreaAgenticAIhackathon/dbe5d683-9e11-4375-ac5d-21e988e6601d/scratchpad/.nightshift_tmp/.coverage.83755.1790253252428 --source=. '--omit=tests/*,*/tests/*,test_*.py,*_test.py,conftest.py,setup.py' -m pytest -q -p no:cacheprovider",
             "returncode": 0,
             "timed_out": false,
             "duration_s": 13.745,
@@ -88,7 +88,7 @@
         "after": {
           "sha": "80ce68e8229f42f846e14f95f8965030916d17f9",
           "tests": {
-            "cmd": "/Users/kkkim/projects/hackthon/KoreaAgenticAIhackathon/.venv/bin/python -m coverage run --data-file=/private/tmp/claude-501/-Users-kkkim-projects-hackthon-KoreaAgenticAIhackathon/dbe5d683-9e11-4375-ac5d-21e988e6601d/scratchpad/.nightshift_tmp/.coverage.83755.1790253268142 --source=. '--omit=tests/*,*/tests/*,test_*.py,*_test.py,conftest.py,setup.py' -m pytest -q -p no:cacheprovider",
+            "cmd": ".venv/bin/python -m coverage run --data-file=/private/tmp/claude-501/-Users-kkkim-projects-hackthon-KoreaAgenticAIhackathon/dbe5d683-9e11-4375-ac5d-21e988e6601d/scratchpad/.nightshift_tmp/.coverage.83755.1790253268142 --source=. '--omit=tests/*,*/tests/*,test_*.py,*_test.py,conftest.py,setup.py' -m pytest -q -p no:cacheprovider",
             "returncode": 0,
             "timed_out": false,
             "duration_s": 13.815,
@@ -210,7 +210,7 @@
         "before": {
           "sha": "4e5faa3d7e4008d89e0d8bf1ea87b6d9a061a16d",
           "tests": {
-            "cmd": "/Users/kkkim/projects/hackthon/KoreaAgenticAIhackathon/.venv/bin/python -m coverage run --data-file=/private/tmp/claude-501/-Users-kkkim-projects-hackthon-KoreaAgenticAIhackathon/dbe5d683-9e11-4375-ac5d-21e988e6601d/scratchpad/.nightshift_tmp/.coverage.83755.1790253252428 --source=. '--omit=tests/*,*/tests/*,test_*.py,*_test.py,conftest.py,setup.py' -m pytest -q -p no:cacheprovider",
+            "cmd": ".venv/bin/python -m coverage run --data-file=/private/tmp/claude-501/-Users-kkkim-projects-hackthon-KoreaAgenticAIhackathon/dbe5d683-9e11-4375-ac5d-21e988e6601d/scratchpad/.nightshift_tmp/.coverage.83755.1790253252428 --source=. '--omit=tests/*,*/tests/*,test_*.py,*_test.py,conftest.py,setup.py' -m pytest -q -p no:cacheprovider",
             "returncode": 0,
             "timed_out": false,
             "duration_s": 13.745,
@@ -233,7 +233,7 @@
         "after": {
           "sha": "a68abb131b6574b38d9c6cf7fb1aa7f39bcc7e57",
           "tests": {
-            "cmd": "/Users/kkkim/projects/hackthon/KoreaAgenticAIhackathon/.venv/bin/python -m coverage run --data-file=/private/tmp/claude-501/-Users-kkkim-projects-hackthon-KoreaAgenticAIhackathon/dbe5d683-9e11-4375-ac5d-21e988e6601d/scratchpad/.nightshift_tmp/.coverage.83755.1790253284100 --source=. '--omit=tests/*,*/tests/*,test_*.py,*_test.py,conftest.py,setup.py' -m pytest -q -p no:cacheprovider",
+            "cmd": ".venv/bin/python -m coverage run --data-file=/private/tmp/claude-501/-Users-kkkim-projects-hackthon-KoreaAgenticAIhackathon/dbe5d683-9e11-4375-ac5d-21e988e6601d/scratchpad/.nightshift_tmp/.coverage.83755.1790253284100 --source=. '--omit=tests/*,*/tests/*,test_*.py,*_test.py,conftest.py,setup.py' -m pytest -q -p no:cacheprovider",
             "returncode": 0,
             "timed_out": false,
             "duration_s": 16.413,
@@ -360,7 +360,7 @@
         "before": {
           "sha": "4e5faa3d7e4008d89e0d8bf1ea87b6d9a061a16d",
           "tests": {
-            "cmd": "/Users/kkkim/projects/hackthon/KoreaAgenticAIhackathon/.venv/bin/python -m coverage run --data-file=/private/tmp/claude-501/-Users-kkkim-projects-hackthon-KoreaAgenticAIhackathon/dbe5d683-9e11-4375-ac5d-21e988e6601d/scratchpad/.nightshift_tmp/.coverage.83755.1790253252428 --source=. '--omit=tests/*,*/tests/*,test_*.py,*_test.py,conftest.py,setup.py' -m pytest -q -p no:cacheprovider",
+            "cmd": ".venv/bin/python -m coverage run --data-file=/private/tmp/claude-501/-Users-kkkim-projects-hackthon-KoreaAgenticAIhackathon/dbe5d683-9e11-4375-ac5d-21e988e6601d/scratchpad/.nightshift_tmp/.coverage.83755.1790253252428 --source=. '--omit=tests/*,*/tests/*,test_*.py,*_test.py,conftest.py,setup.py' -m pytest -q -p no:cacheprovider",
             "returncode": 0,
             "timed_out": false,
             "duration_s": 13.745,
@@ -383,7 +383,7 @@
         "after": {
           "sha": "293c68baa119078d51ce3bb57a1a97b427e00f49",
           "tests": {
-            "cmd": "/Users/kkkim/projects/hackthon/KoreaAgenticAIhackathon/.venv/bin/python -m coverage run --data-file=/private/tmp/claude-501/-Users-kkkim-projects-hackthon-KoreaAgenticAIhackathon/dbe5d683-9e11-4375-ac5d-21e988e6601d/scratchpad/.nightshift_tmp/.coverage.83755.1790253302562 --source=. '--omit=tests/*,*/tests/*,test_*.py,*_test.py,conftest.py,setup.py' -m pytest -q -p no:cacheprovider",
+            "cmd": ".venv/bin/python -m coverage run --data-file=/private/tmp/claude-501/-Users-kkkim-projects-hackthon-KoreaAgenticAIhackathon/dbe5d683-9e11-4375-ac5d-21e988e6601d/scratchpad/.nightshift_tmp/.coverage.83755.1790253302562 --source=. '--omit=tests/*,*/tests/*,test_*.py,*_test.py,conftest.py,setup.py' -m pytest -q -p no:cacheprovider",
             "returncode": 0,
             "timed_out": false,
             "duration_s": 13.64,
@@ -485,8 +485,8 @@
     "note": "로컬 데모: OpenShell 미실행이라 실제 감사 로그가 없다. 건수는 자리표시 입력이다. [unverified]"
   },
   "report": {
-    "md": "/Users/kkkim/projects/hackthon/KoreaAgenticAIhackathon/eval/results/morning_report.md",
-    "html": "/Users/kkkim/projects/hackthon/KoreaAgenticAIhackathon/eval/results/morning_report.html"
+    "md": "eval/results/morning_report.md",
+    "html": "eval/results/morning_report.html"
   },
   "wall_s": 65.4,
   "verdict_counts": {

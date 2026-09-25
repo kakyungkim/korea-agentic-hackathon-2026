@@ -23,3 +23,4 @@ docs/*.pdf
 # 강좌 원문을 옮긴 노트. 저작권 때문에 공개 저장소에 두지 않는다.
 # 원본은 구글 드라이브에 보관하고 docs/COURSE-GUIDE.md 가 링크를 가리킨다.
 docs/notes/dli-course/
+assets/video/slides/*.html

@@ -183,7 +183,9 @@ seccomp, 비루트 신원 네 가지가 각각 "어디로 접속할 수 있는�
 레슨별 상세 노트는 **구글 드라이브에 따로 보관한다.** 강좌 원문과 셀 코드와 실행 결과를 그대로
 옮긴 자료라 공개 저장소에 두지 않는다. 팀원에게는 폴더 주소를 공유한다.
 
-https://drive.google.com/drive/folders/160cI6-__kk6P0ZjPMElhQ1QY1Als1DxH
+https://drive.google.com/drive/folders/1tCcImHZWes8Nzr4eDO7lFCS3j8nDaVZE?usp=sharing
+
+그 아래 `DLI_S-FX-43_강좌노트` 폴더에 들어 있다.
 
 폴더에 들어 있는 것은 아래와 같다.
 

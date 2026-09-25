@@ -213,7 +213,7 @@ PARP1 -10.178, factor Xa -7.967, COX-2 -6.605다. "그러므로 PARP1 선택성�
 [크리틱 · 쓰기 도구 없음]
   1단 결정 규칙    주장 존재, 근거 ID 유무, 빈 문자열            ← 기존 그대로, 0줄 수정
   2단 숫자 오라클  포즈 점수가 로그와 일치, SHA256 대조, PRR 재계산  ← verify 골격 재사용
-  3단 LLM 판정     위 규칙 14종으로 과잉해석 반려                ← 신규, 이번 기여
+  3단 LLM 판정     위 규칙 15종으로 과잉해석 반려                ← 신규, 이번 기여
   ↓
 [평가]  nat eval 적발률. 정상 케이스 + 과잉해석 부정 케이스
   ↓
@@ -231,7 +231,7 @@ PARP1 -10.178, factor Xa -7.967, COX-2 -6.605다. "그러므로 PARP1 선택성�
 | **G2 FDDD 코드 접근** | 팀원에게 저장소 접근과 라이선스, 맡을 범위 확인 | 공개 데이터만 인용하고 초파리 포즈 탐색은 화면 녹화로 대체 |
 | **G3 Jev 접근** | Vercel 계정으로 `typesafe-ai/jev` 호출 1회 | Jev 제외, `nemotron-3.5-lightning`으로 같은 구조 |
 | **G4 레이트리밋** | 429가 얼마나 빨리 오는지 확인. 크레딧이 아니라 레이트리밋으로 관리한다 | 요청 간 1.5초, 지수 백오프, `Retry-After` 존중, 응답 캐시 |
-| **G5 오프라인 본선** | 패스트캠퍼스에 전원 참석 필요 여부 문의(평일 10~18시) | 10/2 발표 전까지 확인. 참석 가능한 인원으로 역할 배치 |
+| **G5 오프라인 본선** | **다섯 중 둘이 해외라 참석 불가. 둘은 미확인.** 연휴가 9/27 까지라 9/28 월요일 오전 10시에 문의. DLI 수료 범위와 함께 묻는다 | 10/2 발표 전까지 확인. 최악의 경우 팀장 혼자 나가는 것을 전제로 준비 |
 
 **G1이 가장 중요했고 통과했다.** 초파리 주제의 심사 1번 항목 유불리가 이것으로 정해졌다.
 NVIDIA 도킹 NIM을 실제로 부를 수 있으므로 권고안의 전제가 성립한다. 최후 대체(PharmaSignal 단독)로
@@ -249,7 +249,7 @@ G2는 사실상 해소된 것으로 보인다. 팀원이 데모 주소를 먼저
 | 9/26 오전 | **도메인 도구를 NAT 함수로 등록하는 선례 만들기.** 기존 `openfda_faers`, `dailymed_label`, `pubmed_search` 셋에 래퍼 씌워 배선 확인 | `nat validate` 통과, `nat run`으로 도구 호출 확인 |
 | 9/26 오후 | `bionemo_client.py`를 먼저 만들고 `diffdock_nim`, `vina_reference`, `bindingdb_ref` 작성과 등록. `author.yml`과 `author_guarded.yml` 동시 수정 | 도킹 1건 E2E 결과 JSON |
 | 9/26 밤 | `jev_triage` 또는 대체. 초파리 경로 연결 또는 기존 결과 인용 | 후보 여러 건 분류 결과 |
-| 9/27 오전 | 크리틱 3단 과잉해석 규칙 14종. `eval/cases.jsonl` 재작성(정상 + 부정 최소 3건). `nat eval` | 적발률 수치, 반려 사유 원문 |
+| 9/27 오전 | 크리틱 3단 과잉해석 규칙 15종. `eval/cases.jsonl` 재작성(정상 + 부정 최소 3건). `nat eval` | 적발률 수치, 반려 사유 원문 |
 | 9/27 오후 | OpenShell 정책 신규 작성, 스모크로 차단 로그. 아키텍처 그림과 결과 그림 | 정책 YAML, 차단 로그, PNG 2장 |
 | 9/27 밤 | 영상 원고와 슬라이드, `assets/video/build.sh`로 렌더 | mp4와 SRT |
 | 9/28 오전 | README, 신청서 문안(문제 300자, 솔루션 500자 각 ±10퍼센트), PDF | 제출물 일체 |
@@ -304,7 +304,7 @@ G2는 사실상 해소된 것으로 보인다. 팀원이 데모 주소를 먼저
 | `src/harness/tools/dock_rcsb.py` | RCSB 구조 받기 |
 | `src/harness/tools/flybrain_pose.py` | 초파리 포즈 탐색 연결. G2 결과에 따라 |
 | `src/harness/tools/jev_triage.py` | Vercel AI Gateway `typesafe-ai/jev`. G3 결과에 따라 |
-| `src/harness/tools/overclaim_rules.py` | 과잉해석 규칙 14종. 크리틱 3단이 참조 |
+| `src/harness/tools/overclaim_rules.py` | 과잉해석 규칙 15종. 크리틱 3단이 참조 |
 | `policies/<주제>.yaml` | `base.yaml` 복사 후 호스트 7곳 추가 |
 | `tests/test_dock_*.py` | 순수 계산부 단위 테스트. 네트워크는 `@pytest.mark.network` |
 

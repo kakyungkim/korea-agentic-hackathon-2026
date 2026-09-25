@@ -1,0 +1,29 @@
+{
+  "claims": [
+    {
+      "text": "Niraparib docks to human PARP1 (PDB 4R6E) with a Vina score of -10.178 kcal/mol (co-crystal redocking control).",
+      "evidence_ids": [
+        "dock:vina:3fe4e8bb"
+      ]
+    },
+    {
+      "text": "The US label for niraparib (ZEJULA) includes thrombocytopenia in the Warnings and Precautions and Adverse Reactions sections.",
+      "evidence_ids": [
+        "b7f675e2-159c-490c-b6f4-3f16d9492b7d"
+      ]
+    },
+    {
+      "text": "FAERS data show a disproportionate reporting of thrombocytopenia with niraparib (PRR 9.13, 95% CI 8.61–9.69).",
+      "evidence_ids": [
+        "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:\"niraparib\"+AND+patient.reaction.reactionmeddrapt.exact:\"THROMBOCYTOPENIA\"&limit=1"
+      ]
+    },
+    {
+      "text": "A PubMed case report describes severe thrombocytopenia induced by niraparib in ovarian cancer patients (PMID 40687421).",
+      "evidence_ids": [
+        "40687421"
+      ]
+    }
+  ],
+  "summary": "Niraparib is predicted to bind PARP1 with a Vina score of -10.178 kcal/mol, and human evidence shows thrombocytopenia is a known risk: it appears in the US label, is disproportionately reported in FAERS, and is described in case reports."
+}

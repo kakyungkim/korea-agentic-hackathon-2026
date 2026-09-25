@@ -33,14 +33,17 @@
 
 | 항목 | 값 | 어디서 |
 |---|---|---|
-| 오프라인 테스트 | **214개 통과** (2026-09-25 갱신, 이전 128) | `pytest -q -m "not network"` |
-| 도구 NAT 등록 | openfda_faers, dailymed_label, pubmed_search, diffdock_nim **4종 배선 완료** | `configs/author.yml` tool_names |
+| 오프라인 테스트 | **313개 통과** (2026-09-25 갱신, 이전 128) | `pytest -q -m "not network"` |
+| 도구 NAT 등록 | **8종.** openfda_faers, dailymed_label, pubmed_search, prr_calculator, diffdock_nim, vina_reference, bindingdb_ref, echo_tool | `configs/author.yml` tool_names |
 | 설정 검증 | 4종 전부 유효 | `nat validate` |
-| 에이전트 도구 호출 | 도구 3종 연속 호출 확인, 근거 ID 붙은 JSON | `nat run` 실행 로그 |
+| **에이전트 도구 호출(도킹 포함)** | **4종 연속 호출.** `vina_reference`, `openfda_faers`, `dailymed_label`, `pubmed_search`. 주장 4건 전부 근거 ID 있음, 근거 없는 주장 0건 | `eval/results/nat_run_author_flydock.json` |
 | **케이스 시연 E2E** | niraparib 두 경로, 7단계 전부 수집, 3단 크리틱 통과와 반려 | `eval/results/case_niraparib_brief.md` |
 | 크리틱 3단 분리 | 1단과 2단은 양쪽 통과, **3단만 과잉해석 7건을 전부 반려** | `eval/results/case_niraparib.json` |
 | DiffDock NIM 호출 | HTTP 200, 4.0초, 포즈 3개 | `eval/results/diffdock_smoke.txt`, `diffdock_client_run.txt` |
-| 크리틱 적발률 | 1.0 | `eval/results/critic_verdict_output.json` |
+| **크리틱 적발률(LLM 포함)** | **16/16 = 1.0**, 평균 0.9697, 거짓 양성 0/17 | `eval/results/critic_verdict_output_llm.json` |
+| **크리틱 적발률(결정 규칙만)** | **1/16 = 0.0625**, 평균 0.0303 | `eval/results/critic_verdict_output_deterministic.json` |
+| **LLM 의미 판단의 몫** | **격차 0.9394.** 과잉해석 15건은 기계 검사로 하나도 안 걸린다 | 위 두 파일 대조 |
+| 평가 케이스 | 33건. 약물감시 3 + 규칙 15종 x (통과, 반려) | `eval/cases.jsonl` |
 | 케이스 3건 | PRR 72.8 / 7.2 / 0.87 | `eval/results/pharmasignal_cases.json` |
 | **샌드박스 스모크(신규 정책)** | **18건 전부 통과** | `eval/results/openshell_smoke_flydock.txt` |
 | 샌드박스 안 파이썬 TLS | **통과.** `health.api.nvidia.com` GET 405 | 같은 파일 |
@@ -97,6 +100,7 @@ Applying Landlock filesystem sandbox [abi:V2 compat:BestEffort ro:12 rw:3]
 - `docs/notes/post-hackathon.md` 제출 후 세 갈래(심사, 스타, 논문)와 순서
 - `docs/notes/paper-plan.md` 논문 계획과 확장 요건
 - `docs/notes/credits.md` 기여 표기. README 와 신청서가 이것을 따른다
+- `docs/notes/work-assignment.md` **팀원별 담당과 파일 충돌 방지 규칙**
 - 새로 합류한 분에게는 `docs/ONBOARDING.md` 링크만 주면 된다
 
 ## 결정된 사항

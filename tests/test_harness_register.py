@@ -201,12 +201,13 @@ def test_score_item_scores_match_and_mismatch():
 # NAT 레지스트리 등록 (register.py 하단 import 블록이 살아 있어야 통과한다)
 # --------------------------------------------------------------------------------------
 def test_domain_tools_are_registered_under_expected_names():
-    """도구 3종이 YAML 의 _type 이름으로 레지스트리에 실렸는지. import 가 빠지면 여기서 잡힌다."""
+    """도메인 도구가 YAML 의 _type 이름으로 레지스트리에 실렸는지. import 가 빠지면 여기서 잡힌다."""
     import harness.register  # noqa: F401  (entry point 와 같은 경로로 등록을 발동시킨다)
     from nat.cli.type_registry import GlobalTypeRegistry
 
     registered = {i.local_name for i in GlobalTypeRegistry.get().get_registered_functions()}
-    assert {"openfda_faers", "dailymed_label", "pubmed_search", "diffdock_nim"} <= registered
+    assert {"openfda_faers", "dailymed_label", "pubmed_search", "diffdock_nim",
+            "vina_reference", "bindingdb_ref"} <= registered
     assert {"echo_tool", "prr_calculator", "critic_judge"} <= registered
 
 
@@ -225,6 +226,8 @@ def test_registered_tool_names_are_unique():
 
 def test_domain_tool_config_types_resolve_to_registered_builders():
     """설정 클래스의 name= 이 YAML 의 _type 이고, 그 클래스로 빌더를 다시 찾을 수 있어야 한다."""
+    from harness.tools.dock_bindingdb_ref import BindingDbRefConfig
+    from harness.tools.dock_vina_reference import VinaReferenceConfig
     from harness.tools.pharmasignal_dailymed import DailyMedLabelConfig
     from harness.tools.pharmasignal_openfda import OpenFdaFaersConfig
     from harness.tools.pharmasignal_pubmed import PubmedSearchConfig
@@ -233,7 +236,9 @@ def test_domain_tool_config_types_resolve_to_registered_builders():
     registry = GlobalTypeRegistry.get()
     for config_type, expected in ((OpenFdaFaersConfig, "openfda_faers"),
                                   (DailyMedLabelConfig, "dailymed_label"),
-                                  (PubmedSearchConfig, "pubmed_search")):
+                                  (PubmedSearchConfig, "pubmed_search"),
+                                  (VinaReferenceConfig, "vina_reference"),
+                                  (BindingDbRefConfig, "bindingdb_ref")):
         assert config_type.static_type() == expected
         info = registry.get_function(config_type)
         assert info.config_type is config_type

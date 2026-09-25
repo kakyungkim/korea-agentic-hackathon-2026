@@ -25,7 +25,7 @@ def _load(path: str):
 
 
 TOOL_NAMES = ["echo_tool", "prr_calculator", "openfda_faers", "dailymed_label",
-              "pubmed_search", "diffdock_nim"]
+              "pubmed_search", "diffdock_nim", "vina_reference", "bindingdb_ref"]
 
 
 def test_author_config_loads_with_two_nim_llms_and_five_tools():
@@ -49,6 +49,8 @@ def test_author_config_domain_tool_settings():
     assert fns["dailymed_label"].max_labels == 1 and fns["dailymed_label"].name_type == "both"
     assert fns["pubmed_search"].retmax == 5 and fns["pubmed_search"].min_interval_seconds == 0.34
     assert fns["diffdock_nim"].num_poses == 3 and fns["diffdock_nim"].steps == 18
+    assert fns["vina_reference"].use_cache is True
+    assert fns["bindingdb_ref"].use_cache is True
 
 
 def test_author_system_prompt_requires_evidence_and_bans_self_computed_stats():

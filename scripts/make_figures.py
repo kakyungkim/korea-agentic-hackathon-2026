@@ -694,7 +694,7 @@ def make_pipeline_architecture(out_path: Path) -> Path:
             fontsize=5.0, color=INK_SOFT, zorder=8)
     ax.text(80.3, 17.1, "추론이 틀린 주장을 반려한다", ha="center", va="center",
             fontsize=5.0, color=INK_SOFT, zorder=8)
-    ax.text(80.3, 15.0, "과잉해석 규칙 14종", ha="center", va="center",
+    ax.text(80.3, 15.0, "과잉해석 규칙 15종", ha="center", va="center",
             fontsize=5.4, fontweight="semibold", color=PLUM, zorder=8)
 
     arrow(ax, (30.0, 12.5), (30.0, 9.1), color=TEAL)
@@ -719,7 +719,7 @@ def make_pipeline_architecture(out_path: Path) -> Path:
             ha="center", va="center", fontsize=5.2, color=INK_SOFT, zorder=8)
 
     ax.text(98.6, 0.7,
-            "출처: docs/notes/topic-decision.md(도구 구성과 규칙 14종), configs/author.yml, configs/critic.yml, nvidia-nat "
+            "출처: docs/notes/topic-decision.md(도구 구성과 규칙 15종), configs/author.yml, configs/critic.yml, nvidia-nat "
             + NAT_VERSION,
             ha="right", va="center", fontsize=4.6, color=INK_FAINT)
 

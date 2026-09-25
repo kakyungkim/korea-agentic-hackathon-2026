@@ -11,6 +11,11 @@ set -euo pipefail
 cd "$(dirname "$0")"
 # .venv 에는 edge_tts 가 없다. 기본값은 rag env 이고 PY 로 덮어쓸 수 있다.
 PY=${PY:-/opt/anaconda3/envs/rag/bin/python}
+
+# 출력 파일명. final 은 빌드 기본 출력명이라 그대로 두면 1차본을 최종본처럼 부르게 된다.
+# 해커톤과 프로젝트와 판본과 날짜가 드러나게 한다. 판본은 VER=2 처럼 올린다.
+# 제출 직전에는 팀명을 넣어 [NVIDIA 해커톤_<팀명>_FlyGate].mp4 로 복사한다.
+OUT_BASE="NVIDIA해커톤_FlyGate_데모영상_v${VER:-1}_$(date +%Y%m%d)"
 KEEP=0.13; SGAP=0.14; FPS=30
 BGM_DB=-15          # 나레이션보다 약 15dB 아래. 후보 청취(-16dB)에서 한 단계 올린 값
 BGM_IN=13           # 배경음악을 까는 구간: 앞쪽 초
@@ -45,7 +50,7 @@ done
 echo "  문장 $N개, 합계 $(awk '{s+=$1} END{printf "%.1f", s}' _durs.txt)초"
 
 echo "== 3. 자막 PNG + SRT =="
-$PY 09_caption.py
+OUT_BASE="$OUT_BASE" $PY 09_caption.py
 
 echo "== 3-1. 자막 자리 침범 점검 =="
 $PY "$(dirname $0)/10_overlap_check.py" . || $PY 10_overlap_check.py . || true
@@ -134,7 +139,7 @@ ffmpeg -nostdin -y -i _voice.mp3 -i _bgm.mp3 \
   -map "[a]" -c:a libmp3lame -q:a 2 _mix.mp3 2>/dev/null
 
 echo "== 8. 결합 =="
-ffmpeg -nostdin -y -i _silent.mp4 -i _mix.mp3 -c:v copy -c:a aac -b:a 192k -shortest final.mp4 2>/dev/null
+ffmpeg -nostdin -y -i _silent.mp4 -i _mix.mp3 -c:v copy -c:a aac -b:a 192k -shortest "${OUT_BASE}.mp4" 2>/dev/null
 printf "  오디오 %.1f초 / 영상 %.1f초\n" "$(dur _mix.mp3)" "$(dur _silent.mp4)"
 
 # 9단계는 리모션 판을 함께 낼 때만 의미가 있다. remotion/ 이 없으면 건너뛴다
@@ -165,12 +170,5 @@ else
 fi
 rm -f _g.mp3 _alist.txt _silent.mp4 _voice.mp3 _bgm.mp3 _bgm_in.mp3 _bgm_out.mp3 _mix.mp3 _xfade.txt _seglen.txt _slidemap.txt \
       s_*.mp3 t_*.mp3 f_*.png cap_*.png _sents.txt _durs.txt
-printf "  final.mp4 %.1f초 · final.srt 동봉\n" "$(dur final.mp4)"
+printf "  %s.mp4 %.1f초 · %s.srt 동봉\n" "$OUT_BASE" "$(dur "${OUT_BASE}.mp4")" "$OUT_BASE"
 
-# 제출용 이름으로 복사한다. final.mp4 는 빌드 기본 출력명이라 그대로 내보내지 않는다.
-DATE=$(date +%Y%m%d)
-OUTNAME="NVIDIA해커톤_FlyGate_데모영상_v${VER:-1}_${DATE}"
-cp final.mp4 "${OUTNAME}.mp4"
-cp final.srt "${OUTNAME}.srt"
-echo "  제출용 이름: ${OUTNAME}.mp4 / .srt"
-echo "  팀명이 정해지면 [NVIDIA 해커톤_<팀명>_FlyGate].mp4 로 다시 복사한다"

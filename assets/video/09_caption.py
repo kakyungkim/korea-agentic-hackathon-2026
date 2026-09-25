@@ -8,8 +8,9 @@ ffmpeg 8.1.1 빌드에 libass·drawtext가 없어 자막 필터를 못 쓴다.
 그래서 투명 PNG를 만들어 overlay 필터로 얹고, 유튜브 업로드용 SRT는 따로 낸다.
 
 입력: _sents.txt (문장 한 줄씩), _durs.txt (문장별 초)
-출력: cap_NN.png, final.srt
+출력: cap_NN.png, <OUT_BASE>.srt (환경변수 OUT_BASE, 없으면 final)
 """
+import os
 import pathlib
 import re
 from PIL import Image, ImageDraw, ImageFont
@@ -128,8 +129,9 @@ def main():
     for i, (text, dur) in enumerate(zip(sents, durs), 1):
         out.append(f'{i}\n{srt_time(t)} --> {srt_time(t + dur)}\n{to_digits(text)}\n')
         t += dur
-    pathlib.Path('final.srt').write_text('\n'.join(out), encoding='utf-8')
-    print(f'  자막 PNG {len(sents)}장 · final.srt {t:.1f}초')
+    srt_name = os.environ.get('OUT_BASE', 'final') + '.srt'
+    pathlib.Path(srt_name).write_text('\n'.join(out), encoding='utf-8')
+    print(f'  자막 PNG {len(sents)}장 · {srt_name} {t:.1f}초')
 
 
 if __name__ == '__main__':

@@ -39,7 +39,8 @@ assets/video/slides/*.html
 assets/video/bgm/
 
 # 렌더 산출물. 다시 만들 수 있고 이력을 불린다. 공유는 드라이브로 한다.
-assets/video/final.mp4
+assets/video/*.mp4
+!assets/video/slides/
 assets/video/_*
 assets/video/[stf]_*.png
 assets/video/[st]_*.mp3

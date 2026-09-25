@@ -48,7 +48,7 @@ echo "== 3. 자막 PNG + SRT =="
 $PY 09_caption.py
 
 echo "== 3-1. 자막 자리 침범 점검 =="
-$PY "$(dirname $0)/10_overlap_check.py" . || $PY overlap_check.py . || true
+$PY "$(dirname $0)/10_overlap_check.py" . || $PY 10_overlap_check.py . || true
 
 echo "== 4. 프레임 합성 (슬라이드 + 자막) =="
 $PY - <<'PY'

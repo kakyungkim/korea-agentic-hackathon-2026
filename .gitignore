@@ -33,3 +33,13 @@ assets/video/slides/*.html
 [A-Z][A-Z]*.md
 !README.md
 *.local.md
+
+# 배경음악 원본. macOS 기본 제공 음원이라 저장소에 두지 않는다.
+# bgm_pick.sh 로 다시 앉힌다. 출처는 assets/video/bgm/출처.md
+assets/video/bgm/
+
+# 렌더 산출물. 다시 만들 수 있고 이력을 불린다. 공유는 드라이브로 한다.
+assets/video/final.mp4
+assets/video/_*
+assets/video/[stf]_*.png
+assets/video/[st]_*.mp3

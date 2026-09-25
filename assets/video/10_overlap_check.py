@@ -28,7 +28,7 @@ RATIO = 0.004        # 띠 화소의 0.4%를 넘으면 침범으로 본다
 
 def main():
     root = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else '.')
-    slides = sorted(root.glob('slide_*.png'))
+    slides = sorted(root.glob('slides/s*.png'))
     if not slides:
         print('  슬라이드를 찾지 못했다'); return 2
 

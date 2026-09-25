@@ -39,8 +39,8 @@
     },
     {
       "id": "affinity_conversion_pass",
-      "score": 1.0,
-      "reasoning": "expected=pass got=pass",
+      "score": 0.0,
+      "reasoning": "expected=pass got=needs_human",
       "error": null
     },
     {
@@ -159,8 +159,8 @@
     },
     {
       "id": "diffdock_reproducibility_pass",
-      "score": 0.0,
-      "reasoning": "expected=pass got=needs_human",
+      "score": 1.0,
+      "reasoning": "expected=pass got=pass",
       "error": null
     },
     {

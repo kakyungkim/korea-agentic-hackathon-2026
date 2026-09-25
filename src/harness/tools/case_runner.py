@@ -1551,7 +1551,7 @@ def render_brief(case: dict[str, Any], supported: dict[str, Any], overclaim: dic
         lines.append(f"- {item}")
     lines.append("")
 
-    lines.append("## 그래서 무엇을 알게 됐는가")
+    lines.append("## 시사점")
     lines.append("")
     if uses_vina:
         lines.append(

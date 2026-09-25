@@ -555,7 +555,7 @@ def _brief(case: dict) -> str:
 def test_render_brief_has_required_sections():
     text = _brief(case_fixture())
     for heading in ("# ", "## 단계별 근거", "## 크리틱 판정 두 벌", "## 말할 수 있는 것",
-                    "## 말할 수 없는 것", "## 그래서 무엇을 알게 됐는가"):
+                    "## 말할 수 없는 것", "## 시사점"):
         assert heading in text
     for row in ("구조", "결합 1 (Vina 실측)", "결합 2 (DiffDock NIM)", "참조 (BindingDB)",
                 "사람 1 (DailyMed 라벨)", "사람 2 (FAERS)", "사람 3 (PubMed)"):
@@ -681,7 +681,7 @@ def test_no_vina_brief_renders_vina_row_as_skipped():
 
 def test_no_vina_brief_keeps_the_two_path_contrast():
     text = _brief(case_fixture(use_vina=False))
-    tail = text.split("## 그래서 무엇을 알게 됐는가", 1)[1]
+    tail = text.split("## 시사점", 1)[1]
     assert "실험 근거가 있는지다" in tail
     assert "kcal/mol" not in tail
 

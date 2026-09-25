@@ -41,7 +41,7 @@
 적용 명령:
 
 ```bash
-git am /private/tmp/claude-501/-Users-kkkim-projects-hackthon-KoreaAgenticAIhackathon/dbe5d683-9e11-4375-ac5d-21e988e6601d/scratchpad/nightshift_patches/honest.patch
+git am /tmp/nightshift-work/scratchpad/nightshift_patches/honest.patch
 ```
 
 ### 2. [반려] ceil()이 범위 밖 상한에서 예외 대신 최댓값을 돌려주도록 완화

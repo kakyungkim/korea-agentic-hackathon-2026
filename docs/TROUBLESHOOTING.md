@@ -187,6 +187,61 @@ If you have no source, write "no source". Acknowledge with OK.
 **우리 코드와의 관계.** 시스템 프롬프트를 쓸 때 한 번만 할 일과 늘 지킬 규칙을 섞지 않는다.
 늘 지킬 규칙은 시스템 프롬프트에 두고, 이번 호출에만 필요한 지시는 사용자 메시지에 둔다.
 
+## 5-5. 강좌 3a 에서 launchable 연결이 계속 실패한다 (미해결, 강좌 쪽 한계)
+
+**증상.** 모듈 3a 의 `Connect NemoClaw` 에서 Base URL 을 넣어도 네 가지 점검(`/api/agent`,
+`/cli/gateway`, `/ws/terminal`, `/healthz`)이 모두 `FAILED` 로 끝난다. 메시지는
+`Connection failed`, 상세에는 `Failure: Failed to fetch` 와
+`Credential: The saved access session is not copied into a direct browser request.` 가 나온다.
+
+**원인.** 강좌 안내와 실제 인스턴스가 어긋난다. 세 가지가 겹친다.
+
+1. **주소 형태가 다르다.** 강좌는 `apps.run.brev.nvidia.com` 또는 `brevtab.com` 만 다루는데
+   실제로 받은 인스턴스는 `nemoclaw-<id>.gobrev.dev` 였다.
+2. **쿠키 이름이 다르다.** 강좌는 `_powerfulm` 이나 `CF_Authorization` 을 찾으라고 하는데
+   실제 쿠키는 `cf_clearance` 와 `__Host-skybridge-brev-prd` 둘뿐이었다. `cf_clearance` 는
+   Cloudflare 봇 검사 통과 표시라 인증 토큰이 아니다.
+3. **`__Host-` 쿠키는 교차 출처로 보낼 수 없다.** 규격상 그렇다. 값을 정확히 복사해 넣어도
+   강좌 페이지(`nvdli.github.io`)에서 `gobrev.dev` 로 보내는 요청에는 실리지 않는다.
+   화면의 "저장한 세션 값이 직접 요청에 실리지 않는다" 가 그 뜻이다.
+
+**해결하지 못했다.** 두 쿠키를 모두 시도했고 launchable 탭을 열어 둔 채로도 실패했다.
+사용자 설정 문제가 아니다.
+
+**대신 이렇게 한다.**
+- launchable 자체는 정상이므로 NemoClaw 화면의 `CHAT WITH AGENT` 로 들어가 에이전트를 직접 쓴다.
+  샌드박스 경계를 확인하는 질문(작업 디렉터리와 사용자 신원, `/tmp` 와 `/etc` 쓰기, 허용 목록 밖
+  도메인 접속, `NVIDIA_API_KEY` 값)을 던지면 모듈 3 과 4 가 가르치려는 것을 실물로 확인할 수 있다.
+- 모듈 3 과 4 의 내용은 `docs/notes/dli-course/module3-4.md` 로 본다. OpenClaw 게이트웨이,
+  예약 실행, OpenShell 정책 문법이 정리돼 있고 우리 `policies/` 와 대조한 표도 있다.
+- **교육 미션 수행은 다른 증거로 설명한다.** 우리는 리눅스 VM 에서 OpenShell 0.0.116 을 설치해
+  정책을 적용하고 허용 목록 밖 접속이 403 으로 끊기는 로그까지 확보했다
+  (`eval/results/openshell_smoke.txt`). 강좌가 가르치려는 것을 실제로 해 본 기록이다.
+
+**진도에 미치는 영향.** 이 연결이 안 되면 진도가 50% 에서 멈춘다. 모듈 3 과 4 의 체크포인트
+다섯 개가 모두 살아 있는 launchable 연결을 요구하기 때문이다.
+
+## 5-6. NemoClaw 인스턴스 다루기 (요금 주의)
+
+**띄우기.** 강좌 첫 화면의 `Launch NemoClaw` 로 Brev launchable 을 배포한다. 배포가 끝나도
+서비스가 바로 응답하지 않는다. 처음 3 분에서 5 분은 `404 route_not_found` 가 나오는데 컨테이너가
+올라오는 중이라 그렇다. 기다렸다 새로고침하면 된다.
+
+**설정.** 온보딩 1 단계에서 런타임은 `OPENCLAW`, 접근 방식은 **`NVIDIA CLOUD`** 를 고른다.
+기본값인 `OPENROUTER` 는 `sk-or-v1-` 로 시작하는 별도 키를 요구하므로 쓸 수 없다.
+제공자를 바꾸면 키 칸이 `nvapi-` 로 바뀌고 강좌에서 쓰던 키를 그대로 넣으면 된다.
+모델은 `nemotron-3-super-120b-a12b` 가 균형이 맞다. Ultra 550B 는 느리고 크레딧을 많이 쓴다.
+
+**요금.** 실행 중 시간당 0.25 달러, 정지 중 0.05 달러다. 신규 계정 잔액이 1 달러라
+**실제 실습에 쓸 수 있는 시간은 네 시간 남짓이다.** 켜 두고 자리를 비우면 그대로 빠져나간다.
+
+**정지.** `brev.nvidia.com` 의 Compute 탭에서 인스턴스 카드 제목을 클릭해 상세 페이지로 들어가면
+오른쪽 위에 `Start`/`Stop` 과 `Delete` 가 있다. 목록 화면에는 점 세 개 메뉴가 없다.
+**`Stop` 을 쓴다.** `Delete` 는 에이전트 설정과 샌드박스를 지워 처음부터 다시 만들어야 한다.
+
+**대화가 실패할 때.** `The AI service is temporarily overloaded.` 는 NVIDIA 모델 서버가 붐비는
+것이고 4 번, 5-3 번과 같은 뿌리다. 잠시 뒤 다시 보내거나 채팅 하단에서 모델을 바꾼다.
+
 ## 6. NAT 가드레일이 검증은 통과하는데 실행에서 죽는다
 
 **증상 둘.** `ValueError: LLM 'planner' not found`,

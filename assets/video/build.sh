@@ -68,7 +68,7 @@ cache = {}
 for i in range(1, n + 1):
     sl = m[i]
     if sl not in cache:
-        cache[sl] = Image.open(f'slide_{sl:02d}.png').convert('RGBA')
+        cache[sl] = Image.open(f'slides/s{sl:02d}.png').convert('RGBA')
     frame = cache[sl].copy()
     frame.alpha_composite(Image.open(f'cap_{i:02d}.png').convert('RGBA'))
     frame.convert('RGB').save(f'f_{i:02d}.png', quality=95)

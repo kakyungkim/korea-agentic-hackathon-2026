@@ -153,14 +153,25 @@ seccomp, 비루트 신원 네 가지가 각각 "어디로 접속할 수 있는�
 
 ## 상세 노트 위치
 
-- `docs/notes/dli-course/module1-2.md`, `module3-4.md`: 여섯 레슨씩 묶은 개념 요약입니다. 강좌를 듣기
-  전에 훑어 두면 실습의 목적이 먼저 잡힙니다.
-- `docs/notes/dli-course/lessons/01a-the-agent.md`, `01b-react-loop.md`: 레슨 1a와 1b는 원문과 번역,
-  코드 해설, 실행 결과까지 옮긴 상세 노트가 따로 있습니다. 강좌를 다시 열지 않고도 내용을 되짚을 수
-  있습니다.
-- 나머지 레슨은 아직 상세 노트가 없으니 위의 개요 문서를 보시면 됩니다. 진행 현황은
-  `docs/notes/dli-course/lessons/README.md`의 표에 있습니다.
-- 강좌 밖의 문제까지 포함한 전체 목록은 `docs/TROUBLESHOOTING.md`에 있습니다.
+레슨별 상세 노트는 **구글 드라이브에 따로 보관한다.** 강좌 원문과 셀 코드와 실행 결과를 그대로
+옮긴 자료라 공개 저장소에 두지 않는다. 팀원에게는 폴더 주소를 공유한다.
+
+https://drive.google.com/drive/folders/160cI6-__kk6P0ZjPMElhQ1QY1Als1DxH
+
+폴더에 들어 있는 것은 아래와 같다.
+
+| 파일 | 내용 |
+|---|---|
+| `module1-2.md`, `module3-4.md` | 여섯 레슨씩 묶은 개념 요약. 강좌를 듣기 전에 훑어 두면 실습의 목적이 먼저 잡힌다 |
+| `01a` 부터 `04c` 까지 12개 | 레슨별 상세 노트. 원문과 번역, 코드 해설, 실행 결과 |
+| `lessons-README.md` | 레슨 12개의 진행 현황 표 |
+| `lessons-TERMS.md` | 용어 정리 |
+
+모듈 3과 4의 노트는 Brev 인스턴스를 띄우지 못해 **실습을 직접 돌리지 않고** 정리한 것이다.
+원문에 없는 해석은 `[unverified]` 로 표시해 두었다.
+
+강좌 밖의 문제까지 포함한 전체 목록은 `docs/TROUBLESHOOTING.md` 에 있다. 이쪽은 우리가 겪고
+푼 것이라 저장소에 그대로 둔다.
 
 ## 모델 ID 모음
 

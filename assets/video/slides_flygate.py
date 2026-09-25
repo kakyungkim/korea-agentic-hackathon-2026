@@ -2,7 +2,7 @@
 # 출처: 같은 폴더의 slides.py(AgentForgeAI 이식본). CSS 와 렌더 절차를 그대로 쓰고
 #       SLIDES 내용만 FlyGate 로 새로 썼다. slides.py 는 손대지 않았다.
 # 작성 2026-09-25. 대본은 docs/video/script_flygate.md, 컷 지시는 docs/video/shotlist_flygate.md.
-"""FlyGate 데모 영상 슬라이드 13장 — 1920x1080 PNG.
+"""FlyGate 데모 영상 슬라이드 13장. 1920x1080 PNG.
 
   python assets/video/slides_flygate.py
 

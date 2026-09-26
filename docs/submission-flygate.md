@@ -53,7 +53,7 @@ build.nvidia.com 스킬 카탈로그의 NVIDIA BioNeMo 에이전트 스킬 문�
 ## 추가 URL
 
 - GitHub 저장소 https://github.com/kakyungkim/korea-agentic-hackathon-2026
-- 데모 영상. 제출 직전 채운다
+- 데모 영상. 제출 직전 채운다. **PDF 안에 주소가 들어가야 한다**
 
 ## 제외 항목
 
@@ -70,25 +70,24 @@ build.nvidia.com 스킬 카탈로그의 NVIDIA BioNeMo 에이전트 스킬 문�
 
 ## 파일명
 
-팀명이 정해지면 형식에 맞춰 복사한다. 팀명은 폼에 적은 철자를 그대로 쓴다.
+형식은 폼에 이렇게 적혀 있다. 2026-09-26 에 폼 원문에서 확인했다.
+
+> 파일명 : [NVIDIA 해커톤_팀명_프로젝트명]
+
+**팀명은 아직 확정 전이다.** 폼 초안에 FlyVigilance 를 넣어 두었고 9-27 에 정한다.
+확정되면 `scripts/make_submission_pdf.py` 의 `TEAM_NAME` 과 파일명을 함께 맞춘다.
 
 ```
 [NVIDIA 해커톤_<팀명>_FlyGate].pdf
-[NVIDIA 해커톤_<팀명>_FlyGate].mp4
 ```
 
-**이 형식을 폼이나 안내문에서 한 번 확인한다.** 우리 문서에만 적혀 있고 주최 측 원문을
-대조하지 못했다.
-
-정해지기 전까지는 판본과 날짜가 남는 이름을 쓴다.
-
-```
-NVIDIA해커톤_FlyGate_데모영상_v2_20260926.mp4
-```
+**올릴 수 있는 파일이 하나뿐이다.** 폼이 "지원되는 파일 1개를 업로드하세요. 최대 크기는
+100 MB" 라고 적었다. 그래서 PDF 를 올리고 그 안에 저장소 주소와 영상 주소를 적는다.
+폼 안내도 "링크 주소 기입하여 파일 업로드" 로 그 방식을 지시한다.
 
 ## 제출 전 점검
 
-- [ ] 팀명을 확정하고 문안, `scripts/make_submission_pdf.py` 의 `TEAM_NAME`, 파일명 세 곳을 맞춘다
+- [ ] 팀명 확정 후 `TEAM_NAME` 과 파일명을 맞춘다. 9-27 결정 예정
 - [ ] `.venv/bin/python scripts/verify_numbers.py` 가 어긋난 항목 없이 끝난다
 - [ ] `jev_triage` 구현 여부를 확인하고 기술 스택을 맞춘다
 - [ ] 폼에 적는 이메일이 developer.nvidia.com 계정 이메일과 같다

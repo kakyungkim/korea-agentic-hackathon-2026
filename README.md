@@ -50,6 +50,7 @@ FDA와 EMA는 2026년 1월 14일에 의약품 전 주기의 AI 활용 원칙 열
 | **적발률 (LLM 포함)** | **16/16**, 거짓 양성 0/17 | `eval/results/critic_verdict_output_llm.json` |
 | **적발률 (결정 규칙만)** | **1/16** | `eval/results/critic_verdict_output_deterministic.json` |
 | 적발률 (규칙 없이 LLM만) | 13/16, 거짓 양성 1/17 | `eval/results/bench_generic-arm.json` |
+| 표기 변동 판정 뒤집힘 | 0/126 (상품명, 코드명 각 3회) | `eval/results/notation_robustness_2026-09-27.json` |
 | DiffDock NIM 호출 | HTTP 200, 4.1초, 포즈 3개 | `eval/results/diffdock_smoke.txt` |
 | 샌드박스 스모크 | 18건 통과 | `eval/results/openshell_smoke_flydock.txt` |
 | 3단 판정 비용 | 건당 출력 토큰 270개, 지연 중앙값 2,243ms | `eval/results/bench_nemotron-super-run2.json` |
@@ -147,12 +148,13 @@ CRITIC_DETERMINISTIC_ONLY=true .venv/bin/nat eval --config_file configs/eval.yml
 | NeMo Retriever 리랭커 | 이 계정 모델 목록 여든두 개에 없어 쓰지 않았다 |
 | NemoClaw | 쓰지 않았다. 참조 스택으로 검토만 했다 |
 
-| 표기 변동 시험 | 하지 않았다. 적발률 16/16은 약물 표기를 한 가지로 고정한 수치다 |
 
 평가 케이스의 정답 라벨은 직접 붙였고 도메인 전문가 두 명 이상의 일치도는 아직 재지 않았다.
-**약물 이름 표기만 바꿔도 LLM 판단이 흔들린다는 보고가 있다**(Gallifant 등, JCO Clin Cancer
-Inform 2025;9:e2400257). 우리 3단도 모델이고 약물 이름을 읽으므로 같은 사정거리 안에 있는데
-아직 재보지 않았다.
+약물 이름 표기만 바꿔도 LLM 판단이 흔들린다는 보고가 있어(Gallifant 등, JCO Clin Cancer
+Inform 2025;9:e2400257) 우리 3단도 같은 사정거리 안에 있다. 상품명 Zejula 와 개발 코드명
+MK-4827 로 바꿔 각각 3회 재실행했고 판정 126건에서 뒤집힘이 없었다. 다만 화합물 하나에
+케이스 14건이라 **0/126 의 95퍼센트 단측 상한이 2.35퍼센트**다. 판정 1건당 그 수준의 민감도는
+이 표본으로 배제되지 않는다.
 `build.nvidia.com` 이 간헐적으로 503을 내므로 측정을 다시 돌려야 할 때가 있다.
 
 ## 선행 연구와 우리가 더한 것

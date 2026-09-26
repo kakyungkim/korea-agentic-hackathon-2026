@@ -66,20 +66,33 @@ DEFAULT_MODEL = "nvidia/nemotron-3-super-120b-a12b"
 # nat eval 경로와 같은 프롬프트를 쓴다. 그쪽은 숫자 오라클이 앞에 없다.
 SYSTEM_PROMPT = ocr.stage3_prompt(numbers_verified=False)
 
+# 규칙 목록을 빼고 일반 판정만 시키는 대조 프롬프트.
+# 규칙 15종이 일반 LLM 판단에 무엇을 더하는지 재려고 둔다.
+GENERIC_PROMPT = (
+    "You are the overclaim stage of a critic inside a drug-candidate evidence pipeline. A "
+    "deterministic stage already checked that every claim carries a non-empty evidence id, and a "
+    "separate numeric oracle owns the arithmetic. Do NOT re-check ids or arithmetic, and do not "
+    "judge whether an evidence id looks real: treat every non-empty id as valid provenance.\n"
+    "Judge ONE thing: does any claim or the summary draw an inference that the cited evidence "
+    "cannot support? Use your own scientific judgment about what docking scores, reference "
+    "affinities, drug labels, adverse event reports, and literature can and cannot show.\n"
+    "Reply with JSON only: {\"verdict\": \"pass\" or \"reject\", \"reason\": \"<one sentence>\"}"
+)
+
 
 def load_cases(path: Path, limit: int | None) -> list[dict[str, Any]]:
     cases = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
     return cases[:limit] if limit else cases
 
 
-def judge_one(client: Any, model: str, case_input: str, *, timeout: float,
+def judge_one(client: Any, model: str, case_input: str, *, prompt: str, timeout: float,
               max_tokens: int) -> dict[str, Any]:
     """한 케이스를 한 번 부르고 판정과 지연과 토큰을 돌려준다."""
     started = time.perf_counter()
     try:
         response = client.chat.completions.create(
             model=model,
-            messages=[{"role": "system", "content": SYSTEM_PROMPT},
+            messages=[{"role": "system", "content": prompt},
                       {"role": "user", "content": case_input}],
             temperature=0.2, top_p=0.95, max_tokens=max_tokens,
             extra_body={"chat_template_kwargs": {"enable_thinking": False}})
@@ -187,7 +200,11 @@ def compare(paths: list[str]) -> int:
     return 0
 
 
+PROMPT = SYSTEM_PROMPT
+
+
 def main(argv: list[str] | None = None) -> int:
+    global PROMPT
     ap = argparse.ArgumentParser(description="크리틱 3단 판정기 A/B 벤치마크")
     ap.add_argument("--compare", nargs="+", metavar="JSON",
                     help="돌려 둔 결과 파일들을 한 표로 비교하고 끝낸다")
@@ -199,6 +216,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--api-key-env", default="NVIDIA_API_KEY",
                     help="키를 담은 환경변수 이름. 기본 NVIDIA_API_KEY")
     ap.add_argument("--limit", type=int, default=None, help="앞의 N 건만 돌린다")
+    ap.add_argument("--prompt", choices=["rules", "generic"], default="rules",
+                    help="rules=규칙 15종 포함(기본), generic=규칙 없이 일반 판정")
     ap.add_argument("--sleep", type=float, default=0.0, help="호출 사이 대기 초")
     ap.add_argument("--timeout", type=float, default=120.0)
     ap.add_argument("--max-tokens", type=int, default=2048)
@@ -206,6 +225,7 @@ def main(argv: list[str] | None = None) -> int:
                     help="입력 백만 토큰당 달러. 주면 비용을 환산한다")
     ap.add_argument("--price-out", type=float, default=None, help="출력 백만 토큰당 달러")
     args = ap.parse_args(argv)
+    PROMPT = GENERIC_PROMPT if args.prompt == "generic" else SYSTEM_PROMPT
 
     if args.compare:
         return compare(args.compare)
@@ -231,7 +251,7 @@ def main(argv: list[str] | None = None) -> int:
     client = OpenAI(base_url=base_url, api_key=key, timeout=args.timeout)
     rows: list[dict[str, Any]] = []
     for i, case in enumerate(cases, 1):
-        r = judge_one(client, model, case["input"],
+        r = judge_one(client, model, case["input"], prompt=PROMPT,
                       timeout=args.timeout, max_tokens=args.max_tokens)
         r.update({"id": case["id"], "expected_verdict": case["expected_verdict"]})
         hit = "" if not r["ok"] else ("맞음" if r["verdict"] == case["expected_verdict"] else "틀림")

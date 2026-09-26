@@ -4,6 +4,37 @@
 것만 모았습니다. 이미 겪고 푼 오류는 원인과 해결을 그대로 적어 두었으니 같은 자리에서 시간을 쓰지
 않으셔도 됩니다.
 
+## 시작 전 점검표
+
+순서대로 확인하고 들어가세요. 아래 일곱 가지를 안 맞춰 두면 실습을 다 해도 진도가 0퍼센트에
+남습니다. 각 항목의 자세한 이유는 뒤의 해당 절에 적었습니다.
+
+| | 확인할 것 | 어디서 |
+|---|---|---|
+| 1 | NVIDIA developer 계정을 **해커톤 폼에 적을 이메일과 같은 주소**로 만든다 | developer.nvidia.com의 My profile |
+| 2 | build.nvidia.com에서 API 키를 발급받는다. 무료이고 각자 보관한다 | build.nvidia.com |
+| 3 | 강좌를 **정식 주소에서 연다** | `nvdli.github.io/NemoClawDLI/nemoclaw/` |
+| 4 | `Request handling`에서 **자동 재시도를 0에서 3 이상으로**, 대기를 60초에서 **120초 이상으로** 올린다 | 키 패널의 `Request handling` 펼치기 |
+| 5 | 상단 `🏃` 버튼에서 **`Enable remote progress`를 먼저 켠다** | 상단 바, API 키 표시 왼쪽 |
+| 6 | **`01a-loop.html`에서 키를 다시 저장해** `✓ Connected. Model replied:` 를 확인한다 | 01a 페이지의 키 패널 |
+| 7 | **한 탭에서 끝까지 진행하고 그 탭을 닫지 않는다** | |
+
+**4번과 5번은 `localStorage`에 남아 한 번만 하면 됩니다.** 반면 진도 증거는 `sessionStorage`라
+탭을 닫으면 사라지므로 7번이 중요합니다.
+
+**6번을 건너뛰면 아무것도 안 올라갑니다.** 진도는 첫 체크포인트부터 끊기지 않아야 오르는데,
+키를 첫 화면에서만 저장하면 `01a`가 영원히 안 찍혀 뒤를 다 해도 0퍼센트입니다.
+
+진행 중 진도를 직접 확인하려면 브라우저 콘솔에서 이렇게 봅니다.
+
+```js
+sessionStorage.getItem('dli_activity:nemoclaw:evidence:v1:1')   // 달성한 체크포인트
+window.__nemoclawActivity.snapshot()                            // 원격 기록 상태
+```
+
+`🏃` 패널의 문구가 `Saved progress:` 면 서버에 남은 것이고, `Local verified progress:` 면
+이 탭에만 있습니다.
+
 ## 수강 이유와 과정 개요
 
 과정 이름은 "Securing Agents with OpenShell and NemoClaw"(DLI S-FX-43)입니다. 무료이고 브라우저에서
@@ -21,6 +52,11 @@ https://learn.nvidia.com/courses/course-detail?course_id=course-v1:DLI+S-FX-43+V
 또는 `Failed to fetch` 가 뜹니다. 키가 틀린 것이 아닙니다.
 
 **툴바의 Request handling 에서 `Automatic retries` 를 0에서 3으로 올리세요.**
+기본값이 실제로 재시도 0회, 대기 60초입니다(`DEFAULT_MODEL_REQUEST_RETRIES = 0`,
+`DEFAULT_MODEL_REQUEST_TIMEOUT_MS = 60000`). 재시도는 0에서 5까지, 대기는 5초에서 300초까지
+넣을 수 있고 **이 두 설정은 `localStorage` 에 남아 탭을 닫아도 유지됩니다.**
+다만 재시도는 스트리밍이 시작되기 전에만 걸리므로, 응답이 흘러나오다 끊기면 그 셀을 다시 Run 해야 합니다.
+재시도 대상도 네트워크 실패와 HTTP 429와 일시적 5xx 뿐이어서 키 오류나 모델명 오류는 반복해도 같습니다.
 대기 시간 60초는 그대로 둡니다. 강좌가 NVIDIA API 를 직접 부르지 못하고 릴레이 서버를 거치는데
 그 서버가 간헐적으로 죽습니다. 실측으로 네 번 중 세 번이 30초 만에 실패했고 한 번만 1.7초에
 성공했습니다. 재시도를 올리지 않으면 첫 화면에서 더 나아가지 못합니다.
@@ -48,6 +84,14 @@ https://learn.nvidia.com/courses/course-detail?course_id=course-v1:DLI+S-FX-43+V
    않습니다. 저장소에도 올리지 않습니다.
 3. **첫 화면의 버튼 순서.** `Models & API Keys`를 먼저 눌러 키와 모델을 넣고, 그다음 `Open Course`로
    들어갑니다. `Launch NemoClaw`는 모듈 3에서 누르세요. 미리 켜 두면 실습은 못 하고 자원만 씁니다.
+4. **★ 그런데 키를 첫 화면에서만 저장하면 첫 체크포인트가 찍히지 않습니다.**
+   `01a` 는 **그 페이지의 키 패널에서 저장을 눌러 연결 테스트가 성공할 때만** 기록 조건을 채웁니다.
+   키가 이미 있으면 패널이 `✓ API key available in this tab` 으로 바뀌어 저장을 다시 누를 일이 없고,
+   그 상태로 셀을 돌려도 진도가 0퍼센트에 남습니다. **`01a-loop.html` 에서 키를 지우고 다시 넣어
+   `✓ Connected. Model replied:` 를 확인한 뒤 실습을 시작하세요.**
+   2026-09-26 에 실제로 막혔고 이 순서로 풀렸습니다. 근거는 `01a-loop.html` 의
+   `mountKeyPanel(..., { onSave: () => dispatchEvent(new CustomEvent("nemoclaw:api-key-verified")) })` 이고,
+   이 이벤트를 쏘는 곳이 그 페이지 하나뿐입니다.
 
 ## 설정 단계의 Failed to fetch 대처
 
@@ -94,10 +138,44 @@ options**에서 추론 예산을 줄이고 출력 길이를 늘리세요.
   뒤를 채워도 오르지 않습니다.
 - 모듈 1과 2를 마치면 50%입니다. 그 위로는 Brev 인스턴스(launchable)가 살아 있어야 하고, 100%는
   모듈 4b까지 마쳐야 채워집니다.
-- **원격 진도 기록은 기본으로 꺼져 있습니다.** 도구 모음의 Activity 패널에서 켜야 서버에 남습니다.
-  꺼진 상태에서도 화면의 퍼센트는 올라가지만 브라우저 로컬 저장소에만 남습니다.
+- **원격 진도 기록은 기본으로 꺼져 있습니다.** 상단 바의 `🏃` 버튼(API 키 표시 바로 왼쪽)을 눌러
+  `Course activity` 패널을 열고 **`Enable remote progress`** 를 누르면 켜집니다.
+- **★ 진도 증거가 `sessionStorage` 에 있습니다. 탭을 닫으면 지워집니다.** 키는
+  `dli_activity:nemoclaw:evidence:v1:1` 이고 켜기 설정도 `dli_activity:progress-preference` 로
+  같은 곳에 있습니다. **그래서 탭을 새로 열면 진도와 켜기 설정이 함께 0으로 돌아갑니다.**
+  강좌 앱 소스 `scripts/_activity_runtime.js` 와 `scripts/_activity.js` 에서 2026-09-26 에 확인했습니다.
+- **그러니 원격 기록을 먼저 켜고 실습을 시작하세요.** 켜 두면 체크포인트를 달성할 때마다
+  서버로 바로 보냅니다. 끄고 진행한 뒤에 켜면 그 탭에 남은 증거만 한 번 올라가고,
+  탭을 이미 닫았으면 올릴 것이 없어 **0퍼센트가 됩니다.**
+- **켠 뒤에는 화면 퍼센트가 서버 값으로 바뀝니다.** 패널의 표시가 `Local verified progress:` 에서
+  `Saved progress:` 로 달라집니다. 서버에 아무것도 없으면 0퍼센트로 보입니다.
+- **진도는 첫 체크포인트부터 끊기지 않아야 오릅니다.** `01a` 가 성공하지 않으면 뒤를 다 채워도
+  0퍼센트입니다. 시작 화면의 모델 호출이 실패하는 문제를 먼저 해결해야 하는 이유입니다.
 - 각 레슨의 실습을 **실제로 돌려야** 올라갑니다. Run 버튼과 채팅 위젯을 눌러 성공한 셀만 세므로,
   읽고 넘어가면 0%입니다. 한 체크포인트가 셀 두 개를 함께 요구하는 곳도 있습니다.
+
+### 체크포인트마다 실제로 필요한 동작
+
+강좌 앱 소스 `scripts/_activity_runtime.js` 에서 기록 조건을 그대로 옮겼습니다.
+**페이지의 모든 셀을 돌릴 필요가 없습니다.** 아래 동작만 성공하면 찍힙니다.
+2026-09-26 에 `01a` 부터 `02a` 까지 직접 확인했고, `02a` 는 맨 아래 채팅에서 답 한 번으로
+다른 셀을 건드리지 않고 35퍼센트가 됐습니다.
+
+| 체크포인트 | 해야 하는 동작 | 개수 |
+|---|---|---|
+| `01a` | 그 페이지에서 키를 저장해 연결 테스트를 통과시킨 뒤, `One stateless chat completion` 셀을 Run. 응답 내용이 비면 안 찍힘 | 2 |
+| `01b` | `react-artifact` 채팅에서 답 한 번 | 1 |
+| `01c` | `tools-artifact` 채팅에서 답 한 번 | 1 |
+| `02a` | `router-artifact` 채팅에서 답 한 번 | 1 |
+| `02b` | `rag-artifact` 채팅에서 답 한 번 | 1 |
+| `02c` | `deep-artifact` 채팅에서 답 한 번 | 1 |
+| `03a` | 연결 점검 통과 | 1 |
+| `03b` | `cell-introspect` 와 `cell-workspace-term` **둘 다** Run | 2 |
+| `03c` | `probe-cron` 캔버스에서 `cr-run` 실행 관찰과 `cr-rm` 정리 성공 **둘 다** | 2 |
+| `04a` | `cell-live-policy` Run(에이전트 응답 필요)과 `cell-predict-confirm` 의 `compare` 노드 동의 **둘 다** | 2 |
+| `04b` | 살아 있는 에이전트를 실제로 운전 | 1 |
+
+둘을 요구하는 곳은 하나만 해도 기록되지 않습니다. 짝이 맞을 때 한 번에 찍힙니다.
 
 | 체크포인트 | 진도 | 필요한 환경 |
 |---|---|---|

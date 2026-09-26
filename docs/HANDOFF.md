@@ -82,7 +82,7 @@ Applying Landlock filesystem sandbox [abi:V2 compat:BestEffort ro:12 rw:3]
 1. **팀 확정.** 폼의 "팀 구성 인원"이 2명부터라 최소 1명 합류가 사실상 필수다. 9/27(일)까지 합류해야
    각자 폼을 낼 수 있다. 연락 현황은 `docs/notes/recruiting.md`.
 2. **데모 영상.** 2~3분. 도구는 준비돼 있고 원고 작성부터 하면 된다.
-3. **신청서 제출.** 문안 초안은 `docs/submission-draft.md`에 있고 글자 수도 맞춰 두었다.
+3. **신청서 제출.** 현행 문안은 `docs/submission-flygate.md` 다. 옛 후보 초안은 `docs/notes/submission-draft-v0.md` 로 옮겼다.
    `[측정필요]` 표에 제출 전 갱신할 자리가 모여 있다.
 4. ~~OpenShell 실행~~ **완료했다.** 아래 "샌드박스 증거" 참고.
 5. **DLI 강좌.** 레슨 1a와 1b를 들었다. 모듈 3과 4는 Brev 인스턴스를 띄워야 진도가 오른다.
@@ -92,7 +92,7 @@ Applying Landlock filesystem sandbox [abi:V2 compat:BestEffort ro:12 rw:3]
 
 - `README.md` 현재 상태와 실행 방법
 - `docs/TROUBLESHOOTING.md` 겪은 문제 11건. 같은 자리에서 시간을 쓰지 않게 한다
-- `docs/submission-draft.md`의 `[측정필요]` 표
+- `docs/notes/submission-draft-v0.md` 의 `[측정필요]` 표
 - `docs/notes/recruiting.md` 연락 현황
 - `docs/notes/topic-decision.md` **주제 후보 비교와 권고, 게이트와 일정. 주제 논의 전에 먼저**
 - `docs/notes/fddd-and-jev.md` 팀원 제안 주제 두 개의 실측 내용

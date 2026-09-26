@@ -1,0 +1,672 @@
+{
+  "generated": "2026-09-27",
+  "source_files": [
+    "eval/results/workflow_output_llm.json",
+    "eval/results/critic_verdict_output_llm.json",
+    "eval/results/critic_verdict_output_deterministic.json"
+  ],
+  "counts": {
+    "cases_total": 33,
+    "negative": 16,
+    "positive": 17,
+    "rules": 15,
+    "llm_average_score": 0.9697,
+    "deterministic_average_score": 0.0303
+  },
+  "per_rule": [
+    {
+      "id": "cross_target_ranking",
+      "name": "교차 타깃 순위 금지",
+      "own_case_fired": true,
+      "fired_cases": [
+        "cross_target_ranking_reject",
+        "cross_docking_binding_reject"
+      ],
+      "fired_negative": 2,
+      "fired_on_pass_case": [],
+      "reasons": [
+        {
+          "case": "cross_target_ranking_reject",
+          "check_name": "교차 타깃 순위 금지",
+          "reason": "두 점수의 차이 2.211 kcal/mol 만큼 niraparib 은 응고인자 Xa 보다 PARP1 에 더 강하게 결합하므로 PARP1 선택성을 갖는다."
+        },
+        {
+          "case": "cross_docking_binding_reject",
+          "check_name": "교차 타깃 순위 금지",
+          "reason": "이 점수로 응고인자 Xa 결합이 확인되었으므로 niraparib 투여 시 항응고 작용을 임상 주의사항으로 함께 고려해야 한다."
+        }
+      ]
+    },
+    {
+      "id": "affinity_conversion",
+      "name": "친화도 환산 금지",
+      "own_case_fired": true,
+      "fired_cases": [
+        "affinity_conversion_reject",
+        "diffdock_confidence_affinity_reject"
+      ],
+      "fired_negative": 2,
+      "fired_on_pass_case": [],
+      "reasons": [
+        {
+          "case": "affinity_conversion_reject",
+          "check_name": "친화도 환산 금지",
+          "reason": "이 점수를 친화도로 환산하면 Kd 는 나노몰 수준이고 IC50 도 같은 자리에 온다."
+        },
+        {
+          "case": "diffdock_confidence_affinity_reject",
+          "check_name": "친화도 환산 금지",
+          "reason": "0.761 을 결합 친화도로 환산하면 강한 친화도에 해당하므로 이 값이 친화도의 근거가 된다."
+        }
+      ]
+    },
+    {
+      "id": "cross_docking_binding",
+      "name": "교차 도킹 해석 금지",
+      "own_case_fired": true,
+      "fired_cases": [
+        "cross_docking_binding_reject"
+      ],
+      "fired_negative": 1,
+      "fired_on_pass_case": [],
+      "reasons": [
+        {
+          "case": "cross_docking_binding_reject",
+          "check_name": "교차 도킹 해석 금지",
+          "reason": "이 점수로 응고인자 Xa 결합이 확인되었으므로 niraparib 투여 시 항응고 작용을 임상 주의사항으로 함께 고려해야 한다."
+        }
+      ]
+    },
+    {
+      "id": "species_mismatch",
+      "name": "종 차이 명시",
+      "own_case_fired": true,
+      "fired_cases": [
+        "species_mismatch_reject"
+      ],
+      "fired_negative": 1,
+      "fired_on_pass_case": [],
+      "reasons": [
+        {
+          "case": "species_mismatch_reject",
+          "check_name": "종 차이 명시",
+          "reason": "이것은 사람 COX-2 계산 결과이므로 사람에서의 COX-2 관련 함의로 바로 읽을 수 있다."
+        }
+      ]
+    },
+    {
+      "id": "convergence_claim",
+      "name": "수렴 주장 금지",
+      "own_case_fired": true,
+      "fired_cases": [
+        "convergence_claim_reject"
+      ],
+      "fired_negative": 1,
+      "fired_on_pass_case": [],
+      "reasons": [
+        {
+          "case": "convergence_claim_reject",
+          "check_name": "수렴 주장 금지",
+          "reason": "seed 를 고정하고 돌렸으므로 -10.178 kcal/mol 은 수렴한 값이고 다시 돌려도 같게 나온다."
+        },
+        {
+          "case": "convergence_claim_reject",
+          "check_name": "수렴 주장 금지",
+          "reason": "-10.178 kcal/mol 은 수렴한 재현값이다."
+        }
+      ]
+    },
+    {
+      "id": "rmsd_reference",
+      "name": "RMSD 기준 명시",
+      "own_case_fired": true,
+      "fired_cases": [
+        "rmsd_reference_reject"
+      ],
+      "fired_negative": 1,
+      "fired_on_pass_case": [],
+      "reasons": [
+        {
+          "case": "rmsd_reference_reject",
+          "check_name": "6. RMSD 기준 명시",
+          "reason": "이 RMSD 는 결정 구조의 리간드 포즈와의 편차이므로 1순위 포즈가 결정 구조와 일치한다는 뜻이다."
+        }
+      ]
+    },
+    {
+      "id": "endpoint_merge",
+      "name": "종점 혼합 규칙",
+      "own_case_fired": true,
+      "fired_cases": [
+        "cross_docking_binding_reject",
+        "endpoint_merge_reject"
+      ],
+      "fired_negative": 2,
+      "fired_on_pass_case": [],
+      "reasons": [
+        {
+          "case": "cross_docking_binding_reject",
+          "check_name": "종점 혼합 규칙",
+          "reason": "응고인자 Xa 결합이 확인되었으므로 항응고 병용 주의 문안을 즉시 추가할 것을 권고한다."
+        },
+        {
+          "case": "endpoint_merge_reject",
+          "check_name": "7. 종점 혼합 규칙",
+          "reason": "네 종점을 합친 7,311건을 하나의 친화도 근거로 삼아 평균 친화도를 산출하면 PARP1 도킹 점수가 실험으로 검증된다."
+        }
+      ]
+    },
+    {
+      "id": "executed_input",
+      "name": "입력 동일성",
+      "own_case_fired": true,
+      "fired_cases": [
+        "executed_input_reject"
+      ],
+      "fired_negative": 1,
+      "fired_on_pass_case": [],
+      "reasons": [
+        {
+          "case": "executed_input_reject",
+          "check_name": "8. 입력 동일성",
+          "reason": "이 SMILES 문자열이 실행된 입력이고 도킹된 3차원 구조를 정의한다."
+        }
+      ]
+    },
+    {
+      "id": "fly_response",
+      "name": "초파리 결과 해석",
+      "own_case_fired": true,
+      "fired_cases": [
+        "fly_response_reject"
+      ],
+      "fired_negative": 1,
+      "fired_on_pass_case": [],
+      "reasons": [
+        {
+          "case": "fly_response_reject",
+          "check_name": "9. 초파리 결과 해석",
+          "reason": "점수가 이만큼 낮으므로 초파리 커넥톰 회로에서도 같은 방향의 반응과 약효가 나타난다."
+        },
+        {
+          "case": "fly_response_reject",
+          "check_name": "9. 초파리 결과 해석",
+          "reason": "도킹 점수로 초파리에서의 반응과 약효를 예측할 수 있다."
+        }
+      ]
+    },
+    {
+      "id": "diffdock_confidence_affinity",
+      "name": "DiffDock 신뢰도 환산 금지",
+      "own_case_fired": false,
+      "fired_cases": [],
+      "fired_negative": 0,
+      "fired_on_pass_case": [],
+      "reasons": []
+    },
+    {
+      "id": "cross_tool_scale",
+      "name": "도구 간 점수 혼용 금지",
+      "own_case_fired": true,
+      "fired_cases": [
+        "cross_tool_scale_reject"
+      ],
+      "fired_negative": 1,
+      "fired_on_pass_case": [],
+      "reasons": [
+        {
+          "case": "cross_tool_scale_reject",
+          "check_name": "도구 간 점수 혼용 금지",
+          "reason": "두 값을 같은 척도에 두면 두 도구가 같은 크기를 가리키므로 서로를 수치로 확증한다."
+        }
+      ]
+    },
+    {
+      "id": "diffdock_reproducibility",
+      "name": "DiffDock 재현성 주장 금지",
+      "own_case_fired": true,
+      "fired_cases": [
+        "diffdock_reproducibility_reject"
+      ],
+      "fired_negative": 1,
+      "fired_on_pass_case": [],
+      "reasons": [
+        {
+          "case": "diffdock_reproducibility_reject",
+          "check_name": "12. DiffDock 재현성 주장 금지",
+          "reason": "이 세 값은 이 입력에 대한 고정된 결과이므로 다시 불러도 같게 나온다."
+        }
+      ]
+    },
+    {
+      "id": "diffdock_negative_confidence",
+      "name": "DiffDock 음수 신뢰도 해석 금지",
+      "own_case_fired": true,
+      "fired_cases": [
+        "diffdock_negative_confidence_reject"
+      ],
+      "fired_negative": 1,
+      "fired_on_pass_case": [],
+      "reasons": [
+        {
+          "case": "diffdock_negative_confidence_reject",
+          "check_name": "13. DiffDock 음수 신뢰도 해석 금지",
+          "reason": "값이 음수이므로 niraparib 은 응고인자 Xa 에 결합하지 않는다는 것이 확인되었다."
+        }
+      ]
+    },
+    {
+      "id": "disproportionality_causality",
+      "name": "라벨 기재와 인과 구분",
+      "own_case_fired": true,
+      "fired_cases": [
+        "disproportionality_causality_reject",
+        "evidence_scope_reject"
+      ],
+      "fired_negative": 2,
+      "fired_on_pass_case": [],
+      "reasons": [
+        {
+          "case": "disproportionality_causality_reject",
+          "check_name": "14. 라벨 기재와 인과 구분",
+          "reason": "이 지표는 niraparib 이 혈소판감소증을 일으킨다는 인과를 통계적으로 확증한다."
+        },
+        {
+          "case": "evidence_scope_reject",
+          "check_name": "14. 라벨 기재와 인과 구분",
+          "reason": "혈소판감소증은 ZEJULA(niraparib) 라벨 5절과 6절에 기재되어 있고 FAERS PRR 은 9.13 이다."
+        }
+      ]
+    },
+    {
+      "id": "evidence_scope",
+      "name": "근거 범위 준수",
+      "own_case_fired": true,
+      "fired_cases": [
+        "evidence_scope_reject"
+      ],
+      "fired_negative": 1,
+      "fired_on_pass_case": [],
+      "reasons": [
+        {
+          "case": "evidence_scope_reject",
+          "check_name": "15. 근거 범위 준수",
+          "reason": "이 사람 근거로 응고인자 Xa 경로의 -7.967 kcal/mol 결합이 사람에서 확증되었다."
+        },
+        {
+          "case": "evidence_scope_reject",
+          "check_name": "15. 근거 범위 준수",
+          "reason": "사람 근거가 응고인자 Xa 결합을 확증했으므로 그 경로를 결론에 쓴다."
+        }
+      ]
+    }
+  ],
+  "negative_cases": [
+    {
+      "id": "planted_unsupported_claim",
+      "expected": "reject",
+      "verdict": "reject",
+      "score": 1.0,
+      "failed": [
+        {
+          "check": "all_claims_have_evidence",
+          "rule_id": "(1단 결정규칙)",
+          "reason": "근거 ID 가 없는 주장 인덱스: [1]"
+        }
+      ]
+    },
+    {
+      "id": "cross_target_ranking_reject",
+      "expected": "reject",
+      "verdict": "reject",
+      "score": 1.0,
+      "failed": [
+        {
+          "check": "교차 타깃 순위 금지",
+          "rule_id": "cross_target_ranking",
+          "reason": "두 점수의 차이 2.211 kcal/mol 만큼 niraparib 은 응고인자 Xa 보다 PARP1 에 더 강하게 결합하므로 PARP1 선택성을 갖는다."
+        }
+      ]
+    },
+    {
+      "id": "affinity_conversion_reject",
+      "expected": "reject",
+      "verdict": "reject",
+      "score": 1.0,
+      "failed": [
+        {
+          "check": "친화도 환산 금지",
+          "rule_id": "affinity_conversion",
+          "reason": "이 점수를 친화도로 환산하면 Kd 는 나노몰 수준이고 IC50 도 같은 자리에 온다."
+        }
+      ]
+    },
+    {
+      "id": "cross_docking_binding_reject",
+      "expected": "reject",
+      "verdict": "reject",
+      "score": 1.0,
+      "failed": [
+        {
+          "check": "교차 타깃 순위 금지",
+          "rule_id": "cross_target_ranking",
+          "reason": "이 점수로 응고인자 Xa 결합이 확인되었으므로 niraparib 투여 시 항응고 작용을 임상 주의사항으로 함께 고려해야 한다."
+        },
+        {
+          "check": "교차 도킹 해석 금지",
+          "rule_id": "cross_docking_binding",
+          "reason": "이 점수로 응고인자 Xa 결합이 확인되었으므로 niraparib 투여 시 항응고 작용을 임상 주의사항으로 함께 고려해야 한다."
+        },
+        {
+          "check": "종점 혼합 규칙",
+          "rule_id": "endpoint_merge",
+          "reason": "응고인자 Xa 결합이 확인되었으므로 항응고 병용 주의 문안을 즉시 추가할 것을 권고한다."
+        }
+      ]
+    },
+    {
+      "id": "species_mismatch_reject",
+      "expected": "reject",
+      "verdict": "reject",
+      "score": 1.0,
+      "failed": [
+        {
+          "check": "종 차이 명시",
+          "rule_id": "species_mismatch",
+          "reason": "이것은 사람 COX-2 계산 결과이므로 사람에서의 COX-2 관련 함의로 바로 읽을 수 있다."
+        }
+      ]
+    },
+    {
+      "id": "convergence_claim_reject",
+      "expected": "reject",
+      "verdict": "reject",
+      "score": 1.0,
+      "failed": [
+        {
+          "check": "수렴 주장 금지",
+          "rule_id": "convergence_claim",
+          "reason": "seed 를 고정하고 돌렸으므로 -10.178 kcal/mol 은 수렴한 값이고 다시 돌려도 같게 나온다."
+        },
+        {
+          "check": "수렴 주장 금지",
+          "rule_id": "convergence_claim",
+          "reason": "-10.178 kcal/mol 은 수렴한 재현값이다."
+        }
+      ]
+    },
+    {
+      "id": "rmsd_reference_reject",
+      "expected": "reject",
+      "verdict": "reject",
+      "score": 1.0,
+      "failed": [
+        {
+          "check": "6. RMSD 기준 명시",
+          "rule_id": "rmsd_reference",
+          "reason": "이 RMSD 는 결정 구조의 리간드 포즈와의 편차이므로 1순위 포즈가 결정 구조와 일치한다는 뜻이다."
+        }
+      ]
+    },
+    {
+      "id": "endpoint_merge_reject",
+      "expected": "reject",
+      "verdict": "reject",
+      "score": 1.0,
+      "failed": [
+        {
+          "check": "7. 종점 혼합 규칙",
+          "rule_id": "endpoint_merge",
+          "reason": "네 종점을 합친 7,311건을 하나의 친화도 근거로 삼아 평균 친화도를 산출하면 PARP1 도킹 점수가 실험으로 검증된다."
+        }
+      ]
+    },
+    {
+      "id": "executed_input_reject",
+      "expected": "reject",
+      "verdict": "reject",
+      "score": 1.0,
+      "failed": [
+        {
+          "check": "8. 입력 동일성",
+          "rule_id": "executed_input",
+          "reason": "이 SMILES 문자열이 실행된 입력이고 도킹된 3차원 구조를 정의한다."
+        }
+      ]
+    },
+    {
+      "id": "fly_response_reject",
+      "expected": "reject",
+      "verdict": "reject",
+      "score": 1.0,
+      "failed": [
+        {
+          "check": "9. 초파리 결과 해석",
+          "rule_id": "fly_response",
+          "reason": "점수가 이만큼 낮으므로 초파리 커넥톰 회로에서도 같은 방향의 반응과 약효가 나타난다."
+        },
+        {
+          "check": "9. 초파리 결과 해석",
+          "rule_id": "fly_response",
+          "reason": "도킹 점수로 초파리에서의 반응과 약효를 예측할 수 있다."
+        }
+      ]
+    },
+    {
+      "id": "diffdock_confidence_affinity_reject",
+      "expected": "reject",
+      "verdict": "reject",
+      "score": 1.0,
+      "failed": [
+        {
+          "check": "친화도 환산 금지",
+          "rule_id": "affinity_conversion",
+          "reason": "0.761 을 결합 친화도로 환산하면 강한 친화도에 해당하므로 이 값이 친화도의 근거가 된다."
+        }
+      ]
+    },
+    {
+      "id": "cross_tool_scale_reject",
+      "expected": "reject",
+      "verdict": "reject",
+      "score": 1.0,
+      "failed": [
+        {
+          "check": "도구 간 점수 혼용 금지",
+          "rule_id": "cross_tool_scale",
+          "reason": "두 값을 같은 척도에 두면 두 도구가 같은 크기를 가리키므로 서로를 수치로 확증한다."
+        }
+      ]
+    },
+    {
+      "id": "diffdock_reproducibility_reject",
+      "expected": "reject",
+      "verdict": "reject",
+      "score": 1.0,
+      "failed": [
+        {
+          "check": "12. DiffDock 재현성 주장 금지",
+          "rule_id": "diffdock_reproducibility",
+          "reason": "이 세 값은 이 입력에 대한 고정된 결과이므로 다시 불러도 같게 나온다."
+        }
+      ]
+    },
+    {
+      "id": "diffdock_negative_confidence_reject",
+      "expected": "reject",
+      "verdict": "reject",
+      "score": 1.0,
+      "failed": [
+        {
+          "check": "13. DiffDock 음수 신뢰도 해석 금지",
+          "rule_id": "diffdock_negative_confidence",
+          "reason": "값이 음수이므로 niraparib 은 응고인자 Xa 에 결합하지 않는다는 것이 확인되었다."
+        }
+      ]
+    },
+    {
+      "id": "disproportionality_causality_reject",
+      "expected": "reject",
+      "verdict": "reject",
+      "score": 1.0,
+      "failed": [
+        {
+          "check": "14. 라벨 기재와 인과 구분",
+          "rule_id": "disproportionality_causality",
+          "reason": "이 지표는 niraparib 이 혈소판감소증을 일으킨다는 인과를 통계적으로 확증한다."
+        }
+      ]
+    },
+    {
+      "id": "evidence_scope_reject",
+      "expected": "reject",
+      "verdict": "reject",
+      "score": 1.0,
+      "failed": [
+        {
+          "check": "14. 라벨 기재와 인과 구분",
+          "rule_id": "disproportionality_causality",
+          "reason": "혈소판감소증은 ZEJULA(niraparib) 라벨 5절과 6절에 기재되어 있고 FAERS PRR 은 9.13 이다."
+        },
+        {
+          "check": "15. 근거 범위 준수",
+          "rule_id": "evidence_scope",
+          "reason": "이 사람 근거로 응고인자 Xa 경로의 -7.967 kcal/mol 결합이 사람에서 확증되었다."
+        },
+        {
+          "check": "15. 근거 범위 준수",
+          "rule_id": "evidence_scope",
+          "reason": "사람 근거가 응고인자 Xa 결합을 확증했으므로 그 경로를 결론에 쓴다."
+        }
+      ]
+    }
+  ],
+  "positive_cases": [
+    {
+      "id": "prr_signal_ok",
+      "expected": "pass",
+      "verdict": "pass",
+      "score": 1.0,
+      "failed": []
+    },
+    {
+      "id": "label_listed_ok",
+      "expected": "pass",
+      "verdict": "pass",
+      "score": 1.0,
+      "failed": []
+    },
+    {
+      "id": "cross_target_ranking_pass",
+      "expected": "pass",
+      "verdict": "pass",
+      "score": 1.0,
+      "failed": []
+    },
+    {
+      "id": "affinity_conversion_pass",
+      "expected": "pass",
+      "verdict": "pass",
+      "score": 1.0,
+      "failed": []
+    },
+    {
+      "id": "cross_docking_binding_pass",
+      "expected": "pass",
+      "verdict": "pass",
+      "score": 1.0,
+      "failed": []
+    },
+    {
+      "id": "species_mismatch_pass",
+      "expected": "pass",
+      "verdict": "pass",
+      "score": 1.0,
+      "failed": []
+    },
+    {
+      "id": "convergence_claim_pass",
+      "expected": "pass",
+      "verdict": "pass",
+      "score": 1.0,
+      "failed": []
+    },
+    {
+      "id": "rmsd_reference_pass",
+      "expected": "pass",
+      "verdict": "pass",
+      "score": 1.0,
+      "failed": []
+    },
+    {
+      "id": "endpoint_merge_pass",
+      "expected": "pass",
+      "verdict": "pass",
+      "score": 1.0,
+      "failed": []
+    },
+    {
+      "id": "executed_input_pass",
+      "expected": "pass",
+      "verdict": "pass",
+      "score": 1.0,
+      "failed": []
+    },
+    {
+      "id": "fly_response_pass",
+      "expected": "pass",
+      "verdict": "pass",
+      "score": 1.0,
+      "failed": []
+    },
+    {
+      "id": "diffdock_confidence_affinity_pass",
+      "expected": "pass",
+      "verdict": "pass",
+      "score": 1.0,
+      "failed": []
+    },
+    {
+      "id": "cross_tool_scale_pass",
+      "expected": "pass",
+      "verdict": "pass",
+      "score": 1.0,
+      "failed": []
+    },
+    {
+      "id": "diffdock_reproducibility_pass",
+      "expected": "pass",
+      "verdict": "needs_human",
+      "score": 0.0,
+      "failed": []
+    },
+    {
+      "id": "diffdock_negative_confidence_pass",
+      "expected": "pass",
+      "verdict": "pass",
+      "score": 1.0,
+      "failed": []
+    },
+    {
+      "id": "disproportionality_causality_pass",
+      "expected": "pass",
+      "verdict": "pass",
+      "score": 1.0,
+      "failed": []
+    },
+    {
+      "id": "evidence_scope_pass",
+      "expected": "pass",
+      "verdict": "pass",
+      "score": 1.0,
+      "failed": []
+    }
+  ],
+  "unmapped_check_names": [],
+  "never_fired": [
+    "diffdock_confidence_affinity"
+  ],
+  "own_case_not_attributed": [
+    "diffdock_confidence_affinity"
+  ]
+}

@@ -1,0 +1,470 @@
+{
+ "label": "generic-arm",
+ "model": "nvidia/nemotron-3-super-120b-a12b",
+ "base_url": "https://integrate.api.nvidia.com/v1",
+ "cases_file": "eval/cases.jsonl",
+ "prompt_sha256": null,
+ "ran_at": "2026-09-27T00:35:39+0900",
+ "summary": {
+  "cases": 33,
+  "ok": 32,
+  "failed": 1,
+  "detection": {
+   "caught": 13,
+   "of": 16,
+   "rate": 0.8125
+  },
+  "false_positive": {
+   "count": 1,
+   "of": 17,
+   "rate": 0.0588
+  },
+  "latency_ms": {
+   "mean": 1577.6,
+   "median": 835.8,
+   "min": 520.2,
+   "max": 6957.0
+  },
+  "tokens": {
+   "prompt": 11748,
+   "completion": 1736,
+   "total": 13484
+  },
+  "cost_usd": null,
+  "failed_ids": [
+   "species_mismatch_pass"
+  ]
+ },
+ "rows": [
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 6527.5,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 376,
+    "completion_tokens": 38,
+    "total_tokens": 414
+   },
+   "id": "prr_signal_ok",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 698.6,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 379,
+    "completion_tokens": 76,
+    "total_tokens": 455
+   },
+   "id": "label_listed_ok",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 759.6,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 299,
+    "completion_tokens": 49,
+    "total_tokens": 348
+   },
+   "id": "planted_unsupported_claim",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 593.9,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 457,
+    "completion_tokens": 40,
+    "total_tokens": 497
+   },
+   "id": "cross_target_ranking_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 527.9,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 443,
+    "completion_tokens": 42,
+    "total_tokens": 485
+   },
+   "id": "cross_target_ranking_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1285.3,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 288,
+    "completion_tokens": 51,
+    "total_tokens": 339
+   },
+   "id": "affinity_conversion_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 749.8,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 329,
+    "completion_tokens": 54,
+    "total_tokens": 383
+   },
+   "id": "affinity_conversion_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 2059.6,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 334,
+    "completion_tokens": 42,
+    "total_tokens": 376
+   },
+   "id": "cross_docking_binding_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 3394.2,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 347,
+    "completion_tokens": 44,
+    "total_tokens": 391
+   },
+   "id": "cross_docking_binding_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 825.1,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 293,
+    "completion_tokens": 36,
+    "total_tokens": 329
+   },
+   "id": "species_mismatch_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": false,
+   "error": "응답이 CriticReport 형식이 아니다",
+   "latency_ms": 5948.4,
+   "verdict": null,
+   "usage": {
+    "prompt_tokens": 293,
+    "completion_tokens": 44,
+    "total_tokens": 337
+   },
+   "raw_response": "{\"verdict\": \"pass\", \"reason\", \"reason\": \"The summary correctly states that the score comes from a mouse structure and that the species is explicitly noted, so no unsupported inference is made.\"}",
+   "id": "species_mismatch_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1639.3,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 324,
+    "completion_tokens": 47,
+    "total_tokens": 371
+   },
+   "id": "convergence_claim_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 583.2,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 337,
+    "completion_tokens": 51,
+    "total_tokens": 388
+   },
+   "id": "convergence_claim_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 785.9,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 311,
+    "completion_tokens": 54,
+    "total_tokens": 365
+   },
+   "id": "rmsd_reference_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 774.0,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 314,
+    "completion_tokens": 54,
+    "total_tokens": 368
+   },
+   "id": "rmsd_reference_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 742.5,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 358,
+    "completion_tokens": 55,
+    "total_tokens": 413
+   },
+   "id": "endpoint_merge_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 683.4,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 335,
+    "completion_tokens": 79,
+    "total_tokens": 414
+   },
+   "id": "endpoint_merge_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 3327.8,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 308,
+    "completion_tokens": 48,
+    "total_tokens": 356
+   },
+   "id": "executed_input_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 846.4,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 363,
+    "completion_tokens": 77,
+    "total_tokens": 440
+   },
+   "id": "executed_input_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1274.7,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 291,
+    "completion_tokens": 52,
+    "total_tokens": 343
+   },
+   "id": "fly_response_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 2292.0,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 303,
+    "completion_tokens": 43,
+    "total_tokens": 346
+   },
+   "id": "fly_response_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1016.2,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 342,
+    "completion_tokens": 57,
+    "total_tokens": 399
+   },
+   "id": "diffdock_confidence_affinity_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 2589.4,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 352,
+    "completion_tokens": 64,
+    "total_tokens": 416
+   },
+   "id": "diffdock_confidence_affinity_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1349.5,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 341,
+    "completion_tokens": 53,
+    "total_tokens": 394
+   },
+   "id": "cross_tool_scale_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 614.6,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 355,
+    "completion_tokens": 63,
+    "total_tokens": 418
+   },
+   "id": "cross_tool_scale_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 520.2,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 398,
+    "completion_tokens": 51,
+    "total_tokens": 449
+   },
+   "id": "diffdock_reproducibility_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 2687.6,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 397,
+    "completion_tokens": 69,
+    "total_tokens": 466
+   },
+   "id": "diffdock_reproducibility_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1161.8,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 387,
+    "completion_tokens": 55,
+    "total_tokens": 442
+   },
+   "id": "diffdock_negative_confidence_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 1408.7,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 396,
+    "completion_tokens": 59,
+    "total_tokens": 455
+   },
+   "id": "diffdock_negative_confidence_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 6957.0,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 367,
+    "completion_tokens": 43,
+    "total_tokens": 410
+   },
+   "id": "disproportionality_causality_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 531.9,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 501,
+    "completion_tokens": 53,
+    "total_tokens": 554
+   },
+   "id": "disproportionality_causality_pass",
+   "expected_verdict": "pass"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 591.4,
+   "verdict": "reject",
+   "usage": {
+    "prompt_tokens": 526,
+    "completion_tokens": 60,
+    "total_tokens": 586
+   },
+   "id": "evidence_scope_reject",
+   "expected_verdict": "reject"
+  },
+  {
+   "ok": true,
+   "error": null,
+   "latency_ms": 683.3,
+   "verdict": "pass",
+   "usage": {
+    "prompt_tokens": 597,
+    "completion_tokens": 77,
+    "total_tokens": 674
+   },
+   "id": "evidence_scope_pass",
+   "expected_verdict": "pass"
+  }
+ ]
+}

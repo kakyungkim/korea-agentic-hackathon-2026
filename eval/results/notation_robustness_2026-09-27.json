@@ -1,0 +1,337 @@
+{
+  "generated": "2026-09-27",
+  "model": "nvidia/nemotron-3-super-120b-a12b, temperature 0.0, enable_thinking false",
+  "config": "configs/eval.yml (dataset/output_dir 만 덮어써 실행)",
+  "subset": {
+    "n": 14,
+    "ids": [
+      "cross_target_ranking_reject",
+      "cross_target_ranking_pass",
+      "affinity_conversion_reject",
+      "cross_docking_binding_reject",
+      "cross_docking_binding_pass",
+      "species_mismatch_reject",
+      "species_mismatch_pass",
+      "executed_input_pass",
+      "fly_response_reject",
+      "fly_response_pass",
+      "diffdock_negative_confidence_reject",
+      "disproportionality_causality_reject",
+      "evidence_scope_reject",
+      "evidence_scope_pass"
+    ],
+    "selection": "본문(claim text, summary)에 niraparib 또는 ZEJULA 가 실제로 나오는 케이스만. 전체 33건 중 14건",
+    "reject_expected": 8,
+    "pass_expected": 6
+  },
+  "notations": {
+    "original": "niraparib (INN 성분명)",
+    "brand": "Zejula. openFDA drug/label.json 조회(2026-09-27): brand_name ZEJULA, generic_name NIRAPARIB, spl_set_id b7f675e2-159c-490c-b6f4-3f16d9492b7d, UNII 195Q483UZD",
+    "code": "MK-4827. PubMed PMID 24970803 (Oncotarget 2014) 제목 \"Niraparib (MK-4827), a novel poly(ADP-Ribose) polymerase inhibitor...\"; 개발 코드 원논문 PMID 19873981 (J Med Chem 2009;52:7170-85)",
+    "substitution_scope": "claim text 와 summary 만 치환. evidence_ids 는 그대로 두어 근거 문자열을 고정",
+    "pathrenamed_note": "brand/code(경로 치환) 세트는 executed_input_pass 본문의 /data/docking/inputs/4R6E_ligand_niraparib.pdbqt 까지 함께 바뀌어 약물명 외의 변화가 섞였다. 그래서 *_keep 세트를 따로 만들었고 본 결과는 *_keep 을 쓴다"
+  },
+  "conditions": {
+    "original": {
+      "runs": [
+        "orig1",
+        "orig2",
+        "orig3"
+      ],
+      "judgments": 42,
+      "mismatch": 1,
+      "mismatch_hard_503": 1,
+      "mismatch_model_judgment": 0,
+      "detection_rate_excl_503": 1.0,
+      "detail": [
+        {
+          "run": "orig3",
+          "case": "affinity_conversion_reject",
+          "expected": "reject",
+          "got": "needs_human",
+          "cause": "503 폴백",
+          "failed_checks": []
+        }
+      ],
+      "infra": {
+        "orig1": {
+          "response_format_retry": 1,
+          "hard_failure": 0
+        },
+        "orig2": {
+          "response_format_retry": 5,
+          "hard_failure": 0
+        },
+        "orig3": {
+          "response_format_retry": 1,
+          "hard_failure": 1
+        }
+      }
+    },
+    "brand_keep": {
+      "runs": [
+        "brand_keep",
+        "brand_keep2",
+        "brand_keep3"
+      ],
+      "judgments": 42,
+      "mismatch": 2,
+      "mismatch_hard_503": 2,
+      "mismatch_model_judgment": 0,
+      "detection_rate_excl_503": 1.0,
+      "detail": [
+        {
+          "run": "brand_keep",
+          "case": "disproportionality_causality_reject",
+          "expected": "reject",
+          "got": "needs_human",
+          "cause": "503 폴백",
+          "failed_checks": []
+        },
+        {
+          "run": "brand_keep3",
+          "case": "cross_docking_binding_pass",
+          "expected": "pass",
+          "got": "needs_human",
+          "cause": "503 폴백",
+          "failed_checks": []
+        }
+      ],
+      "infra": {
+        "brand_keep": {
+          "response_format_retry": 2,
+          "hard_failure": 1
+        },
+        "brand_keep2": {
+          "response_format_retry": 1,
+          "hard_failure": 0
+        },
+        "brand_keep3": {
+          "response_format_retry": 2,
+          "hard_failure": 1
+        }
+      }
+    },
+    "code_keep": {
+      "runs": [
+        "code_keep",
+        "code_keep2",
+        "code_keep3"
+      ],
+      "judgments": 42,
+      "mismatch": 1,
+      "mismatch_hard_503": 1,
+      "mismatch_model_judgment": 0,
+      "detection_rate_excl_503": 1.0,
+      "detail": [
+        {
+          "run": "code_keep",
+          "case": "cross_target_ranking_reject",
+          "expected": "reject",
+          "got": "needs_human",
+          "cause": "503 폴백",
+          "failed_checks": []
+        }
+      ],
+      "infra": {
+        "code_keep": {
+          "response_format_retry": 2,
+          "hard_failure": 1
+        },
+        "code_keep2": {
+          "response_format_retry": 2,
+          "hard_failure": 0
+        },
+        "code_keep3": {
+          "response_format_retry": 2,
+          "hard_failure": 0
+        }
+      }
+    },
+    "brand_pathrenamed": {
+      "runs": [
+        "brand",
+        "brand_rep"
+      ],
+      "judgments": 28,
+      "mismatch": 1,
+      "mismatch_hard_503": 0,
+      "mismatch_model_judgment": 1,
+      "detection_rate_excl_503": 0.9643,
+      "detail": [
+        {
+          "run": "brand",
+          "case": "executed_input_pass",
+          "expected": "pass",
+          "got": "reject",
+          "cause": "모델 판정",
+          "failed_checks": [
+            {
+              "name": "입력 동일성",
+              "reason": "실행된 입력은 준비된 PDBQT 파일 /data/docking/inputs/4R6E_ligand_Zejula.pdbqt 다. 연결성 SMILES 는 입체화학을 빠뜨릴 수 있어 실행 입력이 아니다."
+            }
+          ]
+        }
+      ],
+      "infra": {
+        "brand": {
+          "response_format_retry": 0,
+          "hard_failure": 0
+        },
+        "brand_rep": {
+          "response_format_retry": 0,
+          "hard_failure": 0
+        }
+      }
+    },
+    "code_pathrenamed": {
+      "runs": [
+        "code"
+      ],
+      "judgments": 14,
+      "mismatch": 0,
+      "mismatch_hard_503": 0,
+      "mismatch_model_judgment": 0,
+      "detection_rate_excl_503": 1.0,
+      "detail": [],
+      "infra": {
+        "code": {
+          "response_format_retry": 3,
+          "hard_failure": 0
+        }
+      }
+    }
+  },
+  "flip_vs_original": [
+    {
+      "condition": "brand_keep",
+      "case": "affinity_conversion_reject",
+      "original": [
+        "reject",
+        "reject",
+        "needs_human"
+      ],
+      "variant": [
+        [
+          "brand_keep",
+          "reject",
+          false
+        ],
+        [
+          "brand_keep2",
+          "reject",
+          false
+        ],
+        [
+          "brand_keep3",
+          "reject",
+          false
+        ]
+      ]
+    },
+    {
+      "condition": "brand_keep",
+      "case": "cross_docking_binding_pass",
+      "original": [
+        "pass",
+        "pass",
+        "pass"
+      ],
+      "variant": [
+        [
+          "brand_keep",
+          "pass",
+          false
+        ],
+        [
+          "brand_keep2",
+          "pass",
+          false
+        ],
+        [
+          "brand_keep3",
+          "needs_human",
+          true
+        ]
+      ]
+    },
+    {
+      "condition": "brand_keep",
+      "case": "disproportionality_causality_reject",
+      "original": [
+        "reject",
+        "reject",
+        "reject"
+      ],
+      "variant": [
+        [
+          "brand_keep",
+          "needs_human",
+          true
+        ],
+        [
+          "brand_keep2",
+          "reject",
+          false
+        ],
+        [
+          "brand_keep3",
+          "reject",
+          false
+        ]
+      ]
+    },
+    {
+      "condition": "code_keep",
+      "case": "cross_target_ranking_reject",
+      "original": [
+        "reject",
+        "reject",
+        "reject"
+      ],
+      "variant": [
+        [
+          "code_keep",
+          "needs_human",
+          true
+        ],
+        [
+          "code_keep2",
+          "reject",
+          false
+        ],
+        [
+          "code_keep3",
+          "reject",
+          false
+        ]
+      ]
+    },
+    {
+      "condition": "code_keep",
+      "case": "affinity_conversion_reject",
+      "original": [
+        "reject",
+        "reject",
+        "needs_human"
+      ],
+      "variant": [
+        [
+          "code_keep",
+          "reject",
+          false
+        ],
+        [
+          "code_keep2",
+          "reject",
+          false
+        ],
+        [
+          "code_keep3",
+          "reject",
+          false
+        ]
+      ]
+    }
+  ]
+}

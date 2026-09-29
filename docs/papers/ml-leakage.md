@@ -47,6 +47,26 @@ Applications 또는 Brief Communication 형식을 확인한다 [미확인].
 > **Conclusion.** Reporting a single blinded number is not enough; the rung at which
 > performance falls identifies which prior the model was using.
 
+## 그래픽 초록
+
+![그래픽 초록](../figures/ga-ml-leakage.png)
+
+`scripts/figures/ga_ml_leakage.py`. 본편과 같은 시각 문법을 쓴다.
+
+| 칸 | 담는 것 |
+|---|---|
+| A | 오염 경로. 참조 세트와 그 세트를 다룬 논문이 모두 공개라 학습 코퍼스로 들어간다 |
+| B | **누수 다섯 유형.** 각 유형이 어디로 들어오고 무엇을 부풀리는지, 실측인지 미측정인지 |
+| C | 가림 사다리 네 층과 하강 곡선. 가운데 두 점이 이 논문이 채우는 자리다 |
+
+**C 의 물음표 두 개가 기여를 가리킨다.** 양 끝 두 점은 이미 쟀고, 그 사이가 비어 있어
+어떤 사전지식이 답을 만들었는지 아직 모른다. 그 두 점을 채우는 것이 이 논문이다.
+
+A 의 가림 카드는 본편과 같은 그림이다. 일부러 같게 두어 두 편이 한 연구에서 나왔다는 것이
+보이게 했다.
+
+---
+
 ## 핵심 그림 한 장
 
 ```

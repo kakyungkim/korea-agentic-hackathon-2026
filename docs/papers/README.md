@@ -9,6 +9,19 @@
 | 별편 | `ml-leakage.md` | **JAMIA** | 7.1 | 0원 |
 | 도킹 편 | `docking-critic.md` | **arXiv 선공개 + ML 워크숍 단편.** 학술지는 표본 확대 후 | | 0원 |
 
+## 그래픽 초록
+
+편마다 한 장씩 있다. 세 장이 같은 시각 문법을 쓰므로 한 연구에서 나온 것이 보인다.
+
+| 편 | 그림 | 그리는 스크립트 |
+|---|---|---|
+| 본편 | `docs/figures/ga-pv-main.png` | `scripts/figures/ga_pv_main.py` |
+| 별편 | `docs/figures/ga-ml-leakage.png` | `scripts/figures/ga_ml_leakage.py` |
+| 도킹 편 | `docs/figures/ga-docking-critic.png` | `scripts/figures/ga_docking_critic.py` |
+
+공통 팔레트와 카드 모양은 `scripts/figures/ga_style.py` 에 있다. 수치가 바뀌면 스크립트를
+고치고 다시 돌린다.
+
 ## 전체 조망
 
 편이 셋이고 실험이 여섯이라 무엇이 무엇을 막고 있는지가 흩어지기 쉽다.

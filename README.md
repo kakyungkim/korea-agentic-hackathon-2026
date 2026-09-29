@@ -286,6 +286,7 @@ v0에서 문제 정의와 검증 설계를 물려받았고, v0이 쓴 외부 플
 | `docs/notes/README.md` | **작업 노트 색인.** 주제별 폴더 여섯 개와 그 안의 파일 목록 |
 | `docs/notes/05-research/paper-plan-pv.md` | **약물감시 본편 논문 계획.** 논지, 실험 6종, 투고처와 비용 |
 | `docs/notes/05-research/lit-survey-2026-09-29.md` | 선행연구 조사. 카파 0.22 정정과 선점 위험 셋 |
+| `docs/figures/ga-*.png` | **논문 세 편의 그래픽 초록.** 스터디 디자인이 한 장에 |
 | `docs/papers/STUDY.md` | **연구 전체 조망.** 실험 6종이 논문 3편의 어느 그림과 절로 가는지 |
 | `docs/papers/README.md` | **논문 세 편의 편성과 겹치지 않게 그은 선** |
 | `docs/papers/pv-main.md` | 본편 골격. 절마다 있는 것과 필요한 것 |

@@ -282,7 +282,7 @@ v0에서 문제 정의와 검증 설계를 물려받았고, v0이 쓴 외부 플
 | `docs/notes/04-platform/nvidia-skills-catalog.md` | NVIDIA 스킬 380개 가운데 쓸 만한 것 정리 |
 | `docs/notes/01-domain/causality-assessment.md` | WHO-UMC 와 한국형 알고리즘, 정답 데이터의 소재 |
 | `docs/notes/01-domain/report-form-mapping.md` | 실제 보고 서식과 우리 산출물의 대응 |
-| `docs/blog/00-시리즈-색인.md` | **블로그 시리즈 16편 색인.** 배경 글 2편도 같은 폴더 |
+| `docs/blog/00-시리즈-색인.md` | **블로그 시리즈 14편 색인.** 배경 글 2편도 같은 폴더 |
 | `docs/notes/README.md` | **작업 노트 색인.** 주제별 폴더 여섯 개와 그 안의 파일 목록 |
 | `docs/notes/05-research/paper-plan-pv.md` | **약물감시 본편 논문 계획.** 논지, 실험 6종, 투고처와 비용 |
 | `docs/notes/05-research/lit-survey-2026-09-29.md` | 선행연구 조사. 카파 0.22 정정과 선점 위험 셋 |

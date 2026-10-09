@@ -136,7 +136,7 @@ def test_fddd_only_rules_shrank_from_ten_to_three():
     """FDDD 단독 의존이 10종에서 3종으로 줄었다는 단정. 늘어나면 실패한다.
 
     이중 귀속 전에는 `source == SOURCE_FDDD` 인 규칙 10종이 전부 FDDD 단독 의존이었다.
-    `docs/notes/06-project/contingency-roster.md` 의 "과잉해석 규칙 10종" 행이 그 상태를 적은 것이다.
+    팀 내부 대체 계획 메모의 "과잉해석 규칙 10종" 행이 그 상태를 적은 것이다.
     """
     fddd_sourced = [r.id for r in RULES if r.source == SOURCE_FDDD]
     assert len(fddd_sourced) == 10, "FDDD 출처 규칙 수가 달라졌다"

@@ -57,7 +57,7 @@ def main(argv: list[str] | None = None) -> int:
                         help=f"DiffDock 포즈 수 (기본 {cr.DIFFDOCK_NUM_POSES})")
     parser.add_argument("--no-vina", action="store_true",
                         help="FDDD AutoDock Vina 실측 조회를 건너뛴다. 결합 근거는 DiffDock 만 쓴다. "
-                             "docs/notes/06-project/contingency-roster.md 참고")
+                             "팀원 자산을 쓸 수 없을 때를 대비한 경로다.")
     parser.add_argument("--model", default=None,
                         help="크리틱 3단 모델. 비우면 MODEL_PLANNER 환경변수를 쓴다.")
     args = parser.parse_args(argv)

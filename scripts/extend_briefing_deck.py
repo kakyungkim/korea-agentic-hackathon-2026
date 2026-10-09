@@ -288,7 +288,7 @@ def slides_to_add(m: dict) -> list[dict]:
             ],
             "note": "마감은 23:59 이고 목표는 22:00 이다. 두 시간 여유를 둔다. "
                     "팀장이 근무 시간에는 손을 대기 어려우므로 낮에 할 것은 문의와 수강으로 좁혔다.",
-            "source": "팀장 추가(9/28) · 출처: docs/SESSION-2026-09-27.md, docs/notes/06-project/work-assignment.md",
+            "source": "팀장 추가(9/28) · 출처: docs/SESSION-2026-09-27.md, 팀 작업 분담 메모(비공개)",
         },
         {
             "title": "아직 비어 있는 것",

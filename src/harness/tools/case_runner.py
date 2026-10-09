@@ -695,7 +695,6 @@ def run_path(spec: PathSpec, docking: dict[str, Any], evidence: dict[str, Any], 
     ``use_vina=False`` 면 FDDD 의 AutoDock Vina 실측 조회를 건너뛴다. 그 자산은 팀원의
     별도 저작물이므로 쓸 수 없게 되는 경우를 대비한 경로다. 결합 근거는 DiffDock NIM 하나로
     줄지만 케이스의 요지(같은 화합물, 두 경로, 한쪽만 실험 근거가 있다)는 그대로 선다.
-    자세한 것은 ``docs/notes/06-project/contingency-roster.md``.
     """
     structure = step_structure(spec, offline=offline, use_cache=use_cache)
     vina = step_vina(spec, docking) if use_vina else vina_skip_step()

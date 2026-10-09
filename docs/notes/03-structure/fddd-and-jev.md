@@ -1,6 +1,6 @@
 # 팀원 제안 주제 실측: FDDD(초파리)와 Jev
 
-2026-09-25 조사. 팀원이 제안한 두 주제의 실체를 직접 확인했다. `docs/notes/06-project/team.md:18-19`에
+2026-09-25 조사. 팀원이 제안한 두 주제의 실체를 직접 확인했다. 팀 구성 메모(비공개)에
 `[unverified]`로 남겨 둔 것을 메운다. 주제 선택 근거는 `docs/notes/06-project/topic-decision.md`에 있다.
 
 ## FDDD (초파리 뇌 아틀라스 기반 신약개발)
@@ -123,7 +123,7 @@ solved drug discovery with a fly? Obviously not"이라고 못 박는다. 학습�
 
 ## Jev
 
-실재하는 모델이다. `docs/notes/06-project/team.md:19`의 `[unverified]`를 아래로 대체한다.
+실재하는 모델이다. 팀 구성 메모의 `[unverified]`를 아래로 대체한다.
 
 ### 실체
 

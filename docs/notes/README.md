@@ -71,14 +71,7 @@
 | 파일 | 무엇 |
 |---|---|
 | `topic-decision.md` | **결정 근거와 게이트와 일정의 원본** |
-| `team.md` | 팀 구성과 역할 |
-| `work-assignment.md` | 작업 분담 |
 | `credits.md` | 사람 기여 표기 |
-| `recruiting.md` | 팀원 모집 기록 |
-| `contingency-roster.md` | 막혔을 때의 대안 목록 |
-| `repo-naming-plan.md` | 저장소와 도메인 이름 결정 |
-| `submission-draft-v0.md` | 제출 문서 초안 |
-| `post-hackathon.md` | 마감 뒤에 할 일 |
 | `team-repo-conventions.md` | 팀 저장소에 기여할 때의 규약 |
 | `figures.md` | 그림 목록과 생성 방법 |
 | `flyvigilante-review-2026-09-28.md` | 팀 데모 검토 |

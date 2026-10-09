@@ -51,3 +51,18 @@ assets/video/[st]_*.mp3
 # 안에 든 것: 팀 메시지(실명), 렌더 산출물, 강좌 원문 노트.
 # git clean -fdx 는 이 폴더를 지우므로 그 명령은 쓰지 않는다.
 _local/
+
+# Internal team-ops notes stay local; the public repo keeps the technical notes only
+docs/notes/06-project/team.md
+docs/notes/06-project/work-assignment.md
+docs/notes/06-project/recruiting.md
+docs/notes/06-project/contingency-roster.md
+docs/notes/06-project/repo-naming-plan.md
+docs/notes/06-project/submission-draft-v0.md
+docs/notes/06-project/post-hackathon.md
+docs/notes/06-project/final-prep.md
+docs/notes/06-project/post-final-todo.md
+docs/notes/07-competitors/
+docs/notes/08-final-day/
+docs/notes/09-ai-day/
+docs/notes/*.txt

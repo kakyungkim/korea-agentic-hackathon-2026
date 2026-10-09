@@ -299,7 +299,7 @@ I-CALM(arXiv:2604.03904), SelectLLM, Overconfidence in LLM-as-a-Judge(arXiv:2508
 
 ## 4. 문헌 분석 (paper-analysis-harness)
 
-하네스는 `/Users/kkkim/projects/paper-analysis-harness` 이고 **산출물은 쓰는 쪽 저장소**,
+하네스는 별도 개인 저장소 `paper-analysis-harness` 이고 **산출물은 쓰는 쪽 저장소**,
 곧 `KoreaAgenticAIhackathon/_local/research/<topic>/<paper-id>/` 에 둔다.
 
 편수가 많아 프로필로 계층을 나눈다.
@@ -402,7 +402,7 @@ python3 scripts/plot_metric_roc.py --arms novel,blind
 python3 scripts/connectome_control.py --shuffles 100 --out eval/results/connectome_control.json
 
 # 문헌 분석 구조
-python3 /Users/kkkim/projects/paper-analysis-harness/scripts/check_analysis.py
+python3 <paper-analysis-harness>/scripts/check_analysis.py
 
 # 논문 수치와 결과 파일 대조
 .venv/bin/python scripts/verify_numbers.py
